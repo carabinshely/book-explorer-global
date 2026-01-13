@@ -1,0 +1,16 @@
+{
+  "work_id": "stargazers-journey",
+  "order": 3,
+  "family_title": {
+    "en": "The Stargazer's Journey",
+    "es": "El Viaje del Astrónomo",
+    "eo": "La Vojaĝo de la Stelrigardanto"
+  },
+  "default_specs": {
+    "pages": 40,
+    "dimensions_mm": "215 x 279"
+  },
+  "canonical_images": [
+    "/assets/images/stargazers-journey/cover-main.jpg"
+  ]
+}

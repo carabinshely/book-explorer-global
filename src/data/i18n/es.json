@@ -1,0 +1,68 @@
+{
+  "lang": "es",
+  "site": {
+    "name": "Lighthouse Books",
+    "tagline": "Historias que iluminan mentes curiosas"
+  },
+  "nav": {
+    "home": "Inicio",
+    "books": "Libros",
+    "about": "Nosotros",
+    "contact": "Contacto"
+  },
+  "home": {
+    "hero_title": "Descubre Historias que Iluminan",
+    "hero_subtitle": "Una colección curada de libros bilingües y multilingües que unen culturas e inspiran asombro",
+    "browse_books": "Ver Colección",
+    "featured": "Libros Destacados"
+  },
+  "catalog": {
+    "title": "Nuestra Colección",
+    "subtitle": "Explora nuestra selección cuidadosamente curada de libros en múltiples idiomas",
+    "all_languages": "Todos los Idiomas",
+    "edition": "Edición"
+  },
+  "product": {
+    "buy_on_amazon": "Ver en Amazon",
+    "specifications": "Especificaciones",
+    "pages": "Páginas",
+    "dimensions": "Dimensiones",
+    "format": "Formato",
+    "languages": "Idiomas en esta edición",
+    "other_editions": "Otras Ediciones e Idiomas",
+    "listen": "Escuchar",
+    "watch": "Ver"
+  },
+  "about": {
+    "title": "Sobre Nosotros",
+    "mission_title": "Nuestra Misión",
+    "mission": "En Lighthouse Books, creemos que las grandes historias no conocen fronteras. Nuestra misión es llevar ediciones multilingües y bilingües a lectores de todo el mundo, fomentando la comprensión y apreciación entre culturas.",
+    "story_title": "Nuestra Historia",
+    "story": "Fundada por lingüistas apasionados y amantes de los libros, Lighthouse Books surgió de una idea simple: que el placer de leer debería ser accesible en múltiples idiomas. Curamos y publicamos cuidadosamente ediciones que honran las obras originales mientras las hacemos accesibles a nuevas audiencias."
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "Nos encantaría saber de ti",
+    "email_label": "Escríbenos",
+    "email": "hola@lighthousebooks.com",
+    "follow_label": "Síguenos"
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados.",
+    "tagline": "Historias que iluminan mentes curiosas"
+  },
+  "a11y": {
+    "skip_to_content": "Saltar al contenido",
+    "language_select": "Seleccionar idioma",
+    "open_menu": "Abrir menú",
+    "close_menu": "Cerrar menú",
+    "gallery_previous": "Imagen anterior",
+    "gallery_next": "Imagen siguiente"
+  },
+  "languages": {
+    "en": "Inglés",
+    "es": "Español",
+    "eo": "Esperanto",
+    "fr": "Francés"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "sku_id": "stargazers-journey-bilingual",
+  "slug": "stargazers-journey-bilingual",
+  "work_id": "stargazers-journey",
+  "edition_type": "bilingual",
+  "languages": ["en", "es"],
+  "title": "The Stargazer's Journey / El Viaje del Astrónomo",
+  "description": "Embark on a cosmic adventure in both English and Spanish! This bilingual edition presents the story side-by-side, perfect for families learning together and readers who want to explore the stars in two languages.",
+  "specs": {
+    "format": ["Hardcover"],
+    "pages": 56,
+    "dimensions_mm": "215 x 279",
+    "isbn": "978-1-234567-02-2"
+  },
+  "images": [
+    "/assets/images/stargazers-journey/cover-bilingual.jpg",
+    "/assets/images/stargazers-journey/spread-bilingual-1.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE07",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE07",
+      "ES": "https://amazon.es/dp/B0EXAMPLE07"
+    }
+  },
+  "media": {
+    "spotify": {
+      "mixed": "https://open.spotify.com/album/example-bilingual"
+    },
+    "youtube": {
+      "en": "https://www.youtube.com/watch?v=example-en",
+      "es": "https://www.youtube.com/watch?v=example-es"
+    }
+  }
+}

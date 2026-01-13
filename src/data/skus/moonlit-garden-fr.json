@@ -1,0 +1,26 @@
+{
+  "sku_id": "moonlit-garden-fr",
+  "slug": "moonlit-garden-fr",
+  "work_id": "moonlit-garden",
+  "edition_type": "mono",
+  "languages": ["fr"],
+  "title": "Le Jardin au Clair de Lune",
+  "description": "Quand une jeune fille découvre un jardin secret qui ne fleurit qu'au clair de lune, elle entreprend un voyage magique de découverte. Cette histoire enchanteresse célèbre la curiosité, la patience et les merveilles cachées qui se révèlent à ceux qui regardent de près.",
+  "specs": {
+    "format": ["Couverture Rigide"],
+    "pages": 48,
+    "dimensions_mm": "210 x 280",
+    "isbn": "978-1-234567-01-2"
+  },
+  "images": [
+    "/assets/images/moonlit-garden/cover-fr.jpg",
+    "/assets/images/moonlit-garden/spread-1.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE05",
+    "marketplaces": {
+      "FR": "https://amazon.fr/dp/B0EXAMPLE05"
+    }
+  },
+  "media": {}
+}

@@ -1,0 +1,16 @@
+{
+  "work_id": "moonlit-garden",
+  "order": 2,
+  "family_title": {
+    "en": "The Moonlit Garden",
+    "es": "El Jardín de Luna",
+    "fr": "Le Jardin au Clair de Lune"
+  },
+  "default_specs": {
+    "pages": 48,
+    "dimensions_mm": "210 x 280"
+  },
+  "canonical_images": [
+    "/assets/images/moonlit-garden/cover-main.jpg"
+  ]
+}

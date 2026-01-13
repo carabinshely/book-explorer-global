@@ -1,0 +1,68 @@
+{
+  "lang": "en",
+  "site": {
+    "name": "Lighthouse Books",
+    "tagline": "Illuminating stories for curious minds"
+  },
+  "nav": {
+    "home": "Home",
+    "books": "Books",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero_title": "Discover Stories That Illuminate",
+    "hero_subtitle": "A curated collection of bilingual and multilingual books that bridge cultures and inspire wonder",
+    "browse_books": "Browse Collection",
+    "featured": "Featured Books"
+  },
+  "catalog": {
+    "title": "Our Collection",
+    "subtitle": "Explore our carefully curated selection of books in multiple languages",
+    "all_languages": "All Languages",
+    "edition": "Edition"
+  },
+  "product": {
+    "buy_on_amazon": "View on Amazon",
+    "specifications": "Specifications",
+    "pages": "Pages",
+    "dimensions": "Dimensions",
+    "format": "Format",
+    "languages": "Languages in this edition",
+    "other_editions": "Other Editions & Languages",
+    "listen": "Listen",
+    "watch": "Watch"
+  },
+  "about": {
+    "title": "About Us",
+    "mission_title": "Our Mission",
+    "mission": "At Lighthouse Books, we believe that great stories know no borders. Our mission is to bring multilingual and bilingual editions to readers around the world, fostering understanding and appreciation across cultures.",
+    "story_title": "Our Story",
+    "story": "Founded by passionate linguists and book lovers, Lighthouse Books emerged from a simple idea: that the joy of reading should be accessible in multiple languages. We carefully curate and publish editions that honor the original works while making them accessible to new audiences."
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "We'd love to hear from you",
+    "email_label": "Email Us",
+    "email": "hello@lighthousebooks.com",
+    "follow_label": "Follow Us"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "tagline": "Illuminating stories for curious minds"
+  },
+  "a11y": {
+    "skip_to_content": "Skip to content",
+    "language_select": "Select language",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "gallery_previous": "Previous image",
+    "gallery_next": "Next image"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "eo": "Esperanto",
+    "fr": "French"
+  }
+}
