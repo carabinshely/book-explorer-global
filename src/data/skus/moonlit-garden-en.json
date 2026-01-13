@@ -1,0 +1,30 @@
+{
+  "sku_id": "moonlit-garden-en",
+  "slug": "moonlit-garden-en",
+  "work_id": "moonlit-garden",
+  "edition_type": "mono",
+  "languages": ["en"],
+  "title": "The Moonlit Garden",
+  "description": "When a young girl discovers a secret garden that only blooms under moonlight, she embarks on a magical journey of discovery. This enchanting story celebrates curiosity, patience, and the hidden wonders that reveal themselves to those who look closely.",
+  "specs": {
+    "format": ["Hardcover", "Paperback"],
+    "pages": 48,
+    "dimensions_mm": "210 x 280",
+    "isbn": "978-1-234567-01-1"
+  },
+  "images": [
+    "/assets/images/moonlit-garden/cover-en.jpg",
+    "/assets/images/moonlit-garden/spread-1.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE04",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE04"
+    }
+  },
+  "media": {
+    "apple_music": {
+      "en": "https://music.apple.com/album/example"
+    }
+  }
+}

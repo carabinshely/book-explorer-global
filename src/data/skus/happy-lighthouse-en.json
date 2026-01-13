@@ -1,0 +1,35 @@
+{
+  "sku_id": "happy-lighthouse-en",
+  "slug": "happy-lighthouse-en",
+  "work_id": "happy-lighthouse",
+  "edition_type": "mono",
+  "languages": ["en"],
+  "title": "The Happy Lighthouse",
+  "description": "A heartwarming tale of a lonely lighthouse that discovers the joy of guiding ships safely home. Through beautiful illustrations and gentle prose, children learn about purpose, friendship, and the light we can bring to others' lives.",
+  "specs": {
+    "format": ["Hardcover", "Paperback"],
+    "pages": 32,
+    "dimensions_mm": "203 x 254",
+    "isbn": "978-1-234567-00-1"
+  },
+  "images": [
+    "/assets/images/happy-lighthouse/cover-en.jpg",
+    "/assets/images/happy-lighthouse/spread-1.jpg",
+    "/assets/images/happy-lighthouse/spread-2.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE01",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE01",
+      "UK": "https://amazon.co.uk/dp/B0EXAMPLE01"
+    }
+  },
+  "media": {
+    "spotify": {
+      "en": "https://open.spotify.com/album/example"
+    },
+    "youtube": {
+      "en": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    }
+  }
+}

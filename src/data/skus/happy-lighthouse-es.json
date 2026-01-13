@@ -1,0 +1,32 @@
+{
+  "sku_id": "happy-lighthouse-es",
+  "slug": "happy-lighthouse-es",
+  "work_id": "happy-lighthouse",
+  "edition_type": "mono",
+  "languages": ["es"],
+  "title": "El Faro Feliz",
+  "description": "Una historia conmovedora de un faro solitario que descubre la alegría de guiar los barcos a casa de forma segura. A través de hermosas ilustraciones y prosa gentil, los niños aprenden sobre el propósito, la amistad y la luz que podemos llevar a la vida de otros.",
+  "specs": {
+    "format": ["Tapa Dura", "Tapa Blanda"],
+    "pages": 32,
+    "dimensions_mm": "203 x 254",
+    "isbn": "978-1-234567-00-2"
+  },
+  "images": [
+    "/assets/images/happy-lighthouse/cover-es.jpg",
+    "/assets/images/happy-lighthouse/spread-1.jpg",
+    "/assets/images/happy-lighthouse/spread-2.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE02",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE02",
+      "ES": "https://amazon.es/dp/B0EXAMPLE02"
+    }
+  },
+  "media": {
+    "spotify": {
+      "es": "https://open.spotify.com/album/example-es"
+    }
+  }
+}

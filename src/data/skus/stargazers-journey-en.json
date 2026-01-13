@@ -1,0 +1,30 @@
+{
+  "sku_id": "stargazers-journey-en",
+  "slug": "stargazers-journey-en",
+  "work_id": "stargazers-journey",
+  "edition_type": "mono",
+  "languages": ["en"],
+  "title": "The Stargazer's Journey",
+  "description": "Follow a young astronomer as she travels through the cosmos, learning the stories behind the constellations. With stunning illustrations of the night sky, this book inspires wonder about the universe and the dreams that reach beyond the stars.",
+  "specs": {
+    "format": ["Hardcover"],
+    "pages": 40,
+    "dimensions_mm": "215 x 279",
+    "isbn": "978-1-234567-02-1"
+  },
+  "images": [
+    "/assets/images/stargazers-journey/cover-en.jpg",
+    "/assets/images/stargazers-journey/spread-1.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE06",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE06"
+    }
+  },
+  "media": {
+    "youtube": {
+      "en": "https://www.youtube.com/watch?v=example"
+    }
+  }
+}

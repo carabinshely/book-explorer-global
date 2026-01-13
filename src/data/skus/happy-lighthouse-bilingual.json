@@ -1,0 +1,32 @@
+{
+  "sku_id": "happy-lighthouse-bilingual",
+  "slug": "happy-lighthouse-bilingual",
+  "work_id": "happy-lighthouse",
+  "edition_type": "bilingual",
+  "languages": ["en", "eo"],
+  "title": "The Happy Lighthouse / La Feliĉa Lumturo",
+  "description": "Experience this beloved tale in both English and Esperanto! Side-by-side text allows readers to enjoy the story in two languages, making it perfect for language learners and bilingual families.",
+  "specs": {
+    "format": ["Hardcover"],
+    "pages": 48,
+    "dimensions_mm": "210 x 270",
+    "isbn": "978-1-234567-00-3"
+  },
+  "images": [
+    "/assets/images/happy-lighthouse/cover-bilingual.jpg",
+    "/assets/images/happy-lighthouse/spread-bilingual-1.jpg"
+  ],
+  "amazon": {
+    "asin": "B0EXAMPLE03",
+    "marketplaces": {
+      "US": "https://amazon.com/dp/B0EXAMPLE03"
+    }
+  },
+  "media": {
+    "spotify": {
+      "en": "https://open.spotify.com/album/example-en",
+      "eo": "https://open.spotify.com/album/example-eo",
+      "mixed": "https://open.spotify.com/album/example-mixed"
+    }
+  }
+}

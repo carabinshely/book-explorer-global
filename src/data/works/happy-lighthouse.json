@@ -1,0 +1,16 @@
+{
+  "work_id": "happy-lighthouse",
+  "order": 1,
+  "family_title": {
+    "en": "The Happy Lighthouse",
+    "es": "El Faro Feliz",
+    "eo": "La Feliĉa Lumturo"
+  },
+  "default_specs": {
+    "pages": 32,
+    "dimensions_mm": "203 x 254"
+  },
+  "canonical_images": [
+    "/assets/images/happy-lighthouse/cover-main.jpg"
+  ]
+}
