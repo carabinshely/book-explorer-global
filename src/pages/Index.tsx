@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBooks } from '@/hooks/useBooks';
@@ -10,8 +11,48 @@ const Index = () => {
   const { t } = useLanguage();
   const { skus } = useBooks();
 
-  // Get featured books (first 3)
-  const featuredBooks = skus.slice(0, 3);
+  const featuredBooks = useMemo(() => {
+    const count = Math.min(3, skus.length);
+    if (count === 0) return [];
+    if (typeof window === 'undefined') return skus.slice(0, count);
+
+    const storageKey = 'featuredSkus';
+
+    try {
+      const stored = sessionStorage.getItem(storageKey);
+      if (stored) {
+        const storedIds = JSON.parse(stored);
+        if (Array.isArray(storedIds)) {
+          const mapped = storedIds
+            .map((id: string) => skus.find(sku => sku.sku_id === id))
+            .filter(Boolean);
+          if (mapped.length === count) {
+            return mapped;
+          }
+        }
+      }
+    } catch {
+      // Ignore invalid storage data and reselect.
+    }
+
+    const shuffled = [...skus];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const selection = shuffled.slice(0, count);
+
+    try {
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify(selection.map(sku => sku.sku_id))
+      );
+    } catch {
+      // Ignore storage write errors.
+    }
+
+    return selection;
+  }, [skus]);
 
   return (
     <Layout>
