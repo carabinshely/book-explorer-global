@@ -1,5 +1,13 @@
 # Welcome to your Lovable project
 
+## Repo layout note
+
+All project files live under `public/` now. Run commands from that folder:
+
+```sh
+cd public
+```
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
