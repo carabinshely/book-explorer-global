@@ -25,8 +25,13 @@
   "media": {
     "spotify": {
       "en": "https://open.spotify.com/album/example-en",
-      "eo": "https://open.spotify.com/album/example-eo",
-      "mixed": "https://open.spotify.com/album/example-mixed"
+      "eo": "https://open.spotify.com/album/example-eo"
+    },
+    "apple_music": {
+      "en": "https://music.apple.com/us/song/helicopter/1862935158"
+    },
+    "youtube": {
+      "en": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     }
   }
 }

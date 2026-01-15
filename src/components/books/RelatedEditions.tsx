@@ -9,7 +9,7 @@ interface RelatedEditionsProps {
 }
 
 export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const baseUrl = import.meta.env.BASE_URL;
   const mediaIcons = {
     spotify: `${baseUrl}assets/icons/spotify.svg`,
@@ -21,8 +21,15 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
     return null;
   }
 
-  const hasMediaEntries = (entries?: Record<string, string>) =>
-    entries ? Object.keys(entries).some((langCode) => langCode !== 'mixed') : false;
+  const getMediaLanguages = (
+    entries: Record<string, string> | undefined,
+    allowedLanguages: string[]
+  ) => {
+    if (!entries) return [];
+    return Object.keys(entries).filter(
+      (langCode) => langCode !== 'mixed' && allowedLanguages.includes(langCode)
+    );
+  };
 
   // Get the title in the related edition's primary language, or fall back
   const getTitleForSku = (sku: SKU): string => {
@@ -73,38 +80,92 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                 </p>
                 {(() => {
                   const availability = {
-                    spotify: hasMediaEntries(sku.media.spotify),
-                    appleMusic: hasMediaEntries(sku.media.apple_music),
-                    youtube: hasMediaEntries(sku.media.youtube),
+                    spotify: getMediaLanguages(sku.media.spotify, sku.languages),
+                    appleMusic: getMediaLanguages(sku.media.apple_music, sku.languages),
+                    youtube: getMediaLanguages(sku.media.youtube, sku.languages),
                   };
-                  const hasAny = availability.spotify || availability.appleMusic || availability.youtube;
+                  const hasAny =
+                    availability.spotify.length > 0 ||
+                    availability.appleMusic.length > 0 ||
+                    availability.youtube.length > 0;
                   if (!hasAny) return null;
+                  const showLanguageBadges = sku.languages.length > 1;
+                  const buildTitle = (platform: string, langs: string[]) => {
+                    if (langs.length === 0) return `${t.a11y.available_on} ${platform}`;
+                    const languageNames = langs.map(getLanguageName).join(', ');
+                    return `${t.a11y.available_on} ${platform} (${languageNames})`;
+                  };
 
                   return (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {availability.spotify && (
-                        <img
-                          src={mediaIcons.spotify}
-                          alt="Spotify"
-                          title={`${t.a11y.available_on} Spotify`}
-                          className="h-4 w-4"
-                        />
+                      {availability.spotify.length > 0 && (
+                        <span className="flex items-center">
+                          <img
+                            src={mediaIcons.spotify}
+                            alt="Spotify"
+                            title={buildTitle('Spotify', availability.spotify)}
+                            className="h-4 w-4"
+                          />
+                          {showLanguageBadges && (
+                            <span className="-ml-1 flex -space-x-1 text-sm">
+                              {availability.spotify.map((langCode) => (
+                                <span
+                                  key={`spotify-${langCode}`}
+                                  title={getLanguageName(langCode)}
+                                  aria-label={getLanguageName(langCode)}
+                                >
+                                  {getLanguageFlag(langCode)}
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                        </span>
                       )}
-                      {availability.appleMusic && (
-                        <img
-                          src={mediaIcons.apple_music}
-                          alt="Apple Music"
-                          title={`${t.a11y.available_on} Apple Music`}
-                          className="h-4 w-4"
-                        />
+                      {availability.appleMusic.length > 0 && (
+                        <span className="flex items-center">
+                          <img
+                            src={mediaIcons.apple_music}
+                            alt="Apple Music"
+                            title={buildTitle('Apple Music', availability.appleMusic)}
+                            className="h-4 w-4"
+                          />
+                          {showLanguageBadges && (
+                            <span className="-ml-1 flex -space-x-1 text-sm">
+                              {availability.appleMusic.map((langCode) => (
+                                <span
+                                  key={`apple-music-${langCode}`}
+                                  title={getLanguageName(langCode)}
+                                  aria-label={getLanguageName(langCode)}
+                                >
+                                  {getLanguageFlag(langCode)}
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                        </span>
                       )}
-                      {availability.youtube && (
-                        <img
-                          src={mediaIcons.youtube}
-                          alt="YouTube"
-                          title={`${t.a11y.available_on} YouTube`}
-                          className="h-4 w-4"
-                        />
+                      {availability.youtube.length > 0 && (
+                        <span className="flex items-center">
+                          <img
+                            src={mediaIcons.youtube}
+                            alt="YouTube"
+                            title={buildTitle('YouTube', availability.youtube)}
+                            className="h-4 w-4"
+                          />
+                          {showLanguageBadges && (
+                            <span className="-ml-1 flex -space-x-1 text-sm">
+                              {availability.youtube.map((langCode) => (
+                                <span
+                                  key={`youtube-${langCode}`}
+                                  title={getLanguageName(langCode)}
+                                  aria-label={getLanguageName(langCode)}
+                                >
+                                  {getLanguageFlag(langCode)}
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                        </span>
                       )}
                     </div>
                   );
