@@ -38,7 +38,15 @@
     "mission_title": "Nia Misio",
     "mission": "Ĉe Lighthouse Books ni kredas, ke bonaj rakontoj ne konas limojn. Nia misio estas alporti plurlingvajn kaj dulingvajn eldonojn al legantoj tra la mondo, por kreskigi komprenon kaj aprezon inter kulturoj.",
     "story_title": "Nia Rakonto",
-    "story": "Fondita de pasiaj lingvistoj kaj libroamantoj, Lighthouse Books naskiĝis el simpla ideo: ke la ĝojo de legado estu alirebla en pluraj lingvoj. Ni zorge kuras kaj publikigas eldonojn, kiuj honoras la originalajn verkojn kaj faras ilin alireblaj por novaj legantoj."
+    "story": "Fondita de pasiaj lingvistoj kaj libroamantoj, Lighthouse Books naskiĝis el simpla ideo: ke la ĝojo de legado estu alirebla en pluraj lingvoj. Ni zorge kuras kaj publikigas eldonojn, kiuj honoras la originalajn verkojn kaj faras ilin alireblaj por novaj legantoj.",
+    "values": {
+      "global_reach_title": "Tutmonda Atingo",
+      "global_reach_body": "Kunligante legantojn tra lingvoj kaj kulturoj",
+      "quality_first_title": "Kvalito Unue",
+      "quality_first_body": "Zorge kuritaj eldonoj kun bela dezajno",
+      "education_title": "Edukado",
+      "education_body": "Farante la lernadon de lingvoj alirebla kaj ĝojiga"
+    }
   },
   "contact": {
     "title": "Kontaktu Nin",

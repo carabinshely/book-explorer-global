@@ -38,7 +38,15 @@
     "mission_title": "Nuestra Misión",
     "mission": "En Lighthouse Books, creemos que las grandes historias no conocen fronteras. Nuestra misión es llevar ediciones multilingües y bilingües a lectores de todo el mundo, fomentando la comprensión y apreciación entre culturas.",
     "story_title": "Nuestra Historia",
-    "story": "Fundada por lingüistas apasionados y amantes de los libros, Lighthouse Books surgió de una idea simple: que el placer de leer debería ser accesible en múltiples idiomas. Curamos y publicamos cuidadosamente ediciones que honran las obras originales mientras las hacemos accesibles a nuevas audiencias."
+    "story": "Fundada por lingüistas apasionados y amantes de los libros, Lighthouse Books surgió de una idea simple: que el placer de leer debería ser accesible en múltiples idiomas. Curamos y publicamos cuidadosamente ediciones que honran las obras originales mientras las hacemos accesibles a nuevas audiencias.",
+    "values": {
+      "global_reach_title": "Alcance global",
+      "global_reach_body": "Conectando lectores entre idiomas y culturas",
+      "quality_first_title": "Calidad primero",
+      "quality_first_body": "Ediciones cuidadosamente seleccionadas con un diseño hermoso",
+      "education_title": "Educación",
+      "education_body": "Haciendo que el aprendizaje de idiomas sea accesible y disfrutable"
+    }
   },
   "contact": {
     "title": "Contáctanos",

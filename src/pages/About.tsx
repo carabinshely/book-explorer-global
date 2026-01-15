@@ -53,18 +53,30 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
               <div className="text-center p-6 bg-secondary/50 rounded-lg">
                 <span className="text-4xl mb-3 block">🌍</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">Global Reach</h3>
-                <p className="text-sm text-muted-foreground">Connecting readers across languages and cultures</p>
+                <h3 className="font-display text-lg font-medium text-foreground mb-2">
+                  {t.about.values.global_reach_title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {t.about.values.global_reach_body}
+                </p>
               </div>
               <div className="text-center p-6 bg-secondary/50 rounded-lg">
                 <span className="text-4xl mb-3 block">📚</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">Quality First</h3>
-                <p className="text-sm text-muted-foreground">Carefully curated editions with beautiful design</p>
+                <h3 className="font-display text-lg font-medium text-foreground mb-2">
+                  {t.about.values.quality_first_title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {t.about.values.quality_first_body}
+                </p>
               </div>
               <div className="text-center p-6 bg-secondary/50 rounded-lg">
                 <span className="text-4xl mb-3 block">💡</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">Education</h3>
-                <p className="text-sm text-muted-foreground">Making language learning accessible and joyful</p>
+                <h3 className="font-display text-lg font-medium text-foreground mb-2">
+                  {t.about.values.education_title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {t.about.values.education_body}
+                </p>
               </div>
             </div>
           </div>
