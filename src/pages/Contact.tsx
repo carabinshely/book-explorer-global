@@ -47,7 +47,7 @@ const Contact = () => {
               <div className="flex justify-center gap-4">
                 <Button variant="outline" size="icon" className="h-12 w-12" asChild>
                   <a 
-                    href="https://twitter.com" 
+                    href="https://twitter.com/BronerBooks" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     aria-label="Twitter"
@@ -57,7 +57,7 @@ const Contact = () => {
                 </Button>
                 <Button variant="outline" size="icon" className="h-12 w-12" asChild>
                   <a 
-                    href="https://instagram.com" 
+                    href="https://instagram.com/BronerBooks" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     aria-label="Instagram"
