@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import enTranslations from '@/data/i18n/en.json';
 import esTranslations from '@/data/i18n/es.json';
 import eoTranslations from '@/data/i18n/eo.json';
@@ -43,10 +43,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return 'en';
   });
 
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+  }, [lang]);
+
   const setLang = useCallback((newLang: SupportedLanguage) => {
     setLangState(newLang);
     localStorage.setItem('ui-lang', newLang);
-    document.documentElement.lang = newLang;
   }, []);
 
   const supportedLanguages = useMemo(() => [
