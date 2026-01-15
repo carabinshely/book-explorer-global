@@ -74,7 +74,8 @@
     "open_menu": "Открыть меню",
     "close_menu": "Закрыть меню",
     "gallery_previous": "Предыдущее изображение",
-    "gallery_next": "Следующее изображение"
+    "gallery_next": "Следующее изображение",
+    "available_on": "Доступно на"
   },
   "languages": {
     "en": "Английский",
