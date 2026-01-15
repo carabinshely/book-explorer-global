@@ -1,8 +1,8 @@
 {
   "lang": "es",
   "site": {
-    "name": "Lighthouse Books",
-    "tagline": "Historias que iluminan mentes curiosas"
+    "name": "Broner Books",
+    "tagline": "Historias que iluminan el camino"
   },
   "nav": {
     "home": "Inicio",
@@ -36,9 +36,9 @@
   "about": {
     "title": "Sobre Nosotros",
     "mission_title": "Nuestra Misión",
-    "mission": "En Lighthouse Books, creemos que las grandes historias no conocen fronteras. Nuestra misión es crear ediciones multilingües y bilingües para familias de todo el mundo, fomentando la comprensión y apreciación entre culturas.",
+    "mission": "En Broner Books, creemos que las grandes historias no conocen fronteras. Nuestra misión es crear ediciones multilingües y bilingües para familias de todo el mundo, fomentando la comprensión y apreciación entre culturas.",
     "story_title": "Nuestra Historia",
-    "story": "Lighthouse Books es un pequeño estudio dirigido por su fundador, moldeado por la vida familiar y el amor por los idiomas. Nació como un proyecto de un padre para que leer entre lenguas se sintiera natural y alegre. Creamos cada título con cuidado, combinando narración, diseño y flujos creativos modernos, y luego lo afinamos con un criterio editorial para que cada libro se sienta intencional, cálido y acogedor.",
+    "story": "Broner Books es un pequeño estudio dirigido por su fundador, moldeado por la vida familiar y el amor por los idiomas. Nació como un proyecto de un padre para que leer entre lenguas se sintiera natural y alegre. Creamos cada título con cuidado, combinando narración, diseño y flujos creativos modernos, y luego lo afinamos con un criterio editorial para que cada libro se sienta intencional, cálido y acogedor.",
     "values": {
       "global_reach_title": "Alcance global",
       "global_reach_body": "Conectando lectores entre idiomas y culturas",
@@ -57,7 +57,7 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "tagline": "Historias que iluminan mentes curiosas",
+    "tagline": "Historias que iluminan el camino",
     "navigation": "Navegación",
     "legal": "Legal"
   },

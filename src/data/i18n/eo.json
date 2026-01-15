@@ -1,8 +1,8 @@
 {
   "lang": "eo",
   "site": {
-    "name": "Lighthouse Books",
-    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn"
+    "name": "Broner Books",
+    "tagline": "Rakontoj kiuj lumigas la vojon"
   },
   "nav": {
     "home": "Hejmo",
@@ -36,9 +36,9 @@
   "about": {
     "title": "Pri Ni",
     "mission_title": "Nia Misio",
-    "mission": "Ĉe Lighthouse Books ni kredas, ke bonaj rakontoj ne konas limojn. Nia misio estas krei plurlingvajn kaj dulingvajn eldonojn por familioj tra la mondo, por kreskigi komprenon kaj aprezon inter kulturoj.",
+    "mission": "Ĉe Broner Books ni kredas, ke bonaj rakontoj ne konas limojn. Nia misio estas krei plurlingvajn kaj dulingvajn eldonojn por familioj tra la mondo, por kreskigi komprenon kaj aprezon inter kulturoj.",
     "story_title": "Nia Rakonto",
-    "story": "Lighthouse Books estas malgranda studio gvidata de fondinto, formita de familia vivo kaj amo al lingvoj. Ĝi komenciĝis kiel gepatra projekto por ke legado inter lingvoj sentiĝu natura kaj ĝoja. Ni kreas ĉiun titolon kun zorgo, kombinante rakontadon, dezajnon kaj modernajn kreajn laborfluojn, kaj poste rafinas ĝin per redakta rigardo por ke ĉiu libro sentiĝu intenca, varma kaj bonvena.",
+    "story": "Broner Books estas malgranda studio gvidata de fondinto, formita de familia vivo kaj amo al lingvoj. Ĝi komenciĝis kiel gepatra projekto por ke legado inter lingvoj sentiĝu natura kaj ĝoja. Ni kreas ĉiun titolon kun zorgo, kombinante rakontadon, dezajnon kaj modernajn kreajn laborfluojn, kaj poste rafinas ĝin per redakta rigardo por ke ĉiu libro sentiĝu intenca, varma kaj bonvena.",
     "values": {
       "global_reach_title": "Tutmonda Atingo",
       "global_reach_body": "Kunligante legantojn tra lingvoj kaj kulturoj",
@@ -57,7 +57,7 @@
   },
   "footer": {
     "rights": "Ĉiuj rajtoj rezervitaj.",
-    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn",
+    "tagline": "Rakontoj kiuj lumigas la vojon",
     "navigation": "Navigado",
     "legal": "Jura"
   },

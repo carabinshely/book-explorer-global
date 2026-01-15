@@ -1,8 +1,8 @@
 {
   "lang": "en",
   "site": {
-    "name": "Lighthouse Books",
-    "tagline": "Illuminating stories for curious minds"
+    "name": "Broner Books",
+    "tagline": "Stories that light the way"
   },
   "nav": {
     "home": "Home",
@@ -36,9 +36,9 @@
   "about": {
     "title": "About Us",
     "mission_title": "Our Mission",
-    "mission": "At Lighthouse Books, we believe that great stories know no borders. Our mission is to craft multilingual and bilingual editions for families around the world, fostering understanding and appreciation across cultures.",
+    "mission": "At Broner Books, we believe that great stories know no borders. Our mission is to craft multilingual and bilingual editions for families around the world, fostering understanding and appreciation across cultures.",
     "story_title": "Our Story",
-    "story": "Lighthouse Books is a small, founder-led studio shaped by family life and a love of language. It began as a parent's project to make reading across languages feel natural and joyful. We create each title with care, blending storytelling, design, and modern creative workflows, then refine it through an editorial lens so every book feels intentional, warm, and welcoming.",
+    "story": "Broner Books is a small, founder-led studio shaped by family life and a love of language. It began as a parent's project to make reading across languages feel natural and joyful. We create each title with care, blending storytelling, design, and modern creative workflows, then refine it through an editorial lens so every book feels intentional, warm, and welcoming.",
     "values": {
       "global_reach_title": "Global Reach",
       "global_reach_body": "Connecting readers across languages and cultures",
