@@ -24,7 +24,7 @@
   },
   "media": {
     "apple_music": {
-      "en": "https://music.apple.com/album/example"
+      "en": "https://embed.music.apple.com/album/example"
     }
   }
 }

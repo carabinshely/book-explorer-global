@@ -38,6 +38,10 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
   };
 
+  const getAppleMusicEmbedUrl = (url: string) => {
+    return url.replace('https://music.apple.com/', 'https://embed.music.apple.com/');
+  };
+
   return (
     <div className="space-y-6">
       {/* Spotify */}
@@ -80,16 +84,22 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
           </h3>
           <div className="grid gap-3">
             {appleMusicEntries.map(([langCode, url]) => (
-              <div key={langCode}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-accent hover:underline"
-                >
-                  <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                    Listen on Apple Music ({getLanguageName(langCode)})
-                </a>
+              <div key={langCode} className="space-y-1">
+                {appleMusicEntries.length > 1 && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
+                    {getLanguageName(langCode)}
+                  </p>
+                )}
+                <iframe
+                  title={`Apple Music player - ${getLanguageName(langCode)}`}
+                  src={getAppleMusicEmbedUrl(url)}
+                  width="100%"
+                  height="175"
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                  loading="lazy"
+                  className="rounded-lg"
+                />
               </div>
             ))}
           </div>
