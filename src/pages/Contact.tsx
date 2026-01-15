@@ -32,9 +32,9 @@ const Contact = () => {
               <h2 className="font-display text-xl font-medium text-foreground">
                 {t.contact.email_label}
               </h2>
-              <Button asChild variant="outline" size="lg">
+              <Button asChild variant="outline" size="lg" className="items-center">
                 <a href={`mailto:${t.contact.email}`}>
-                  {t.contact.email}
+                  <span className="leading-none">{t.contact.email}</span>
                 </a>
               </Button>
             </div>
@@ -44,8 +44,8 @@ const Contact = () => {
               <h2 className="font-display text-xl font-medium text-foreground">
                 {t.contact.follow_label}
               </h2>
-              <div className="flex justify-center gap-4">
-                <Button variant="outline" size="icon" className="h-12 w-12" asChild>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button variant="outline" className="h-12 px-4 gap-2 items-center" asChild>
                   <a 
                     href="https://twitter.com/BronerBooks" 
                     target="_blank" 
@@ -53,9 +53,10 @@ const Contact = () => {
                     aria-label="Twitter"
                   >
                     <Twitter className="h-5 w-5" />
+                    <span className="text-sm leading-none">@BronerBooks</span>
                   </a>
                 </Button>
-                <Button variant="outline" size="icon" className="h-12 w-12" asChild>
+                <Button variant="outline" className="h-12 px-4 gap-2 items-center" asChild>
                   <a 
                     href="https://instagram.com/BronerBooks" 
                     target="_blank" 
@@ -63,6 +64,7 @@ const Contact = () => {
                     aria-label="Instagram"
                   >
                     <Instagram className="h-5 w-5" />
+                    <span className="text-sm leading-none">@BronerBooks</span>
                   </a>
                 </Button>
               </div>
