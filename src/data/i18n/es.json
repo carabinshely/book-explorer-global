@@ -14,7 +14,9 @@
     "hero_title": "Descubre Historias que Iluminan",
     "hero_subtitle": "Una colección curada de libros bilingües y multilingües que unen culturas e inspiran asombro",
     "browse_books": "Ver Colección",
-    "featured": "Libros Destacados"
+    "featured": "Libros Destacados",
+    "quote": "Un libro es un jardín, un huerto, un almacén, una fiesta, una compañía en el camino, un consejero, una multitud de consejeros.",
+    "quote_author": "— Charles Baudelaire"
   },
   "catalog": {
     "title": "Nuestra Colección",
@@ -53,7 +55,9 @@
     "subtitle": "Nos encantaría saber de ti",
     "email_label": "Escríbenos",
     "email": "hello@bronerbooks.com",
-    "follow_label": "Síguenos"
+    "follow_label": "Síguenos",
+    "quote": "Leer es una conversación. Todos los libros hablan. Pero un buen libro también escucha.",
+    "quote_author": "— Mark Haddon"
   },
   "footer": {
     "rights": "Todos los derechos reservados.",

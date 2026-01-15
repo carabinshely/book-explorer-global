@@ -127,10 +127,9 @@ const Index = () => {
       <section className="py-16 bg-secondary/30">
         <div className="container max-w-3xl">
           <blockquote className="literary-quote text-xl md:text-2xl text-center">
-            A book is a garden, an orchard, a storehouse, a party, a company by the way, 
-            a counselor, a multitude of counselors.
+            {t.home.quote}
             <footer className="mt-4 text-base text-muted-foreground not-italic">
-              — Charles Baudelaire
+              {t.home.quote_author}
             </footer>
           </blockquote>
         </div>

@@ -14,7 +14,9 @@
     "hero_title": "Malkovru Rakontojn kiuj Lumigas",
     "hero_subtitle": "Zorge elektita kolekto de dulingvaj kaj plurlingvaj libroj, kiuj ligas kulturojn kaj inspiras miron",
     "browse_books": "Rigardi Kolekton",
-    "featured": "Elstaraj Libroj"
+    "featured": "Elstaraj Libroj",
+    "quote": "Libro estas ĝardeno, fruktoĝardeno, magazeno, festo, kunulo en la vojo, konsilanto, multo da konsilantoj.",
+    "quote_author": "— Charles Baudelaire"
   },
   "catalog": {
     "title": "Nia Kolekto",
@@ -53,7 +55,9 @@
     "subtitle": "Ni volonte aŭdus de vi",
     "email_label": "Retpoŝtu Nin",
     "email": "hello@bronerbooks.com",
-    "follow_label": "Sekvu Nin"
+    "follow_label": "Sekvu Nin",
+    "quote": "Legado estas konversacio. Ĉiuj libroj parolas. Sed bona libro ankaŭ aŭskultas.",
+    "quote_author": "— Mark Haddon"
   },
   "footer": {
     "rights": "Ĉiuj rajtoj rezervitaj.",

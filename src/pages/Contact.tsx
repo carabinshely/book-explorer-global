@@ -72,9 +72,9 @@ const Contact = () => {
 
             {/* Decorative Quote */}
             <blockquote className="literary-quote text-lg text-center mt-8">
-              Reading is a conversation. All books talk. But a good book listens as well.
+              {t.contact.quote}
               <footer className="mt-3 text-sm text-muted-foreground not-italic">
-                — Mark Haddon
+                {t.contact.quote_author}
               </footer>
             </blockquote>
           </div>

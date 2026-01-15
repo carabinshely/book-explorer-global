@@ -14,7 +14,9 @@
     "hero_title": "Discover Stories That Illuminate",
     "hero_subtitle": "A curated collection of bilingual and multilingual books that bridge cultures and inspire wonder",
     "browse_books": "Browse Collection",
-    "featured": "Featured Books"
+    "featured": "Featured Books",
+    "quote": "A book is a garden, an orchard, a storehouse, a party, a company by the way, a counselor, a multitude of counselors.",
+    "quote_author": "— Charles Baudelaire"
   },
   "catalog": {
     "title": "Our Collection",
@@ -53,7 +55,9 @@
     "subtitle": "We'd love to hear from you",
     "email_label": "Email Us",
     "email": "hello@bronerbooks.com",
-    "follow_label": "Follow Us"
+    "follow_label": "Follow Us",
+    "quote": "Reading is a conversation. All books talk. But a good book listens as well.",
+    "quote_author": "— Mark Haddon"
   },
   "footer": {
     "rights": "All rights reserved.",
