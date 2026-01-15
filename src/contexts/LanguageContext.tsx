@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import enTranslations from '@/data/i18n/en.json';
 import esTranslations from '@/data/i18n/es.json';
+import eoTranslations from '@/data/i18n/eo.json';
+import heTranslations from '@/data/i18n/he.json';
+import ruTranslations from '@/data/i18n/ru.json';
 
 type TranslationData = typeof enTranslations;
-type SupportedLanguage = 'en' | 'es';
+type SupportedLanguage = 'en' | 'es' | 'eo' | 'he' | 'ru';
 
 interface LanguageContextType {
   lang: SupportedLanguage;
@@ -15,6 +18,9 @@ interface LanguageContextType {
 const translations: Record<SupportedLanguage, TranslationData> = {
   en: enTranslations,
   es: esTranslations,
+  eo: eoTranslations,
+  he: heTranslations,
+  ru: ruTranslations,
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -46,6 +52,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const supportedLanguages = useMemo(() => [
     { code: 'en' as const, name: 'English' },
     { code: 'es' as const, name: 'Español' },
+    { code: 'ru' as const, name: 'Русский' },
+    { code: 'he' as const, name: 'עברית' },
+    { code: 'eo' as const, name: 'Esperanto' },
   ], []);
 
   const value = useMemo(() => ({

@@ -119,6 +119,8 @@ export function getLanguageFlag(langCode: string): string {
     es: '🇪🇸',
     fr: '🇫🇷',
     eo: '🌍',
+    ru: '🇷🇺',
+    he: '🇮🇱',
   };
   return flags[langCode] || '🌐';
 }
@@ -129,6 +131,8 @@ export function getLanguageName(langCode: string): string {
     es: 'Español',
     fr: 'Français',
     eo: 'Esperanto',
+    ru: 'Русский',
+    he: 'עברית',
   };
   return names[langCode] || langCode.toUpperCase();
 }

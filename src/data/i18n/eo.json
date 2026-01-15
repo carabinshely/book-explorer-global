@@ -1,0 +1,70 @@
+{
+  "lang": "eo",
+  "site": {
+    "name": "Lighthouse Books",
+    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn"
+  },
+  "nav": {
+    "home": "Hejmo",
+    "books": "Libroj",
+    "about": "Pri ni",
+    "contact": "Kontakto"
+  },
+  "home": {
+    "hero_title": "Malkovru Rakontojn kiuj Lumigas",
+    "hero_subtitle": "Zorge elektita kolekto de dulingvaj kaj plurlingvaj libroj, kiuj ligas kulturojn kaj inspiras miron",
+    "browse_books": "Rigardi Kolekton",
+    "featured": "Elstaraj Libroj"
+  },
+  "catalog": {
+    "title": "Nia Kolekto",
+    "subtitle": "Esploru nian zorge elektitan selekton de libroj en pluraj lingvoj",
+    "all_languages": "Ĉiuj Lingvoj",
+    "edition": "Eldono"
+  },
+  "product": {
+    "buy_on_amazon": "Vidi ĉe Amazon",
+    "specifications": "Specifoj",
+    "pages": "Paĝoj",
+    "dimensions": "Dimensioj",
+    "format": "Formato",
+    "languages": "Lingvoj en ĉi tiu eldono",
+    "other_editions": "Aliaj Eldonoj kaj Lingvoj",
+    "listen": "Aŭskulti",
+    "watch": "Spekti"
+  },
+  "about": {
+    "title": "Pri Ni",
+    "mission_title": "Nia Misio",
+    "mission": "Ĉe Lighthouse Books ni kredas, ke bonaj rakontoj ne konas limojn. Nia misio estas alporti plurlingvajn kaj dulingvajn eldonojn al legantoj tra la mondo, por kreskigi komprenon kaj aprezon inter kulturoj.",
+    "story_title": "Nia Rakonto",
+    "story": "Fondita de pasiaj lingvistoj kaj libroamantoj, Lighthouse Books naskiĝis el simpla ideo: ke la ĝojo de legado estu alirebla en pluraj lingvoj. Ni zorge kuras kaj publikigas eldonojn, kiuj honoras la originalajn verkojn kaj faras ilin alireblaj por novaj legantoj."
+  },
+  "contact": {
+    "title": "Kontaktu Nin",
+    "subtitle": "Ni volonte aŭdus de vi",
+    "email_label": "Retpoŝtu Nin",
+    "email": "hello@lighthousebooks.com",
+    "follow_label": "Sekvu Nin"
+  },
+  "footer": {
+    "rights": "Ĉiuj rajtoj rezervitaj.",
+    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn"
+  },
+  "a11y": {
+    "skip_to_content": "Salti al enhavo",
+    "language_select": "Elekti lingvon",
+    "open_menu": "Malfermi menuon",
+    "close_menu": "Fermi menuon",
+    "gallery_previous": "Antaŭa bildo",
+    "gallery_next": "Sekva bildo"
+  },
+  "languages": {
+    "en": "Angla",
+    "es": "Hispana",
+    "eo": "Esperanto",
+    "fr": "Franca",
+    "ru": "Rusa",
+    "he": "Hebrea"
+  }
+}
