@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        var repoBase = "/book-explorer-global";
+        var l = window.location;
+        var path = l.pathname.replace(repoBase, "");
+        var redirect =
+          l.protocol +
+          "//" +
+          l.hostname +
+          (l.port ? ":" + l.port : "") +
+          repoBase +
+          "/?/" +
+          path.replace(/^\//, "") +
+          (l.search ? l.search.replace("?", "&") : "") +
+          l.hash;
+        window.location.replace(redirect.replace(/&/g, "~and~"));
+      })();
+    </script>
+  </body>
+</html>
