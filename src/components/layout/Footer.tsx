@@ -22,7 +22,7 @@ export function Footer() {
           {/* Navigation */}
           <div className="space-y-4">
             <h3 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider">
-              Navigation
+              {t.footer.navigation}
             </h3>
             <nav className="flex flex-col space-y-2">
               <Link 
@@ -55,7 +55,7 @@ export function Footer() {
           {/* Legal */}
           <div className="space-y-4">
             <h3 className="font-display text-sm font-semibold text-foreground uppercase tracking-wider">
-              Legal
+              {t.footer.legal}
             </h3>
             <p className="text-sm text-muted-foreground">
               © {currentYear} {t.site.name}. {t.footer.rights}

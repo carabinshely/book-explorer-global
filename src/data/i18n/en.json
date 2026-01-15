@@ -49,7 +49,9 @@
   },
   "footer": {
     "rights": "All rights reserved.",
-    "tagline": "Illuminating stories for curious minds"
+    "tagline": "Illuminating stories for curious minds",
+    "navigation": "Navigation",
+    "legal": "Legal"
   },
   "a11y": {
     "skip_to_content": "Skip to content",

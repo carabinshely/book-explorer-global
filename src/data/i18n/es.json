@@ -49,7 +49,9 @@
   },
   "footer": {
     "rights": "Todos los derechos reservados.",
-    "tagline": "Historias que iluminan mentes curiosas"
+    "tagline": "Historias que iluminan mentes curiosas",
+    "navigation": "Navegación",
+    "legal": "Legal"
   },
   "a11y": {
     "skip_to_content": "Saltar al contenido",

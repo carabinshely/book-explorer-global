@@ -49,7 +49,9 @@
   },
   "footer": {
     "rights": "Ĉiuj rajtoj rezervitaj.",
-    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn"
+    "tagline": "Rakontoj kiuj lumigas scivolemajn mensojn",
+    "navigation": "Navigado",
+    "legal": "Jura"
   },
   "a11y": {
     "skip_to_content": "Salti al enhavo",
