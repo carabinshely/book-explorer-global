@@ -22,7 +22,10 @@
     "title": "Nia Kolekto",
     "subtitle": "Esploru nian zorge elektitan selekton de libroj en pluraj lingvoj",
     "all_languages": "Ĉiuj Lingvoj",
-    "edition": "Eldono"
+    "edition": "Eldono",
+    "edition_all": "Ĉiuj eldonoj",
+    "edition_single": "Unulingva",
+    "edition_bilingual": "Dulingva"
   },
   "product": {
     "buy_on_amazon": "Vidi ĉe Amazon",

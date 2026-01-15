@@ -22,7 +22,10 @@
     "title": "Наша коллекция",
     "subtitle": "Исследуйте нашу тщательно отобранную подборку книг на разных языках",
     "all_languages": "Все языки",
-    "edition": "Издание"
+    "edition": "Издание",
+    "edition_all": "Все издания",
+    "edition_single": "На одном языке",
+    "edition_bilingual": "Двуязычные"
   },
   "product": {
     "buy_on_amazon": "Посмотреть на Amazon",

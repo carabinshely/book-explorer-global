@@ -10,12 +10,16 @@ const Books = () => {
   const { t } = useLanguage();
   const { skus, getUniqueLanguages, filterSkusByLanguage } = useBooks();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [selectedEdition, setSelectedEdition] = useState<'all' | 'single' | 'bilingual'>('all');
 
   const languages = getUniqueLanguages;
-  const filteredBooks = useMemo(
-    () => filterSkusByLanguage(selectedLanguage),
-    [filterSkusByLanguage, selectedLanguage]
-  );
+  const filteredBooks = useMemo(() => {
+    const byLanguage = filterSkusByLanguage(selectedLanguage);
+    if (selectedEdition === 'all') return byLanguage;
+    return byLanguage.filter((sku) =>
+      selectedEdition === 'single' ? sku.languages.length === 1 : sku.languages.length === 2
+    );
+  }, [filterSkusByLanguage, selectedEdition, selectedLanguage]);
 
   return (
     <Layout>
@@ -59,6 +63,39 @@ const Books = () => {
                 {getLanguageName(langCode)}
               </Button>
             ))}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 mt-3" role="group" aria-label="Filter by edition">
+            <Button
+              variant={selectedEdition === 'all' ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedEdition('all')}
+              className={cn(
+                selectedEdition === 'all' && "bg-accent hover:bg-accent/90"
+              )}
+            >
+              {t.catalog.edition_all}
+            </Button>
+            <Button
+              variant={selectedEdition === 'single' ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedEdition('single')}
+              className={cn(
+                selectedEdition === 'single' && "bg-accent hover:bg-accent/90"
+              )}
+            >
+              {t.catalog.edition_single}
+            </Button>
+            <Button
+              variant={selectedEdition === 'bilingual' ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedEdition('bilingual')}
+              className={cn(
+                selectedEdition === 'bilingual' && "bg-accent hover:bg-accent/90"
+              )}
+            >
+              {t.catalog.edition_bilingual}
+            </Button>
           </div>
         </div>
       </section>

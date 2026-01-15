@@ -22,7 +22,10 @@
     "title": "האוסף שלנו",
     "subtitle": "גלו את הבחירה המוקפדת שלנו של ספרים במספר שפות",
     "all_languages": "כל השפות",
-    "edition": "מהדורה"
+    "edition": "מהדורה",
+    "edition_all": "כל המהדורות",
+    "edition_single": "שפה אחת",
+    "edition_bilingual": "דו־לשוני"
   },
   "product": {
     "buy_on_amazon": "לצפייה באמזון",

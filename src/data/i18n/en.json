@@ -22,7 +22,10 @@
     "title": "Our Collection",
     "subtitle": "Explore our carefully curated selection of books in multiple languages",
     "all_languages": "All Languages",
-    "edition": "Edition"
+    "edition": "Edition",
+    "edition_all": "All Editions",
+    "edition_single": "Single Language",
+    "edition_bilingual": "Bilingual"
   },
   "product": {
     "buy_on_amazon": "View on Amazon",
