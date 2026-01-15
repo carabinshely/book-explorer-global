@@ -7,7 +7,7 @@ import happyLighthouseBilingual from '@/data/skus/happy-lighthouse-bilingual.jso
 import moonlitGardenEn from '@/data/skus/moonlit-garden-en.json';
 import moonlitGardenFr from '@/data/skus/moonlit-garden-fr.json';
 import stargazersJourneyEn from '@/data/skus/stargazers-journey-en.json';
-import stargazersJourneyBilingual from '@/data/skus/stargazers-journey-en_eo.json';
+import stargazersJourneyBilingual from '@/data/skus/stargazers-journey-bilingual.json';
 
 // Import work data
 import happyLighthouseWork from '@/data/works/happy-lighthouse.json';
