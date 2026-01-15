@@ -20,6 +20,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Work around Vite env import resolution to avoid __DEFINES__ ReferenceError in dev.
+      var __DEFINES__ = {};
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
