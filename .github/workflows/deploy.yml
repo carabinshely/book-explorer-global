@@ -25,6 +25,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+        env:
+          VITE_BASE_URL: /book-explorer-global/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
