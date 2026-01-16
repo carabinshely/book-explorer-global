@@ -27,6 +27,7 @@
     "no_results": "Книги не найдены.",
     "view_all": "Показать все книги",
     "book_singular": "книга",
+    "book_few": "книги",
     "book_plural": "книг",
     "in_language": "на",
     "edition": "Издание",
