@@ -16,12 +16,6 @@
     "/assets/images/stargazers-journey/cover-en.jpg",
     "/assets/images/stargazers-journey/spread-1.jpg"
   ],
-  "amazon": {
-    "asin": "B0EXAMPLE06",
-    "marketplaces": {
-      "US": "https://amazon.com/dp/B0EXAMPLE06"
-    }
-  },
   "media": {
     "youtube": {
       "en": "https://www.youtube.com/watch?v=example"

@@ -29,7 +29,7 @@ const BookDetail = () => {
   }
 
   // Get first Amazon marketplace link
-  const amazonUrl = Object.values(sku.amazon.marketplaces)[0];
+  const amazonUrl = Object.values(sku.amazon?.marketplaces ?? {})[0];
   const format = sku.specs?.format;
   const pages = sku.specs?.pages ?? work.default_specs?.pages;
   const dimensions = sku.specs?.dimensions_mm ?? work.default_specs?.dimensions_mm;
@@ -94,7 +94,7 @@ const BookDetail = () => {
               </div>
 
               {/* Amazon Button */}
-              {amazonUrl && (
+              {amazonUrl ? (
                 <Button asChild size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90">
                   <a 
                     href={amazonUrl} 
@@ -106,6 +106,10 @@ const BookDetail = () => {
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 </Button>
+              ) : (
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t.product.coming_soon}
+                </p>
               )}
 
               {/* Specifications */}
