@@ -22,6 +22,7 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
   const hasSpotify = spotifyEntries.length > 0;
   const hasAppleMusic = appleMusicEntries.length > 0;
   const hasYouTube = youtubeEntries.length > 0;
+  const hasListen = hasSpotify || hasAppleMusic;
 
   if (!hasSpotify && !hasAppleMusic && !hasYouTube) {
     return null;
@@ -44,65 +45,71 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Spotify */}
-      {hasSpotify && (
-        <div className="space-y-3">
+      {/* Listen */}
+      {hasListen && (
+        <div className="space-y-4">
           <h3 className="font-display text-lg font-medium text-foreground flex items-center gap-2">
             <span aria-hidden="true">🎵</span>
             {t.product.listen}
           </h3>
-          <div className="grid gap-3">
-            {spotifyEntries.map(([langCode, url]) => (
-              <div key={langCode} className="space-y-1">
-                {spotifyEntries.length > 1 && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                    {getLanguageName(langCode)}
-                  </p>
-                )}
-                <iframe
-                  title={`Spotify player - ${getLanguageName(langCode)}`}
-                  src={getSpotifyEmbedUrl(url)}
-                  width="100%"
-                  height="152"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  className="rounded-lg"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Apple Music */}
-      {hasAppleMusic && (
-        <div className="space-y-3">
-          <h3 className="font-display text-lg font-medium text-foreground flex items-center gap-2">
-            <span aria-hidden="true">🎧</span>
-            Apple Music
-          </h3>
-          <div className="grid gap-3">
-            {appleMusicEntries.map(([langCode, url]) => (
-              <div key={langCode} className="space-y-1">
-                {appleMusicEntries.length > 1 && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                    {getLanguageName(langCode)}
-                  </p>
-                )}
-                <iframe
-                  title={`Apple Music player - ${getLanguageName(langCode)}`}
-                  src={getAppleMusicEmbedUrl(url)}
-                  width="100%"
-                  height="175"
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                  loading="lazy"
-                  className="rounded-lg"
-                />
+          {hasSpotify && (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                <span aria-hidden="true">Spotify</span>
+              </p>
+              <div className="grid gap-3">
+                {spotifyEntries.map(([langCode, url]) => (
+                  <div key={langCode} className="space-y-1">
+                    {spotifyEntries.length > 1 && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
+                        {getLanguageName(langCode)}
+                      </p>
+                    )}
+                    <iframe
+                      title={`Spotify player - ${getLanguageName(langCode)}`}
+                      src={getSpotifyEmbedUrl(url)}
+                      width="100%"
+                      height="152"
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      className="rounded-lg"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {hasAppleMusic && (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                <span aria-hidden="true">Apple Music</span>
+              </p>
+              <div className="grid gap-3">
+                {appleMusicEntries.map(([langCode, url]) => (
+                  <div key={langCode} className="space-y-1">
+                    {appleMusicEntries.length > 1 && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
+                        {getLanguageName(langCode)}
+                      </p>
+                    )}
+                    <iframe
+                      title={`Apple Music player - ${getLanguageName(langCode)}`}
+                      src={getAppleMusicEmbedUrl(url)}
+                      width="100%"
+                      height="175"
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      className="rounded-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
