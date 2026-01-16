@@ -75,9 +75,10 @@ const BookDetail = () => {
               </h1>
 
               {/* Description */}
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                {sku.description}
-              </p>
+              <div
+                className="text-lg text-muted-foreground leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: sku.description }}
+              />
 
               {/* Languages */}
               <div className="flex flex-wrap gap-2">
