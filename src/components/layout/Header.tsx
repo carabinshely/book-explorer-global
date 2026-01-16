@@ -40,7 +40,7 @@ export function Header() {
           to="/" 
           className="flex items-center gap-2 font-display text-xl font-semibold text-foreground transition-colors hover:text-accent"
         >
-          <span className="text-2xl">🏠</span>
+          <span className="text-2xl">🛋️</span>
           <span className="hidden sm:inline">{t.site.name}</span>
         </Link>
 
