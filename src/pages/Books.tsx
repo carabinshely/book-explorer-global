@@ -135,8 +135,9 @@ const Books = () => {
         <div className="container">
           {/* Results count */}
           <p className="text-sm text-muted-foreground mb-6">
-            {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'}
-            {selectedLanguage && ` in ${getLanguageName(selectedLanguage)}`}
+            {filteredBooks.length}{' '}
+            {filteredBooks.length === 1 ? t.catalog.book_singular : t.catalog.book_plural}
+            {selectedLanguage && ` ${t.catalog.in_language} ${getLanguageName(selectedLanguage)}`}
           </p>
 
           {filteredBooks.length > 0 ? (
