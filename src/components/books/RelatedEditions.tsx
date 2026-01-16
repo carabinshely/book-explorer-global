@@ -76,13 +76,14 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                   )}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {sku.edition_type === 'bilingual' ? 'Bilingual Edition' : 'Single Language'} • {sku.specs.format[0]}
+                  {sku.edition_type === 'bilingual' ? 'Bilingual Edition' : 'Single Language'}
+                  {sku.specs?.format?.[0] ? ` • ${sku.specs.format[0]}` : null}
                 </p>
                 {(() => {
                   const availability = {
-                    spotify: getMediaLanguages(sku.media.spotify, sku.languages),
-                    appleMusic: getMediaLanguages(sku.media.apple_music, sku.languages),
-                    youtube: getMediaLanguages(sku.media.youtube, sku.languages),
+                    spotify: getMediaLanguages(sku.media?.spotify, sku.languages),
+                    appleMusic: getMediaLanguages(sku.media?.apple_music, sku.languages),
+                    youtube: getMediaLanguages(sku.media?.youtube, sku.languages),
                   };
                   const hasAny =
                     availability.spotify.length > 0 ||

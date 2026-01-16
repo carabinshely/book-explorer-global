@@ -12,6 +12,10 @@ interface MediaEmbedsProps {
 export function MediaEmbeds({ media }: MediaEmbedsProps) {
   const { t } = useLanguage();
 
+  if (!media) {
+    return null;
+  }
+
   const filterMixed = <T extends Record<string, string> | undefined>(entries: T) =>
     entries ? Object.entries(entries).filter(([langCode]) => langCode !== 'mixed') : [];
 

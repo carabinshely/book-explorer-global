@@ -8,11 +8,14 @@ import moonlitGardenEn from '@/data/skus/moonlit-garden-en.json';
 import moonlitGardenFr from '@/data/skus/moonlit-garden-fr.json';
 import stargazersJourneyEn from '@/data/skus/stargazers-journey-en.json';
 import stargazersJourneyBilingual from '@/data/skus/stargazers-journey-bilingual.json';
+import laPerditaOmbreloDeNiranoEo from '@/data/skus/la-perdita-ombrelo-de-nirano-eo.json';
+import laPerditaOmbreloDeNiranoEn from '@/data/skus/la-perdita-ombrelo-de-nirano-ru.json';
 
 // Import work data
 import happyLighthouseWork from '@/data/works/happy-lighthouse.json';
 import moonlitGardenWork from '@/data/works/moonlit-garden.json';
 import stargazersJourneyWork from '@/data/works/stargazers-journey.json';
+import laPerditaOmbreloDeNiranoWork from '@/data/works/la-perdita-ombrelo-de-nirano.json';
 
 export interface SKU {
   sku_id: string;
@@ -59,12 +62,15 @@ const allSkus: SKU[] = [
   moonlitGardenFr,
   stargazersJourneyEn,
   stargazersJourneyBilingual,
+  laPerditaOmbreloDeNiranoEo,
+  laPerditaOmbreloDeNiranoEn
 ] as SKU[];
 
 const allWorks: Work[] = [
   happyLighthouseWork,
   moonlitGardenWork,
   stargazersJourneyWork,
+  laPerditaOmbreloDeNiranoWork,
 ] as Work[];
 
 export function useBooks() {

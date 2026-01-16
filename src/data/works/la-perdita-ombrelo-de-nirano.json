@@ -1,0 +1,15 @@
+{
+  "work_id": "la-perdita-ombrelo-de-nirano",
+  "family_title": {
+    "en": "Nirano's Lost Umbrella",
+    "eo": "La Perdita Ombrelo de Nirano"
+  },
+  "order": 1,
+  "default_specs": {
+    "pages": 36,
+    "dimensions_mm": "203 x 254"
+  },
+  "canonical_images": [
+    "/assets/images/la-perdita-ombrelo-de-nirano/1.jpg"
+  ]
+}

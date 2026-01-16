@@ -30,6 +30,11 @@ const BookDetail = () => {
 
   // Get first Amazon marketplace link
   const amazonUrl = Object.values(sku.amazon.marketplaces)[0];
+  const format = sku.specs?.format;
+  const pages = sku.specs?.pages ?? work.default_specs?.pages;
+  const dimensions = sku.specs?.dimensions_mm ?? work.default_specs?.dimensions_mm;
+  const isbn = sku.specs?.isbn;
+  const hasSpecs = Boolean(format?.length || pages || dimensions || isbn);
 
   return (
     <Layout>
@@ -103,30 +108,40 @@ const BookDetail = () => {
               )}
 
               {/* Specifications */}
-              <div className="border-t border-border pt-6 space-y-4">
-                <h2 className="font-display text-xl font-medium text-foreground">
-                  {t.product.specifications}
-                </h2>
-                
-                <dl className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <dt className="text-muted-foreground">{t.product.format}</dt>
-                    <dd className="font-medium text-foreground">{sku.specs.format.join(', ')}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">{t.product.pages}</dt>
-                    <dd className="font-medium text-foreground">{sku.specs.pages}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">{t.product.dimensions}</dt>
-                    <dd className="font-medium text-foreground">{sku.specs.dimensions_mm}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">ISBN</dt>
-                    <dd className="font-medium text-foreground">{sku.specs.isbn}</dd>
-                  </div>
-                </dl>
-              </div>
+              {hasSpecs && (
+                <div className="border-t border-border pt-6 space-y-4">
+                  <h2 className="font-display text-xl font-medium text-foreground">
+                    {t.product.specifications}
+                  </h2>
+                  
+                  <dl className="grid grid-cols-2 gap-4 text-sm">
+                    {format?.length && (
+                      <div>
+                        <dt className="text-muted-foreground">{t.product.format}</dt>
+                        <dd className="font-medium text-foreground">{format.join(', ')}</dd>
+                      </div>
+                    )}
+                    {pages && (
+                      <div>
+                        <dt className="text-muted-foreground">{t.product.pages}</dt>
+                        <dd className="font-medium text-foreground">{pages}</dd>
+                      </div>
+                    )}
+                    {dimensions && (
+                      <div>
+                        <dt className="text-muted-foreground">{t.product.dimensions}</dt>
+                        <dd className="font-medium text-foreground">{dimensions}</dd>
+                      </div>
+                    )}
+                    {isbn && (
+                      <div>
+                        <dt className="text-muted-foreground">ISBN</dt>
+                        <dd className="font-medium text-foreground">{isbn}</dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+              )}
             </div>
           </div>
         </div>

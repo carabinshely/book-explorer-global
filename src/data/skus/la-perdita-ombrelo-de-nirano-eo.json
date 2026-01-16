@@ -1,0 +1,19 @@
+{
+  "title": "La Perdita Ombrelo de Nirano",
+  "description": "**<b>Nirano’s Lost Umbrella</b>** is a heartfelt children’s picture book told entirely in <b>Esperanto</b>, designed for ages 5–6.\nDuring Thailand’s Songkran water festival, young Nirano loses a treasured umbrella from his grandmother. As he searches with help from kind neighbors and reflects with his wise grandmother, he learns that asking for help and sharing feelings are acts of strength—not weakness.\nSet in a vibrant Thai village and illustrated in soft watercolor, this story is a gentle invitation to talk about emotions, family, memory, and hope.",
+  "amazon": {
+    "marketplaces": {
+      "US": "https://www.amazon.com/Complete-Esperanto-Learn-write-understand/dp/1473669189/ref=sr_1_3"
+    }
+  },
+  "sku_id": "la-perdita-ombrelo-de-nirano-eo",
+  "work_id": "la-perdita-ombrelo-de-nirano",
+  "languages": [
+    "eo"
+  ],
+  "edition_type": "mono",
+  "slug": "la-perdita-ombrelo-de-nirano-eo",
+  "images": [
+    "/assets/images/la-perdita-ombrelo-de-nirano/1.jpg"
+  ]
+}

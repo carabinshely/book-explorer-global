@@ -10,6 +10,8 @@ interface BookCardProps {
 
 export function BookCard({ sku }: BookCardProps) {
   const { t } = useLanguage();
+  const format = sku.specs?.format;
+  const pages = sku.specs?.pages;
 
   // Use generated cover image or placeholder
   const imageUrl = getBookCover(sku.sku_id) || '/placeholder.svg';
@@ -60,9 +62,13 @@ export function BookCard({ sku }: BookCardProps) {
         </div>
 
         {/* Format info */}
-        <p className="text-xs text-muted-foreground">
-          {sku.specs.format.join(' / ')} • {sku.specs.pages} {t.product.pages.toLowerCase()}
-        </p>
+        {(format?.length || pages) && (
+          <p className="text-xs text-muted-foreground">
+            {format?.length ? format.join(' / ') : null}
+            {format?.length && pages ? ' • ' : null}
+            {pages ? `${pages} ${t.product.pages.toLowerCase()}` : null}
+          </p>
+        )}
       </div>
     </Link>
   );
