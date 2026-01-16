@@ -11,15 +11,22 @@ const Books = () => {
   const { skus, getUniqueLanguages, filterSkusByLanguage } = useBooks();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedEdition, setSelectedEdition] = useState<'all' | 'single' | 'bilingual'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const languages = getUniqueLanguages;
   const filteredBooks = useMemo(() => {
-    const byLanguage = filterSkusByLanguage(selectedLanguage);
-    if (selectedEdition === 'all') return byLanguage;
-    return byLanguage.filter((sku) =>
+    let result = filterSkusByLanguage(selectedLanguage);
+    if (selectedEdition !== 'all') {
+      result = result.filter((sku) =>
       selectedEdition === 'single' ? sku.languages.length === 1 : sku.languages.length === 2
-    );
-  }, [filterSkusByLanguage, selectedEdition, selectedLanguage]);
+      );
+    }
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      result = result.filter((sku) => sku.title.toLowerCase().includes(query));
+    }
+    return result;
+  }, [filterSkusByLanguage, searchQuery, selectedEdition, selectedLanguage]);
 
   return (
     <Layout>
@@ -97,6 +104,29 @@ const Books = () => {
               {t.catalog.edition_bilingual}
             </Button>
           </div>
+
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            <div className="relative w-full sm:w-80">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder={t.catalog.search_placeholder}
+                aria-label={t.catalog.search_placeholder}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+            </div>
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery('')}
+                className="text-muted-foreground"
+              >
+                {t.catalog.clear_search}
+              </Button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -118,14 +148,18 @@ const Books = () => {
           ) : (
             <div className="text-center py-16">
               <p className="text-xl text-muted-foreground">
-                No books found for this language.
+                {t.catalog.no_results}
               </p>
               <Button
                 variant="link"
-                onClick={() => setSelectedLanguage(null)}
+                onClick={() => {
+                  setSelectedLanguage(null);
+                  setSelectedEdition('all');
+                  setSearchQuery('');
+                }}
                 className="mt-4 text-accent"
               >
-                View all books
+                {t.catalog.view_all}
               </Button>
             </div>
           )}
