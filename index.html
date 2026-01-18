@@ -17,6 +17,38 @@
     <meta name="twitter:site" content="@BronerBooks" />
   </head>
   <body>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "name": "Broner Books",
+            "url": "https://bronerbooks.com",
+            "logo": "https://bronerbooks.com/favicon.ico",
+            "sameAs": [
+              "https://twitter.com/BronerBooks",
+              "https://www.instagram.com/BronerBooks"
+            ]
+          },
+          {
+            "@type": "Book",
+            "name": "Broner Books Collection",
+            "author": {
+              "@type": "Organization",
+              "name": "Broner Books"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Broner Books"
+            },
+            "inLanguage": ["en", "es", "fr", "ru", "he", "eo"],
+            "bookFormat": ["Hardcover", "Paperback"],
+            "description": "A curated collection of bilingual and multilingual books for families and young readers."
+          }
+        ]
+      }
+    </script>
     <script>
       (function (l) {
         if (l.search[1] === "/") {
