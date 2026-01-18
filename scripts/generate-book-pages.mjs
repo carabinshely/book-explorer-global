@@ -20,9 +20,31 @@ const skus = readdirSync(skusDir)
     return JSON.parse(raw);
   });
 
+const buildAssociatedMedia = (sku) => {
+  const media = [];
+  const addEntries = (entries, type, label) => {
+    if (!entries) return;
+    Object.entries(entries).forEach(([langCode, url]) => {
+      if (langCode === "mixed" || !url) return;
+      media.push({
+        "@type": type,
+        name: `${label} (${langCode.toUpperCase()})`,
+        url,
+      });
+    });
+  };
+
+  addEntries(sku.media?.spotify, "AudioObject", "Audio (Spotify)");
+  addEntries(sku.media?.apple_music, "AudioObject", "Audio (Apple Music)");
+  addEntries(sku.media?.youtube, "VideoObject", "Video (YouTube)");
+
+  return media.length > 0 ? media : undefined;
+};
+
 const buildJsonLd = (sku) => {
   const image = Array.isArray(sku.images) && sku.images.length > 0 ? toAbsolute(sku.images[0]) : undefined;
   const formats = sku.specs?.format ?? [];
+  const associatedMedia = buildAssociatedMedia(sku);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -44,6 +66,9 @@ const buildJsonLd = (sku) => {
   }
   if (image) {
     jsonLd.image = image;
+  }
+  if (associatedMedia) {
+    jsonLd.associatedMedia = associatedMedia;
   }
 
   return jsonLd;
