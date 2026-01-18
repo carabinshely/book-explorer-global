@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,26 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, alt }: ImageGalleryProps) {
   const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
 
-  // Use placeholders if no images
-  const galleryImages = images.length > 0 
-    ? images 
-    : ['/placeholder.svg'];
+  const galleryImages = useMemo(() => {
+    const available = images.filter((image) => image && !brokenImages.has(image));
+    return available.length > 0 ? available : ['/placeholder.svg'];
+  }, [brokenImages, images]);
+
+  useEffect(() => {
+    if (currentIndex >= galleryImages.length) {
+      setCurrentIndex(0);
+    }
+  }, [currentIndex, galleryImages.length]);
+
+  const handleImageError = useCallback((image: string) => {
+    setBrokenImages((prev) => {
+      const next = new Set(prev);
+      next.add(image);
+      return next;
+    });
+  }, []);
 
   const goToPrevious = useCallback(() => {
     setCurrentIndex((prev) => 
@@ -51,8 +66,9 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
         <img
           src={galleryImages[currentIndex]}
           alt={`${alt} - Image ${currentIndex + 1} of ${galleryImages.length}`}
-          className="absolute inset-0 w-full h-full object-cover animate-fade-in"
+          className="absolute inset-0 w-full h-full object-contain animate-fade-in"
           key={currentIndex}
+          onError={() => handleImageError(galleryImages[currentIndex])}
         />
 
         {/* Navigation Arrows */}
@@ -106,8 +122,9 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
               <img
                 src={image}
                 alt=""
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 loading="lazy"
+                onError={() => handleImageError(image)}
               />
             </button>
           ))}

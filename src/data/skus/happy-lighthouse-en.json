@@ -15,7 +15,8 @@
   "images": [
     "/assets/images/happy-lighthouse/cover-en.jpg",
     "/assets/images/happy-lighthouse/spread-1.jpg",
-    "/assets/images/happy-lighthouse/spread-2.jpg"
+    "/assets/images/happy-lighthouse/spread-2.jpg",
+    "https://m.media-amazon.com/images/I/71h0tJSsw7L._AC_SL1500_.jpg"
   ],
   "amazon": {
     "asin": "B0EXAMPLE01",
