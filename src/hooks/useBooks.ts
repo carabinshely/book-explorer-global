@@ -1,21 +1,6 @@
 import { useMemo } from 'react';
-
-// Import all SKU data
-import happyLighthouseEn from '@/data/skus/happy-lighthouse-en.json';
-import happyLighthouseEs from '@/data/skus/happy-lighthouse-es.json';
-import happyLighthouseBilingual from '@/data/skus/happy-lighthouse-bilingual.json';
-import moonlitGardenEn from '@/data/skus/moonlit-garden-en.json';
-import moonlitGardenFr from '@/data/skus/moonlit-garden-fr.json';
-import stargazersJourneyEn from '@/data/skus/stargazers-journey-en.json';
-import stargazersJourneyBilingual from '@/data/skus/stargazers-journey-bilingual.json';
-import laPerditaOmbreloDeNiranoEo from '@/data/skus/la-perdita-ombrelo-de-nirano-eo.json';
-import laPerditaOmbreloDeNiranoEn from '@/data/skus/la-perdita-ombrelo-de-nirano-ru.json';
-
-// Import work data
-import happyLighthouseWork from '@/data/works/happy-lighthouse.json';
-import moonlitGardenWork from '@/data/works/moonlit-garden.json';
-import stargazersJourneyWork from '@/data/works/stargazers-journey.json';
-import laPerditaOmbreloDeNiranoWork from '@/data/works/la-perdita-ombrelo-de-nirano.json';
+import { allSkus } from '@/data/skus';
+import { allWorks } from '@/data/works';
 
 export interface SKU {
   sku_id: string;
@@ -54,28 +39,12 @@ export interface Work {
   canonical_images: string[];
 }
 
-const allSkus: SKU[] = [
-  happyLighthouseEn,
-  happyLighthouseEs,
-  happyLighthouseBilingual,
-  moonlitGardenEn,
-  moonlitGardenFr,
-  stargazersJourneyEn,
-  stargazersJourneyBilingual,
-  laPerditaOmbreloDeNiranoEo,
-  laPerditaOmbreloDeNiranoEn
-] as SKU[];
-
-const allWorks: Work[] = [
-  happyLighthouseWork,
-  moonlitGardenWork,
-  stargazersJourneyWork,
-  laPerditaOmbreloDeNiranoWork,
-] as Work[];
+const skusSource = allSkus as SKU[];
+const worksSource = allWorks as Work[];
 
 export function useBooks() {
-  const skus = useMemo(() => allSkus, []);
-  const works = useMemo(() => allWorks, []);
+  const skus = useMemo(() => skusSource, []);
+  const works = useMemo(() => worksSource, []);
 
   const getSkuBySlug = useMemo(() => {
     return (slug: string): SKU | undefined => {

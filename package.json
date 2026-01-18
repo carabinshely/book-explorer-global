@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "sync:data": "sh -c 'bash scripts/sync-data.sh \"$1\" \"src/data\" \"src/assets/images\"' --",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
