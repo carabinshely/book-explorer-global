@@ -21,7 +21,9 @@ const BookDetail = () => {
 
   // Get cover image
   const coverImage = sku ? getBookCover(sku.sku_id) : undefined;
-  const galleryImages = coverImage ? [coverImage] : [];
+  const galleryImages = Array.from(
+    new Set([coverImage, ...(sku?.images ?? [])].filter(Boolean))
+  ) as string[];
 
   // If SKU not found, redirect to books page
   if (!sku || !work) {
