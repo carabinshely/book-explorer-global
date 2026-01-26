@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "npm run sitemap && vite build && node scripts/generate-book-pages.mjs",
     "build:dev": "vite build --mode development",
-    "sync:data": "sh -c 'bash scripts/sync-data.sh \"$1\" \"src/data\" \"src/assets/images\"' --",
+    "sync:data": "sh -c 'bash scripts/sync-data.sh \"$1\" \"$2\"' --",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "lint": "eslint .",
     "test": "vitest run",

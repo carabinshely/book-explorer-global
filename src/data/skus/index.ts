@@ -1,21 +1,15 @@
-import happyLighthouseBilingual from './happy-lighthouse-bilingual.json';
-import happyLighthouseEn from './happy-lighthouse-en.json';
-import happyLighthouseEs from './happy-lighthouse-es.json';
-import laPerditaOmbreloDeNiranoEo from './la-perdita-ombrelo-de-nirano-eo.json';
-import laPerditaOmbreloDeNiranoRu from './la-perdita-ombrelo-de-nirano-ru.json';
-import moonlitGardenEn from './moonlit-garden-en.json';
-import moonlitGardenFr from './moonlit-garden-fr.json';
-import stargazersJourneyBilingual from './stargazers-journey-bilingual.json';
-import stargazersJourneyEn from './stargazers-journey-en.json';
+import theLostUmbrellaOfNiranEn from './the-lost-umbrella-of-niran-en.json';
+import theLostUmbrellaOfNiranEoEn from './the-lost-umbrella-of-niran-eo-en.json';
+import theLostUmbrellaOfNiranEo from './the-lost-umbrella-of-niran-eo.json';
+import theLostUmbrellaOfNiranRuEn from './the-lost-umbrella-of-niran-ru-en.json';
+import theLostUmbrellaOfNiranRuEo from './the-lost-umbrella-of-niran-ru-eo.json';
+import theLostUmbrellaOfNiranRu from './the-lost-umbrella-of-niran-ru.json';
 
 export const allSkus = [
-  happyLighthouseBilingual,
-  happyLighthouseEn,
-  happyLighthouseEs,
-  laPerditaOmbreloDeNiranoEo,
-  laPerditaOmbreloDeNiranoRu,
-  moonlitGardenEn,
-  moonlitGardenFr,
-  stargazersJourneyBilingual,
-  stargazersJourneyEn,
+  theLostUmbrellaOfNiranEn,
+  theLostUmbrellaOfNiranEoEn,
+  theLostUmbrellaOfNiranEo,
+  theLostUmbrellaOfNiranRuEn,
+  theLostUmbrellaOfNiranRuEo,
+  theLostUmbrellaOfNiranRu,
 ] as const;

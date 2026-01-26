@@ -1,11 +1,5 @@
-import happyLighthouse from './happy-lighthouse.json';
-import laPerditaOmbreloDeNirano from './la-perdita-ombrelo-de-nirano.json';
-import moonlitGarden from './moonlit-garden.json';
-import stargazersJourney from './stargazers-journey.json';
+import theLostUmbrellaOfNiran from './the-lost-umbrella-of-niran.json';
 
 export const allWorks = [
-  happyLighthouse,
-  laPerditaOmbreloDeNirano,
-  moonlitGarden,
-  stargazersJourney,
+  theLostUmbrellaOfNiran,
 ] as const;

@@ -1,0 +1,13 @@
+{
+  "work_id": "the-lost-umbrella-of-niran",
+  "family_title": {
+    "en": "The Lost Umbrella of Niran",
+    "eo": "La Perdita Ombrelo de Nirano",
+    "ru": "Потерянный зонтик Нирана",
+    "es": "El paraguas perdido de Niran"
+  },
+  "default_specs": {
+    "pages": 40,
+    "dimensions_mm": "21.6 x 21.6"
+  }
+}
