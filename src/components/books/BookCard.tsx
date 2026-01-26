@@ -22,7 +22,7 @@ export function BookCard({ sku }: BookCardProps) {
       className="group book-card block bg-card rounded-lg overflow-hidden border border-border/50 hover:border-accent/30"
     >
       {/* Cover Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div className="relative aspect-[7/8] overflow-hidden bg-muted">
         <img
           src={imageUrl}
           alt={`Cover of ${sku.title}`}

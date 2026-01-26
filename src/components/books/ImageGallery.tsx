@@ -62,7 +62,7 @@ export function ImageGallery({ images, alt }: ImageGalleryProps) {
       aria-label="Image gallery"
     >
       {/* Main Image */}
-      <div className="relative aspect-[3/4] bg-muted rounded-lg overflow-hidden shadow-book">
+      <div className="relative aspect-[7/8] bg-muted rounded-lg overflow-hidden shadow-book">
         <img
           src={galleryImages[currentIndex]}
           alt={`${alt} - Image ${currentIndex + 1} of ${galleryImages.length}`}
