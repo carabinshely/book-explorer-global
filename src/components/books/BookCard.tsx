@@ -10,6 +10,7 @@ interface BookCardProps {
 
 export function BookCard({ sku }: BookCardProps) {
   const { t } = useLanguage();
+  const hasMarketplace = Object.values(sku.amazon?.marketplaces ?? {}).some(Boolean);
   const format = sku.specs?.format;
   const pages = sku.specs?.pages;
 
@@ -48,7 +49,7 @@ export function BookCard({ sku }: BookCardProps) {
         </h3>
 
         {/* Languages */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {sku.languages.map((langCode) => (
             <span
               key={langCode}
@@ -59,6 +60,11 @@ export function BookCard({ sku }: BookCardProps) {
               <span>{langCode.toUpperCase()}</span>
             </span>
           ))}
+          {!hasMarketplace && (
+            <span className="ml-auto text-xs text-muted-foreground">
+              {t.product.coming_soon}
+            </span>
+          )}
         </div>
 
         {/* Format info */}

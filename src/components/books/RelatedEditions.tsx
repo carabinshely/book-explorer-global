@@ -75,9 +75,14 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
                   {sku.edition_type === 'bilingual' ? 'Bilingual Edition' : 'Single Language'}
                   {sku.specs?.format?.[0] ? ` • ${sku.specs.format[0]}` : null}
+                  {!Object.values(sku.amazon?.marketplaces ?? {}).some(Boolean) && (
+                    <span className="text-xs text-muted-foreground">
+                      {t.product.coming_soon}
+                    </span>
+                  )}
                 </p>
                 {(() => {
                   const availability = {
