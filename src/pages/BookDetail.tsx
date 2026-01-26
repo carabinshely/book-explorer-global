@@ -73,9 +73,10 @@ const BookDetail = () => {
               )}
 
               {/* Title */}
-              <h1 className="font-display text-3xl md:text-4xl font-semibold text-foreground">
-                {sku.title}
-              </h1>
+              <h1
+                className="font-display text-3xl md:text-4xl font-semibold text-foreground"
+                dangerouslySetInnerHTML={{ __html: sku.title }}
+              />
 
               {/* Description */}
               <div

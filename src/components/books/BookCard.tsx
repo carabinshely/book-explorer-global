@@ -44,9 +44,10 @@ export function BookCard({ sku }: BookCardProps) {
 
       {/* Content */}
       <div className="p-4 space-y-3">
-        <h3 className="font-display text-lg font-medium text-card-foreground line-clamp-2 group-hover:text-accent transition-colors">
-          {sku.title}
-        </h3>
+        <h3
+          className="font-display text-lg font-medium text-card-foreground line-clamp-2 group-hover:text-accent transition-colors"
+          dangerouslySetInnerHTML={{ __html: sku.title }}
+        />
 
         {/* Languages */}
         <div className="flex flex-wrap items-center gap-2">
