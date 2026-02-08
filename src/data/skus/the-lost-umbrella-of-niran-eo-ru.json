@@ -1,17 +1,17 @@
 {
-  "title": "Потерянный зонтик Нирана - La Perdita Ombrelo de Nirano",
   "description": "<b>Потерянный зонтик Нирана</b> — трогательная книжка-картинка для детей 5–6 лет.<br>Во время тайского водного праздника Сонгкран маленький Ниран теряет свой любимый зонтик — подарок бабушки. Ища его вместе с добрыми соседями и разговаривая с мудрой бабушкой, он понимает: просить о помощи и делиться своими чувствами — это проявление силы, а не слабости.<br>Действие происходит в яркой тайской деревне, а мягкие акварельные иллюстрации создают тёплое настроение. Эта история — нежное приглашение поговорить о чувствах, семье, воспоминаниях и надежде.<br><br><b>La Perdita Ombrelo de Nirano</b> estas kortuŝa bildlibro por infanoj, destinita por aĝoj 5–6.<br>Dum la tajlanda akvofestivalo Songkrano, la juna Nirano perdas trezoratan ombrelon de sia avino. Dum li serĉas ĝin kun helpo de afablaj najbaroj kaj pripensas kune kun sia saĝa avino, li lernas ke peti helpon kaj dividi siajn sentojn estas agoj de forto — ne de malforto.<br>Lokita en vigla tajlanda vilaĝo kaj ilustrita per mildaj akvareloj, ĉi tiu rakonto estas delikata invito paroli pri emocioj, familio, memoro kaj espero.",
   "amazon": {
     "marketplaces": {
       "US": ""
     }
   },
-  "sku_id": "the-lost-umbrella-of-niran-ru-eo",
+  "sku_id": "the-lost-umbrella-of-niran-eo-ru",
   "work_id": "the-lost-umbrella-of-niran",
   "languages": [
-    "ru",
-    "eo"
+    "eo",
+    "ru"
   ],
   "edition_type": "bilingual",
-  "slug": "the-lost-umbrella-of-niran-ru-eo"
+  "slug": "the-lost-umbrella-of-niran-eo-ru",
+  "title": "La Perdita Ombrelo de Nirano - Потерянный зонтик Нирана"
 }

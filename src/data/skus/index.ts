@@ -1,15 +1,15 @@
+import theLostUmbrellaOfNiranEnEo from './the-lost-umbrella-of-niran-en-eo.json';
+import theLostUmbrellaOfNiranEnRu from './the-lost-umbrella-of-niran-en-ru.json';
 import theLostUmbrellaOfNiranEn from './the-lost-umbrella-of-niran-en.json';
-import theLostUmbrellaOfNiranEoEn from './the-lost-umbrella-of-niran-eo-en.json';
+import theLostUmbrellaOfNiranEoRu from './the-lost-umbrella-of-niran-eo-ru.json';
 import theLostUmbrellaOfNiranEo from './the-lost-umbrella-of-niran-eo.json';
-import theLostUmbrellaOfNiranRuEn from './the-lost-umbrella-of-niran-ru-en.json';
-import theLostUmbrellaOfNiranRuEo from './the-lost-umbrella-of-niran-ru-eo.json';
 import theLostUmbrellaOfNiranRu from './the-lost-umbrella-of-niran-ru.json';
 
 export const allSkus = [
+  theLostUmbrellaOfNiranEnEo,
+  theLostUmbrellaOfNiranEnRu,
   theLostUmbrellaOfNiranEn,
-  theLostUmbrellaOfNiranEoEn,
+  theLostUmbrellaOfNiranEoRu,
   theLostUmbrellaOfNiranEo,
-  theLostUmbrellaOfNiranRuEn,
-  theLostUmbrellaOfNiranRuEo,
   theLostUmbrellaOfNiranRu,
 ] as const;
