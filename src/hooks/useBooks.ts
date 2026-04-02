@@ -4,6 +4,8 @@ import publishedCatalog from '@/generated/books/catalog.json';
 export interface MediaEntry {
   lang: string;
   url: string;
+  title?: string;
+  release_id?: string;
 }
 
 export interface SKU {
@@ -22,11 +24,11 @@ export interface SKU {
   };
   cover_image: string;
   gallery_images: string[];
-  amazon: {
+  amazon?: {
     asin: string;
     marketplaces: Record<string, string>;
   };
-  media: {
+  media?: {
     spotify?: MediaEntry[];
     apple_music?: MediaEntry[];
     youtube?: MediaEntry[];

@@ -3,7 +3,7 @@ import { MediaEntry, getLanguageName } from '@/hooks/useBooks';
 import { LanguageIcon } from '@/components/books/LanguageIcon';
 
 interface MediaEmbedsProps {
-  media: {
+  media?: {
     spotify?: MediaEntry[];
     apple_music?: MediaEntry[];
     youtube?: MediaEntry[];
@@ -64,12 +64,18 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                 <span aria-hidden="true">Spotify</span>
               </p>
               <div className="grid gap-3">
-                {spotifyEntries.map(({ lang, url }) => (
-                  <div key={`${lang}-${url}`} className="space-y-1">
-                    {spotifyEntries.length > 1 && lang !== 'mixed' && (
+                {spotifyEntries.map(({ lang, url, title, release_id }) => (
+                  <div key={release_id ?? `${lang}-${url}`} className="space-y-1">
+                    {(title || (spotifyEntries.length > 1 && lang !== 'mixed')) && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
-                        {getLanguageName(lang)}
+                        {title ? <span className="font-medium text-foreground">{title}</span> : null}
+                        {lang !== 'mixed' && (
+                          <>
+                            {title ? <span aria-hidden="true">·</span> : null}
+                            <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
+                            {getLanguageName(lang)}
+                          </>
+                        )}
                       </p>
                     )}
                     <iframe
@@ -93,12 +99,18 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                 <span aria-hidden="true">Apple Music</span>
               </p>
               <div className="grid gap-3">
-                {appleMusicEntries.map(({ lang, url }) => (
-                  <div key={`${lang}-${url}`} className="space-y-1">
-                    {appleMusicEntries.length > 1 && lang !== 'mixed' && (
+                {appleMusicEntries.map(({ lang, url, title, release_id }) => (
+                  <div key={release_id ?? `${lang}-${url}`} className="space-y-1">
+                    {(title || (appleMusicEntries.length > 1 && lang !== 'mixed')) && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
-                        {getLanguageName(lang)}
+                        {title ? <span className="font-medium text-foreground">{title}</span> : null}
+                        {lang !== 'mixed' && (
+                          <>
+                            {title ? <span aria-hidden="true">·</span> : null}
+                            <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
+                            {getLanguageName(lang)}
+                          </>
+                        )}
                       </p>
                     )}
                     <iframe
@@ -126,12 +138,18 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
             {t.product.watch}
           </h3>
           <div className="grid gap-4">
-            {youtubeEntries.map(({ lang, url }) => (
-              <div key={`${lang}-${url}`} className="space-y-1">
-                {youtubeEntries.length > 1 && lang !== 'mixed' && (
+            {youtubeEntries.map(({ lang, url, title, release_id }) => (
+              <div key={release_id ?? `${lang}-${url}`} className="space-y-1">
+                {(title || (youtubeEntries.length > 1 && lang !== 'mixed')) && (
                   <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
-                    {getLanguageName(lang)}
+                    {title ? <span className="font-medium text-foreground">{title}</span> : null}
+                    {lang !== 'mixed' && (
+                      <>
+                        {title ? <span aria-hidden="true">·</span> : null}
+                        <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
+                        {getLanguageName(lang)}
+                      </>
+                    )}
                   </p>
                 )}
                 <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
