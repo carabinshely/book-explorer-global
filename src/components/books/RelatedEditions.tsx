@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MediaEntry, SKU, Work, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { MediaEntry, SKU, Work, getLanguageName } from '@/hooks/useBooks';
 import { ChevronRight } from 'lucide-react';
+import { LanguageIcon } from '@/components/books/LanguageIcon';
 
 interface RelatedEditionsProps {
   relatedSkus: SKU[];
@@ -51,13 +52,13 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
               {/* Language Flags */}
               <div className="flex -space-x-1">
                 {sku.languages.map((langCode) => (
-                  <span 
+                  <span
                     key={langCode} 
-                    className="text-lg"
+                    className="block"
                     title={getLanguageName(langCode)}
                     aria-label={getLanguageName(langCode)}
                   >
-                    {getLanguageFlag(langCode)}
+                    <LanguageIcon langCode={langCode} className="h-5 w-7 rounded-[2px] object-cover shadow-sm" />
                   </span>
                 ))}
               </div>
@@ -118,7 +119,7 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                                   title={getLanguageName(lang)}
                                   aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(lang)}
+                                  <LanguageIcon langCode={lang} className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                                 </span>
                               ))}
                             </span>
@@ -141,7 +142,7 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                                   title={getLanguageName(lang)}
                                   aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(lang)}
+                                  <LanguageIcon langCode={lang} className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                                 </span>
                               ))}
                             </span>
@@ -164,7 +165,7 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                                   title={getLanguageName(lang)}
                                   aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(lang)}
+                                  <LanguageIcon langCode={lang} className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                                 </span>
                               ))}
                             </span>

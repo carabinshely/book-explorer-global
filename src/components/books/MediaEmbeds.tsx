@@ -1,5 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MediaEntry, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { MediaEntry, getLanguageName } from '@/hooks/useBooks';
+import { LanguageIcon } from '@/components/books/LanguageIcon';
 
 interface MediaEmbedsProps {
   media: {
@@ -67,7 +68,7 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                   <div key={`${lang}-${url}`} className="space-y-1">
                     {spotifyEntries.length > 1 && lang !== 'mixed' && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                        <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                         {getLanguageName(lang)}
                       </p>
                     )}
@@ -96,7 +97,7 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                   <div key={`${lang}-${url}`} className="space-y-1">
                     {appleMusicEntries.length > 1 && lang !== 'mixed' && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                        <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                         {getLanguageName(lang)}
                       </p>
                     )}
@@ -129,7 +130,7 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
               <div key={`${lang}-${url}`} className="space-y-1">
                 {youtubeEntries.length > 1 && lang !== 'mixed' && (
                   <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                    <LanguageIcon langCode={lang} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
                     {getLanguageName(lang)}
                   </p>
                 )}

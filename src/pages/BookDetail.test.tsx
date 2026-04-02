@@ -52,4 +52,10 @@ describe('Book detail page', () => {
     const galleryImage = screen.getByRole('img', { name: /mock book - image/i });
     expect(galleryImage).toHaveAttribute('src', expect.stringContaining('/generated/books/images/'));
   });
+
+  it('renders deterministic language flag assets on the detail page', () => {
+    const { container } = renderBookDetail();
+    const flag = container.querySelector('img[src*="/assets/flags/en.svg"]');
+    expect(flag).not.toBeNull();
+  });
 });

@@ -50,4 +50,10 @@ describe('Books page', () => {
     const cover = screen.getByRole('img', { name: /cover of mock book/i });
     expect(cover).toHaveAttribute('src', expect.stringContaining('/generated/books/images/'));
   });
+
+  it('renders deterministic language flag assets for book cards', () => {
+    const { container } = renderBooks();
+    const flag = container.querySelector('img[src*="/assets/flags/en.svg"]');
+    expect(flag).not.toBeNull();
+  });
 });

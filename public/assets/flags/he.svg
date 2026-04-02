@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" role="img" aria-labelledby="title">
+  <title>Hebrew</title>
+  <rect width="60" height="40" fill="#fff"/>
+  <rect y="4" width="60" height="5" fill="#0038b8"/>
+  <rect y="31" width="60" height="5" fill="#0038b8"/>
+  <path d="m30 12 7 12H23Zm0 16-7-12h14Z" fill="none" stroke="#0038b8" stroke-width="2"/>
+</svg>

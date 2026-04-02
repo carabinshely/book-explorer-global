@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" role="img" aria-labelledby="title">
+  <title>Esperanto</title>
+  <rect width="60" height="40" fill="#009246"/>
+  <rect width="24" height="20" fill="#fff"/>
+  <g transform="translate(0,-2)">
+    <path d="m12 4.5 1.88 5.78h6.08l-4.92 3.57 1.88 5.77L12 16.06l-4.92 3.56 1.88-5.77-4.92-3.57h6.08Z" fill="#009246"/>
+  </g>
+</svg>

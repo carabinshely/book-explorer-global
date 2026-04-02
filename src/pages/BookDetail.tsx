@@ -1,10 +1,11 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useBooks, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { useBooks, getLanguageName } from '@/hooks/useBooks';
 import { Layout } from '@/components/layout/Layout';
 import { ImageGallery } from '@/components/books/ImageGallery';
 import { MediaEmbeds } from '@/components/books/MediaEmbeds';
 import { RelatedEditions } from '@/components/books/RelatedEditions';
+import { LanguageIcon } from '@/components/books/LanguageIcon';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
@@ -84,7 +85,7 @@ const BookDetail = () => {
                     key={langCode}
                     className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-full text-sm"
                   >
-                    <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
+                    <LanguageIcon langCode={langCode} decorative className="h-4 w-6 rounded-[2px] object-cover shadow-sm" />
                     <span>{getLanguageName(langCode)}</span>
                   </span>
                 ))}

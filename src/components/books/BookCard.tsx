@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SKU, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { SKU, getLanguageName } from '@/hooks/useBooks';
 import { Badge } from '@/components/ui/badge';
+import { LanguageIcon } from '@/components/books/LanguageIcon';
 
 interface BookCardProps {
   sku: SKU;
@@ -54,7 +55,7 @@ export function BookCard({ sku }: BookCardProps) {
               className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-1 rounded"
               title={getLanguageName(langCode)}
             >
-              <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
+              <LanguageIcon langCode={langCode} decorative className="h-3.5 w-5 rounded-[2px] object-cover shadow-sm" />
               <span>{langCode.toUpperCase()}</span>
             </span>
           ))}
