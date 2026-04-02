@@ -1,6 +1,6 @@
 {
   "schema_version": "book-explorer-global-publish-v1",
-  "generated_at": "2026-04-02T17:03:58Z",
+  "generated_at": "2026-04-02T20:07:38Z",
   "works": [
     {
       "work_id": "the-lost-umbrella-of-niran",
@@ -24,11 +24,6 @@
   "skus": [
     {
       "title": "La Perdita Ombrelo de Nirano - The Lost Umbrella of Niran",
-      "amazon": {
-        "marketplaces": {
-          "US": ""
-        }
-      },
       "sku_id": "the-lost-umbrella-of-niran-en-eo",
       "work_id": "the-lost-umbrella-of-niran",
       "languages": [
@@ -42,11 +37,6 @@
       "gallery_images": []
     },
     {
-      "amazon": {
-        "marketplaces": {
-          "US": ""
-        }
-      },
       "sku_id": "the-lost-umbrella-of-niran-en-ru",
       "work_id": "the-lost-umbrella-of-niran",
       "languages": [
@@ -62,11 +52,6 @@
     },
     {
       "title": "The Lost Umbrella of Niran",
-      "amazon": {
-        "marketplaces": {
-          "US": ""
-        }
-      },
       "sku_id": "the-lost-umbrella-of-niran-en",
       "work_id": "the-lost-umbrella-of-niran",
       "languages": [
@@ -79,11 +64,6 @@
       "gallery_images": []
     },
     {
-      "amazon": {
-        "marketplaces": {
-          "US": ""
-        }
-      },
       "sku_id": "the-lost-umbrella-of-niran-eo",
       "work_id": "the-lost-umbrella-of-niran",
       "languages": [
@@ -98,11 +78,6 @@
     },
     {
       "title": "La Perdita Ombrelo de Nirano",
-      "amazon": {
-        "marketplaces": {
-          "US": ""
-        }
-      },
       "sku_id": "the-lost-umbrella-of-niran-ru",
       "work_id": "the-lost-umbrella-of-niran",
       "languages": [
