@@ -26,4 +26,4 @@ src/generated/books/catalog.json
 public/generated/books/images/
 ```
 
-No sync or pull scripts live in this repo anymore. Refresh those generated files from `juna_lumturo_retejo` with its `tools/publish_site.py` command.
+No sync or pull scripts live in this repo anymore. Refresh those generated files from `juna_lumturo_retejo` with its `tools/ingest_cli.py --publish-target book-explorer-global --target-repo ...` flow.
