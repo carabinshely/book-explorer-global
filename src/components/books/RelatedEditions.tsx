@@ -35,6 +35,11 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
     return work.family_title[primaryLang] || sku.title;
   };
 
+  const getLanguageCodesLabel = (sku: SKU): string | null => {
+    if (sku.languages.length === 0) return null;
+    return `(${sku.languages.map((lang) => lang.toUpperCase()).join(', ')})`;
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="font-display text-xl font-medium text-foreground">
@@ -67,9 +72,9 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
               <div className="space-y-1">
                 <p className="font-medium text-card-foreground group-hover:text-accent transition-colors">
                   {getTitleForSku(sku)}
-                  {sku.languages.length === 1 && (
+                  {getLanguageCodesLabel(sku) && (
                     <span className="ml-2 text-muted-foreground">
-                      ({sku.languages[0].toUpperCase()})
+                      {getLanguageCodesLabel(sku)}
                     </span>
                   )}
                 </p>
