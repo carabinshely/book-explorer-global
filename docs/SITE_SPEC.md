@@ -62,16 +62,17 @@ Routing example: [[docs/EXAMPLES#Routing Example]].
 
 ## Data dependencies
 
-The site is rendered from normalized JSON in `/data` plus `i18n/*` and `config/site.json`.
+The site is rendered from published generated data in `src/generated/books/catalog.json` plus `i18n/*` and static assets under `public/generated/books/images/`.
 
 Content model requirements:
-- One JSON per SKU/edition; each SKU has its own page.
+- One published catalog payload contains all Works and SKUs for the site build.
 - `languages` reflects content languages; bilingual SKUs include both.
 - Media entries can be per-language or `mixed` for bilingual editions.
+- SKU image rendering uses published `cover_image` and `gallery_images` fields.
 
 Per-page data needs:
 - Home/About/Contact: `i18n/{lang}.json` (site strings).
-- Catalog: `data/skus/*.json` + related `data/works/*.json`.
+- Catalog: `src/generated/books/catalog.json`.
 - Product detail: a SKU plus its Work and sibling SKUs (same `work_id`).
 
 Examples: [[docs/EXAMPLES#Normalized Work (Site Output)]], [[docs/EXAMPLES#Normalized SKU (Mono)]], [[docs/EXAMPLES#Normalized SKU (Bilingual)]].

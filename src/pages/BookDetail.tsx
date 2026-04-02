@@ -1,7 +1,6 @@
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useBooks, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
-import { getBookCover, getGalleryImages } from '@/assets/bookImages';
 import { Layout } from '@/components/layout/Layout';
 import { ImageGallery } from '@/components/books/ImageGallery';
 import { MediaEmbeds } from '@/components/books/MediaEmbeds';
@@ -18,13 +17,7 @@ const BookDetail = () => {
   const sku = slug ? getSkuBySlug(slug) : undefined;
   const work = sku ? getWorkById(sku.work_id) : undefined;
   const relatedSkus = sku ? getRelatedSkus(sku.work_id, sku.sku_id) : [];
-
-  // Get cover image
-  const coverImage = sku ? getBookCover(sku.sku_id) : undefined;
-  const galleryImagesForSku = sku ? getGalleryImages(sku.sku_id) ?? [] : [];
-  const galleryImages = Array.from(
-    new Set([coverImage, ...galleryImagesForSku].filter(Boolean))
-  ) as string[];
+  const galleryImages = sku ? [sku.cover_image, ...(sku.gallery_images ?? [])].filter(Boolean) : [];
 
   // If SKU not found, redirect to books page
   if (!sku || !work) {

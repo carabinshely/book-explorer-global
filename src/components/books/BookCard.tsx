@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SKU, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
-import { getBookCover } from '@/assets/bookImages';
 import { Badge } from '@/components/ui/badge';
 
 interface BookCardProps {
@@ -13,9 +12,7 @@ export function BookCard({ sku }: BookCardProps) {
   const hasMarketplace = Object.values(sku.amazon?.marketplaces ?? {}).some(Boolean);
   const format = sku.specs?.format;
   const pages = sku.specs?.pages;
-
-  // Use generated cover image or placeholder
-  const imageUrl = getBookCover(sku.sku_id) || '/placeholder.svg';
+  const imageUrl = sku.cover_image || '/placeholder.svg';
 
   return (
     <Link

@@ -1,11 +1,11 @@
 import { useLanguage } from '@/contexts/LanguageContext';
-import { getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { MediaEntry, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
 
 interface MediaEmbedsProps {
   media: {
-    spotify?: Record<string, string>;
-    apple_music?: Record<string, string>;
-    youtube?: Record<string, string>;
+    spotify?: MediaEntry[];
+    apple_music?: MediaEntry[];
+    youtube?: MediaEntry[];
   };
 }
 
@@ -16,12 +16,12 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
     return null;
   }
 
-  const filterMixed = <T extends Record<string, string> | undefined>(entries: T) =>
-    entries ? Object.entries(entries).filter(([langCode]) => langCode !== 'mixed') : [];
+  const filterEntries = (entries?: MediaEntry[]) =>
+    (entries ?? []).filter((entry) => Boolean(entry?.url));
 
-  const spotifyEntries = filterMixed(media.spotify);
-  const appleMusicEntries = filterMixed(media.apple_music);
-  const youtubeEntries = filterMixed(media.youtube);
+  const spotifyEntries = filterEntries(media.spotify);
+  const appleMusicEntries = filterEntries(media.apple_music);
+  const youtubeEntries = filterEntries(media.youtube);
 
   const hasSpotify = spotifyEntries.length > 0;
   const hasAppleMusic = appleMusicEntries.length > 0;
@@ -63,16 +63,16 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                 <span aria-hidden="true">Spotify</span>
               </p>
               <div className="grid gap-3">
-                {spotifyEntries.map(([langCode, url]) => (
-                  <div key={langCode} className="space-y-1">
-                    {spotifyEntries.length > 1 && (
+                {spotifyEntries.map(({ lang, url }) => (
+                  <div key={`${lang}-${url}`} className="space-y-1">
+                    {spotifyEntries.length > 1 && lang !== 'mixed' && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                        {getLanguageName(langCode)}
+                        <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                        {getLanguageName(lang)}
                       </p>
                     )}
                     <iframe
-                      title={`Spotify player - ${getLanguageName(langCode)}`}
+                      title={`Spotify player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
                       src={getSpotifyEmbedUrl(url)}
                       width="100%"
                       height="152"
@@ -92,16 +92,16 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                 <span aria-hidden="true">Apple Music</span>
               </p>
               <div className="grid gap-3">
-                {appleMusicEntries.map(([langCode, url]) => (
-                  <div key={langCode} className="space-y-1">
-                    {appleMusicEntries.length > 1 && (
+                {appleMusicEntries.map(({ lang, url }) => (
+                  <div key={`${lang}-${url}`} className="space-y-1">
+                    {appleMusicEntries.length > 1 && lang !== 'mixed' && (
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                        {getLanguageName(langCode)}
+                        <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                        {getLanguageName(lang)}
                       </p>
                     )}
                     <iframe
-                      title={`Apple Music player - ${getLanguageName(langCode)}`}
+                      title={`Apple Music player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
                       src={getAppleMusicEmbedUrl(url)}
                       width="100%"
                       height="175"
@@ -125,17 +125,17 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
             {t.product.watch}
           </h3>
           <div className="grid gap-4">
-            {youtubeEntries.map(([langCode, url]) => (
-              <div key={langCode} className="space-y-1">
-                {youtubeEntries.length > 1 && (
+            {youtubeEntries.map(({ lang, url }) => (
+              <div key={`${lang}-${url}`} className="space-y-1">
+                {youtubeEntries.length > 1 && lang !== 'mixed' && (
                   <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <span aria-hidden="true">{getLanguageFlag(langCode)}</span>
-                    {getLanguageName(langCode)}
+                    <span aria-hidden="true">{getLanguageFlag(lang)}</span>
+                    {getLanguageName(lang)}
                   </p>
                 )}
                 <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
                   <iframe
-                    title={`YouTube video - ${getLanguageName(langCode)}`}
+                    title={`YouTube video - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
                     src={getYouTubeEmbedUrl(url)}
                     width="100%"
                     height="100%"

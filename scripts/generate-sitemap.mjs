@@ -1,17 +1,10 @@
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const baseUrl = (process.env.SITE_URL || "https://bronerbooks.com").replace(/\/+$/, "");
-const skusDir = join(process.cwd(), "src", "data", "skus");
-
-const slugs = readdirSync(skusDir)
-  .filter((file) => file.endsWith(".json"))
-  .map((file) => {
-    const raw = readFileSync(join(skusDir, file), "utf8");
-    const data = JSON.parse(raw);
-    return data.slug;
-  })
-  .filter(Boolean);
+const catalogPath = join(process.cwd(), "src", "generated", "books", "catalog.json");
+const catalog = JSON.parse(readFileSync(catalogPath, "utf8"));
+const slugs = (catalog.skus ?? []).map((sku) => sku.slug).filter(Boolean);
 
 const today = new Date().toISOString().split("T")[0];
 const urls = [

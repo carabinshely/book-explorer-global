@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
-import { allSkus } from '@/data/skus';
-import { allWorks } from '@/data/works';
+import publishedCatalog from '@/generated/books/catalog.json';
+
+export interface MediaEntry {
+  lang: string;
+  url: string;
+}
 
 export interface SKU {
   sku_id: string;
@@ -16,31 +20,38 @@ export interface SKU {
     dimensions_mm: string;
     isbn: string;
   };
-  images: string[];
+  cover_image: string;
+  gallery_images: string[];
   amazon: {
     asin: string;
     marketplaces: Record<string, string>;
   };
   media: {
-    spotify?: Record<string, string>;
-    apple_music?: Record<string, string>;
-    youtube?: Record<string, string>;
+    spotify?: MediaEntry[];
+    apple_music?: MediaEntry[];
+    youtube?: MediaEntry[];
   };
 }
 
 export interface Work {
   work_id: string;
-  order: number;
   family_title: Record<string, string>;
   default_specs: {
     pages: number;
     dimensions_mm: string;
   };
-  canonical_images: string[];
 }
 
-const skusSource = allSkus as SKU[];
-const worksSource = allWorks as Work[];
+interface PublishedCatalog {
+  schema_version: string;
+  generated_at: string;
+  works: Work[];
+  skus: SKU[];
+}
+
+const catalogSource = publishedCatalog as PublishedCatalog;
+const skusSource = catalogSource.skus ?? [];
+const worksSource = catalogSource.works ?? [];
 
 export function useBooks() {
   const skus = useMemo(() => skusSource, []);

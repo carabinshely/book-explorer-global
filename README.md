@@ -15,19 +15,15 @@ npm run dev
 npm run build
 ```
 
-## Data sync pipeline
+## Generated book data
 
-Book data and images are generated in another repo and synced here.
+Book data and book images are generated and published from `juna_lumturo_retejo`.
 
-1) Run the generator script (from the other repo).
-2) It should output JSON/images into `src/data` and `src/assets/images`.
-3) It should also update these index files so imports stay consistent:
-   - `src/data/skus/index.ts`
-   - `src/data/works/index.ts`
-   - `src/assets/images/index.ts`
-
-To run the sync wrapper from this repo:
+This repo only consumes committed generated artifacts:
 
 ```sh
-npm run sync:data -- /path/to/generator-script.sh
+src/generated/books/catalog.json
+public/generated/books/images/
 ```
+
+No sync or pull scripts live in this repo anymore. Refresh those generated files from `juna_lumturo_retejo` with its `tools/publish_site.py` command.

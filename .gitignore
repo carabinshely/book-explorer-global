@@ -12,6 +12,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.*
 
 # Editor directories and files
 .vscode/*
@@ -24,3 +26,8 @@ dist-ssr
 *.sln
 *.sw?
 /.worktrees/
+
+.obsidian
+coverage/
+.coverage
+.coverage.*

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SKU, Work, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
+import { MediaEntry, SKU, Work, getLanguageFlag, getLanguageName } from '@/hooks/useBooks';
 import { ChevronRight } from 'lucide-react';
 
 interface RelatedEditionsProps {
@@ -21,13 +21,10 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
     return null;
   }
 
-  const getMediaLanguages = (
-    entries: Record<string, string> | undefined,
-    allowedLanguages: string[]
-  ) => {
+  const getMediaEntries = (entries: MediaEntry[] | undefined, allowedLanguages: string[]) => {
     if (!entries) return [];
-    return Object.keys(entries).filter(
-      (langCode) => langCode !== 'mixed' && allowedLanguages.includes(langCode)
+    return entries.filter(
+      (entry) => Boolean(entry?.url) && (entry.lang === 'mixed' || allowedLanguages.includes(entry.lang))
     );
   };
 
@@ -86,9 +83,9 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                 </p>
                 {(() => {
                   const availability = {
-                    spotify: getMediaLanguages(sku.media?.spotify, sku.languages),
-                    appleMusic: getMediaLanguages(sku.media?.apple_music, sku.languages),
-                    youtube: getMediaLanguages(sku.media?.youtube, sku.languages),
+                    spotify: getMediaEntries(sku.media?.spotify, sku.languages),
+                    appleMusic: getMediaEntries(sku.media?.apple_music, sku.languages),
+                    youtube: getMediaEntries(sku.media?.youtube, sku.languages),
                   };
                   const hasAny =
                     availability.spotify.length > 0 ||
@@ -96,7 +93,8 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                     availability.youtube.length > 0;
                   if (!hasAny) return null;
                   const showLanguageBadges = sku.languages.length > 1;
-                  const buildTitle = (platform: string, langs: string[]) => {
+                  const buildTitle = (platform: string, entries: MediaEntry[]) => {
+                    const langs = entries.map((entry) => entry.lang).filter((lang) => lang !== 'mixed');
                     if (langs.length === 0) return `${t.a11y.available_on} ${platform}`;
                     const languageNames = langs.map(getLanguageName).join(', ');
                     return `${t.a11y.available_on} ${platform} (${languageNames})`;
@@ -114,13 +112,13 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                           />
                           {showLanguageBadges && (
                             <span className="-ml-1 flex -space-x-1 text-sm">
-                              {availability.spotify.map((langCode) => (
+                              {availability.spotify.filter((entry) => entry.lang !== 'mixed').map(({ lang }) => (
                                 <span
-                                  key={`spotify-${langCode}`}
-                                  title={getLanguageName(langCode)}
-                                  aria-label={getLanguageName(langCode)}
+                                  key={`spotify-${lang}`}
+                                  title={getLanguageName(lang)}
+                                  aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(langCode)}
+                                  {getLanguageFlag(lang)}
                                 </span>
                               ))}
                             </span>
@@ -137,13 +135,13 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                           />
                           {showLanguageBadges && (
                             <span className="-ml-1 flex -space-x-1 text-sm">
-                              {availability.appleMusic.map((langCode) => (
+                              {availability.appleMusic.filter((entry) => entry.lang !== 'mixed').map(({ lang }) => (
                                 <span
-                                  key={`apple-music-${langCode}`}
-                                  title={getLanguageName(langCode)}
-                                  aria-label={getLanguageName(langCode)}
+                                  key={`apple-music-${lang}`}
+                                  title={getLanguageName(lang)}
+                                  aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(langCode)}
+                                  {getLanguageFlag(lang)}
                                 </span>
                               ))}
                             </span>
@@ -160,13 +158,13 @@ export function RelatedEditions({ relatedSkus, work }: RelatedEditionsProps) {
                           />
                           {showLanguageBadges && (
                             <span className="-ml-1 flex -space-x-1 text-sm">
-                              {availability.youtube.map((langCode) => (
+                              {availability.youtube.filter((entry) => entry.lang !== 'mixed').map(({ lang }) => (
                                 <span
-                                  key={`youtube-${langCode}`}
-                                  title={getLanguageName(langCode)}
-                                  aria-label={getLanguageName(langCode)}
+                                  key={`youtube-${lang}`}
+                                  title={getLanguageName(lang)}
+                                  aria-label={getLanguageName(lang)}
                                 >
-                                  {getLanguageFlag(langCode)}
+                                  {getLanguageFlag(lang)}
                                 </span>
                               ))}
                             </span>
