@@ -14,12 +14,7 @@ const GOOGLE_TAG_SCRIPT_ID = 'google-analytics-gtag';
 
 function hasInitialConfig(measurementId: string) {
   return window.dataLayer?.some(
-    (args) =>
-      args[0] === 'config' &&
-      args[1] === measurementId &&
-      typeof args[2] === 'object' &&
-      args[2] !== null &&
-      'send_page_view' in args[2]
+    (args) => args[0] === 'config' && args[1] === measurementId
   );
 }
 

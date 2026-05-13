@@ -21,6 +21,10 @@ describe('Google Analytics utilities', () => {
 
     const scripts = document.querySelectorAll('script[src="https://www.googletagmanager.com/gtag/js?id=G-TEST123"]');
     expect(scripts).toHaveLength(1);
+    expect(window.dataLayer?.filter((args) => args[0] === 'js')).toHaveLength(1);
+    expect(
+      window.dataLayer?.filter((args) => args[0] === 'config' && args[1] === 'G-TEST123' && args[2] === undefined)
+    ).toHaveLength(1);
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ 0: 'config', 1: 'G-TEST123' }),
