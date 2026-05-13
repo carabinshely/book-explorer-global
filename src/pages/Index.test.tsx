@@ -5,7 +5,7 @@ import Index from './Index';
 
 const renderHome = () =>
   render(
-    <MemoryRouter>
+    <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <LanguageProvider>
         <Index />
       </LanguageProvider>

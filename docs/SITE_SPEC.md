@@ -108,7 +108,15 @@ Example snippet: [[docs/EXAMPLES#Gallery and Media Embed Snippet]].
 
 ## Analytics and legal
 
-- If analytics are added, use privacy-respecting tools and disclose usage.
+- Google Analytics 4 is installed for basic traffic, page-view, and outbound
+  Amazon CTA measurement. The default measurement ID is `G-DD2217GBC7`; hosting
+  environments may override it with `VITE_GA_MEASUREMENT_ID`.
+- Custom campaign links should use the UTM rules maintained in
+  `bronerbooks-marketing-ops/07_automation/utm-rules.yaml`.
+- Analytics reporting and review workflow lives in
+  `docs/GOOGLE_ANALYTICS.md`.
+- Disclose analytics usage in the privacy/legal experience before broader paid
+  traffic campaigns.
 - Provide Privacy/Terms pages if required by hosting or embeds.
 
 ## Hosting and previews (planned)

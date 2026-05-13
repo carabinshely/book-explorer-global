@@ -37,7 +37,7 @@ import Books from './Books';
 
 const renderBooks = () =>
   render(
-    <MemoryRouter>
+    <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <LanguageProvider>
         <Books />
       </LanguageProvider>

@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { vi } from 'vitest';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { trackEvent } from '@/lib/analytics';
 
 vi.mock('@/generated/books/catalog.json', () => ({
   default: {
@@ -33,11 +34,18 @@ vi.mock('@/generated/books/catalog.json', () => ({
   },
 }));
 
+vi.mock('@/lib/analytics', () => ({
+  trackEvent: vi.fn(),
+}));
+
 import BookDetail from './BookDetail';
 
 const renderBookDetail = () =>
   render(
-    <MemoryRouter initialEntries={['/books/mock-book-en']}>
+    <MemoryRouter
+      initialEntries={['/books/mock-book-en']}
+      future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+    >
       <LanguageProvider>
         <Routes>
           <Route path="/books/:slug" element={<BookDetail />} />
@@ -57,5 +65,17 @@ describe('Book detail page', () => {
     const { container } = renderBookDetail();
     const flag = container.querySelector('img[src*="/assets/flags/en.svg"]');
     expect(flag).not.toBeNull();
+  });
+
+  it('tracks Amazon CTA clicks with the book slug and work id', () => {
+    renderBookDetail();
+
+    fireEvent.click(screen.getByRole('link', { name: /view on amazon/i }));
+
+    expect(trackEvent).toHaveBeenCalledWith('amazon_click', {
+      book_slug: 'mock-book-en',
+      work_id: 'mock-book',
+      marketplace_url: 'https://example.com/book',
+    });
   });
 });

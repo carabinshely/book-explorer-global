@@ -8,6 +8,7 @@ import { RelatedEditions } from '@/components/books/RelatedEditions';
 import { LanguageIcon } from '@/components/books/LanguageIcon';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { trackEvent } from '@/lib/analytics';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 
 const BookDetail = () => {
@@ -99,6 +100,13 @@ const BookDetail = () => {
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="gap-2"
+                    onClick={() =>
+                      trackEvent('amazon_click', {
+                        book_slug: sku.slug,
+                        work_id: sku.work_id,
+                        marketplace_url: amazonUrl,
+                      })
+                    }
                   >
                     {t.product.buy_on_amazon}
                     <ExternalLink className="h-4 w-4" />

@@ -49,7 +49,7 @@ const relatedSkus = [
 describe('RelatedEditions', () => {
   it('shows language codes for both mono and bilingual editions', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
         <LanguageProvider>
           <RelatedEditions relatedSkus={relatedSkus} work={work} />
         </LanguageProvider>
