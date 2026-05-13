@@ -58,7 +58,9 @@ export function trackPageView(
   const normalizedMeasurementId = measurementId?.trim();
   if (!normalizedMeasurementId || !window.gtag) return;
 
-  window.gtag('config', normalizedMeasurementId, {
+  window.gtag('event', 'page_view', {
+    send_to: normalizedMeasurementId,
+    page_location: `${window.location.origin}${pagePath}`,
     page_path: pagePath,
     page_title: pageTitle,
   });

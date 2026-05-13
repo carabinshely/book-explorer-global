@@ -28,7 +28,7 @@ describe('Google Analytics utilities', () => {
     );
   });
 
-  it('tracks SPA page views with the current path and title', () => {
+  it('tracks SPA page views as explicit page_view events', () => {
     initializeGoogleAnalytics('G-TEST123');
 
     trackPageView('G-TEST123', '/books/mock-book-en', 'Mock Book');
@@ -36,9 +36,11 @@ describe('Google Analytics utilities', () => {
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          0: 'config',
-          1: 'G-TEST123',
+          0: 'event',
+          1: 'page_view',
           2: {
+            send_to: 'G-TEST123',
+            page_location: 'http://localhost:3000/books/mock-book-en',
             page_path: '/books/mock-book-en',
             page_title: 'Mock Book',
           },
