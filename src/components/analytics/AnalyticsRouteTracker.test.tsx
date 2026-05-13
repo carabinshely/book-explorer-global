@@ -23,11 +23,10 @@ describe('AnalyticsRouteTracker', () => {
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          0: 'event',
-          1: 'page_view',
+          0: 'config',
+          1: 'G-TEST123',
           2: expect.objectContaining({
             page_path: '/books/mock-book-en',
-            send_to: 'G-TEST123',
           }),
         }),
       ])

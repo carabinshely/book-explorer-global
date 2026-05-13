@@ -15,7 +15,7 @@ describe('Google Analytics utilities', () => {
     expect(window.gtag).toBeUndefined();
   });
 
-  it('loads Google Analytics once and disables automatic page views', () => {
+  it('loads Google Analytics once and sends the standard config hit', () => {
     initializeGoogleAnalytics('G-TEST123');
     initializeGoogleAnalytics('G-TEST123');
 
@@ -23,12 +23,12 @@ describe('Google Analytics utilities', () => {
     expect(scripts).toHaveLength(1);
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ 0: 'config', 1: 'G-TEST123', 2: { send_page_view: false } }),
+        expect.objectContaining({ 0: 'config', 1: 'G-TEST123' }),
       ])
     );
   });
 
-  it('tracks SPA page views as explicit page_view events', () => {
+  it('tracks SPA page views with config updates', () => {
     initializeGoogleAnalytics('G-TEST123');
 
     trackPageView('G-TEST123', '/books/mock-book-en', 'Mock Book');
@@ -36,10 +36,9 @@ describe('Google Analytics utilities', () => {
     expect(window.dataLayer).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          0: 'event',
-          1: 'page_view',
+          0: 'config',
+          1: 'G-TEST123',
           2: {
-            send_to: 'G-TEST123',
             page_location: 'http://localhost:3000/books/mock-book-en',
             page_path: '/books/mock-book-en',
             page_title: 'Mock Book',

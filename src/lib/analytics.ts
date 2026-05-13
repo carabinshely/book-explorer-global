@@ -46,7 +46,7 @@ export function initializeGoogleAnalytics(measurementId?: string) {
 
   if (!hasInitialConfig(normalizedMeasurementId)) {
     window.gtag('js', new Date());
-    window.gtag('config', normalizedMeasurementId, { send_page_view: false });
+    window.gtag('config', normalizedMeasurementId);
   }
 }
 
@@ -58,8 +58,7 @@ export function trackPageView(
   const normalizedMeasurementId = measurementId?.trim();
   if (!normalizedMeasurementId || !window.gtag) return;
 
-  window.gtag('event', 'page_view', {
-    send_to: normalizedMeasurementId,
+  window.gtag('config', normalizedMeasurementId, {
     page_location: `${window.location.origin}${pagePath}`,
     page_path: pagePath,
     page_title: pageTitle,
