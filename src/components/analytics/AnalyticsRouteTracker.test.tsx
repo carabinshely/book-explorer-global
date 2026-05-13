@@ -1,35 +1,46 @@
-import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnalyticsRouteTracker } from './AnalyticsRouteTracker';
+
+function TestRoutes() {
+  return (
+    <>
+      <AnalyticsRouteTracker measurementId="G-TEST123" />
+      <Link to="/books/mock-book-en">Book detail</Link>
+      <Routes>
+        <Route path="/books" element={<h1>Books</h1>} />
+        <Route path="/books/mock-book-en" element={<h1>Book detail</h1>} />
+      </Routes>
+    </>
+  );
+}
 
 describe('AnalyticsRouteTracker', () => {
   beforeEach(() => {
-    document.head.innerHTML = '';
-    delete window.dataLayer;
-    delete window.gtag;
+    window.gtag = vi.fn();
   });
 
-  it('initializes Google Analytics and sends the first route page view', () => {
+  it('skips the static initial page view and tracks later route changes', () => {
     render(
       <MemoryRouter
-        initialEntries={['/books/mock-book-en']}
+        initialEntries={['/books']}
         future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
       >
-        <AnalyticsRouteTracker measurementId="G-TEST123" />
+        <TestRoutes />
       </MemoryRouter>
     );
 
-    expect(window.dataLayer).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          0: 'config',
-          1: 'G-TEST123',
-          2: expect.objectContaining({
-            page_path: '/books/mock-book-en',
-          }),
-        }),
-      ])
+    expect(window.gtag).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('link', { name: /book detail/i }));
+
+    expect(window.gtag).toHaveBeenCalledWith(
+      'config',
+      'G-TEST123',
+      expect.objectContaining({
+        page_path: '/books/mock-book-en',
+      })
     );
   });
 });

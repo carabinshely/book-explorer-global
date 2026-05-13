@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   DEFAULT_GA_MEASUREMENT_ID,
-  initializeGoogleAnalytics,
   trackPageView,
 } from '@/lib/analytics';
 
@@ -15,9 +14,14 @@ export function AnalyticsRouteTracker({
 }: AnalyticsRouteTrackerProps) {
   const location = useLocation();
   const pagePath = `${location.pathname}${location.search}${location.hash}`;
+  const hasSeenInitialRoute = useRef(false);
 
   useEffect(() => {
-    initializeGoogleAnalytics(measurementId);
+    if (!hasSeenInitialRoute.current) {
+      hasSeenInitialRoute.current = true;
+      return;
+    }
+
     trackPageView(measurementId, pagePath);
   }, [measurementId, pagePath]);
 
