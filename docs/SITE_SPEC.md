@@ -83,7 +83,7 @@ Examples: [[docs/EXAMPLES#Normalized Work (Site Output)]], [[docs/EXAMPLES#Norma
 
 ## i18n behavior
 
-- UI language is prefix-based (`/{ui_lang}/...`).
+- UI language is client-side state selected by the language toggle and persisted locally; it is not part of canonical route paths.
 - Content languages live on SKU data (`languages`).
 - Strings come from `i18n/{ui_lang}.json`.
 - Planned: browser-locale default with English fallback and persistent user toggle.
