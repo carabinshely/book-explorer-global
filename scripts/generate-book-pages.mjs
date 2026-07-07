@@ -3,6 +3,8 @@ import { dirname, join, relative, resolve } from "node:path";
 
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
+const MAX_SEO_DESCRIPTION_LENGTH = 161;
+const HTML_TAG_PATTERN = /<[^>]+>/;
 const distDir = join(process.cwd(), "dist");
 const templatePath = join(distDir, "index.html");
 const catalogPath = join(process.cwd(), "src", "generated", "books", "catalog.json");
@@ -73,6 +75,18 @@ const assertPathPolicy = (path, label) => {
   const segments = path.split("/").filter(Boolean);
   if (segments.some((segment) => segment === "." || segment === "..")) {
     fail(`${label} must not contain dot segments (${path}).`);
+  }
+};
+
+const assertPlainDescription = (description, label) => {
+  if (typeof description !== "string" || description.trim().length === 0) {
+    fail(`${label}.description must be non-empty.`);
+  }
+  if (HTML_TAG_PATTERN.test(description)) {
+    fail(`${label}.description must be stripped plain text.`);
+  }
+  if (description.length > MAX_SEO_DESCRIPTION_LENGTH) {
+    fail(`${label}.description must be length-bounded to ${MAX_SEO_DESCRIPTION_LENGTH} characters.`);
   }
 };
 
@@ -207,7 +221,8 @@ const validateManifest = (manifest) => {
       assertPathPolicy(page.path, `${label}.path`);
       if (seen.has(page.path)) fail(`duplicate manifest path ${page.path}.`);
       seen.add(page.path);
-      if (!page.title || !page.description) fail(`${label} requires non-empty title and description.`);
+      if (!page.title) fail(`${label} requires non-empty title.`);
+      assertPlainDescription(page.description, label);
       if (Array.isArray(page.alternate_paths) && page.alternate_paths.length > 0) {
         fail(`${label}.alternate_paths is not supported yet; hreflang output is deferred.`);
       }

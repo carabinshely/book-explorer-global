@@ -4,6 +4,8 @@ import { join } from "node:path";
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
 const REQUIRED_STATIC_PATHS = new Set(["/", "/books", "/about", "/contact"]);
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
+const MAX_SEO_DESCRIPTION_LENGTH = 161;
+const HTML_TAG_PATTERN = /<[^>]+>/;
 const manifestPath = join(process.cwd(), "src", "generated", "seo", "manifest.json");
 const robotsPath = join(process.cwd(), "public", "robots.txt");
 const sitemapPath = join(process.cwd(), "public", "sitemap.xml");
@@ -70,6 +72,18 @@ const assertLastmod = (lastmod, label) => {
   const parsed = new Date(`${lastmod}T00:00:00Z`);
   if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== lastmod) {
     fail(`${label} lastmod is not a real calendar date: ${lastmod}.`);
+  }
+};
+
+const assertPlainDescription = (description, label) => {
+  if (typeof description !== "string" || description.trim().length === 0) {
+    fail(`${label}.description must be non-empty.`);
+  }
+  if (HTML_TAG_PATTERN.test(description)) {
+    fail(`${label}.description must be stripped plain text.`);
+  }
+  if (description.length > MAX_SEO_DESCRIPTION_LENGTH) {
+    fail(`${label}.description must be length-bounded to ${MAX_SEO_DESCRIPTION_LENGTH} characters.`);
   }
 };
 
@@ -160,9 +174,7 @@ export const loadAndValidateManifest = () => {
     if (typeof page.title !== "string" || page.title.trim().length === 0) {
       fail(`${label}.title must be non-empty.`);
     }
-    if (typeof page.description !== "string" || page.description.trim().length === 0) {
-      fail(`${label}.description must be non-empty.`);
-    }
+    assertPlainDescription(page.description, label);
     if (Array.isArray(page.alternate_paths) && page.alternate_paths.length > 0) {
       fail(`${label}.alternate_paths is not supported yet; hreflang is deferred until reciprocal alternates are validated.`);
     }

@@ -4,6 +4,8 @@ import { join } from "node:path";
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
 const REQUIRED_STATIC_PATHS = new Set(["/", "/books", "/about", "/contact"]);
+const MAX_SEO_DESCRIPTION_LENGTH = 161;
+const HTML_TAG_PATTERN = /<[^>]+>/;
 const mode = process.argv.includes("--dist") ? "dist" : "source";
 const baseUrl = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, "");
 const cwd = process.cwd();
@@ -60,6 +62,19 @@ const assertLastmod = (lastmod, label) => {
   }
 };
 
+const assertPlainDescription = (description, label) => {
+  if (typeof description !== "string" || description.trim().length === 0) {
+    fail(`${label} requires a non-empty description.`);
+    return;
+  }
+  if (HTML_TAG_PATTERN.test(description)) {
+    fail(`${label}.description must be stripped plain text.`);
+  }
+  if (description.length > MAX_SEO_DESCRIPTION_LENGTH) {
+    fail(`${label}.description must be length-bounded to ${MAX_SEO_DESCRIPTION_LENGTH} characters.`);
+  }
+};
+
 const routeOutputPath = (path) =>
   path === "/" ? join(cwd, "dist", "index.html") : join(cwd, "dist", path.slice(1), "index.html");
 
@@ -86,7 +101,8 @@ for (const [page, label] of pages) {
   assertLastmod(page.lastmod, label);
   if (paths.has(page.path)) fail(`duplicate path ${page.path}.`);
   paths.add(page.path);
-  if (!page.title || !page.description) fail(`${label} requires title and description.`);
+  if (!page.title) fail(`${label} requires title.`);
+  assertPlainDescription(page.description, label);
   if (Array.isArray(page.alternate_paths) && page.alternate_paths.length > 0) fail(`${label}.alternate_paths must be omitted until reciprocal hreflang validation exists.`);
 }
 
