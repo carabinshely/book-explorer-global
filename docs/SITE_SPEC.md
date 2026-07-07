@@ -18,11 +18,15 @@ Non-goals:
 ## Page map and routes
 
 Primary routes:
-- `/{ui_lang}/` (home)
-- `/{ui_lang}/books/` (catalog)
-- `/{ui_lang}/books/{slug}/` (product detail)
-- `/{ui_lang}/about/`
-- `/{ui_lang}/contact/`
+- `/` (home)
+- `/books` (catalog)
+- `/books/{slug}` (product detail)
+- `/about`
+- `/contact`
+
+Canonical route policy: use no trailing slash except for `/`. UI language is
+client-side state, not a URL prefix. Do not emit `hreflang` until reciprocal
+alternate relationships are explicit and validated.
 
 Routing example: [[docs/EXAMPLES#Routing Example]].
 

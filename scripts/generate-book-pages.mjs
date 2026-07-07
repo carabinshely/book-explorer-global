@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
@@ -70,6 +70,10 @@ const assertPathPolicy = (path, label) => {
   if (path.length > 1 && path.endsWith("/")) {
     fail(`${label} must not use a trailing slash except root (${path}).`);
   }
+  const segments = path.split("/").filter(Boolean);
+  if (segments.some((segment) => segment === "." || segment === "..")) {
+    fail(`${label} must not contain dot segments (${path}).`);
+  }
 };
 
 const removeHeadSeo = (headHtml) =>
@@ -112,6 +116,10 @@ const applySeo = (template, seo) => {
 const writeRoutePage = (path, html) => {
   assertPathPolicy(path, "route path");
   const outputPath = path === "/" ? join(distDir, "index.html") : join(distDir, path.slice(1), "index.html");
+  const relativeOutput = relative(resolve(distDir), resolve(outputPath));
+  if (relativeOutput === ".." || relativeOutput.startsWith("../") || relativeOutput.startsWith("..\\")) {
+    fail(`route path would escape dist output: ${path}.`);
+  }
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, html, "utf8");
 };

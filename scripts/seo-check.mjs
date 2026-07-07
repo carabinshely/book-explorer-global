@@ -45,6 +45,8 @@ const isHttpsUrl = (value) => {
 const assertPath = (path, label) => {
   if (typeof path !== "string" || !path.startsWith("/")) fail(`${label} must start with '/'.`);
   if (typeof path === "string" && path.length > 1 && path.endsWith("/")) fail(`${label} must not have a trailing slash except root: ${path}.`);
+  const segments = typeof path === "string" ? path.split("/").filter(Boolean) : [];
+  if (segments.some((segment) => segment === "." || segment === "..")) fail(`${label} must not contain dot segments: ${path}.`);
 };
 
 const assertLastmod = (lastmod, label) => {

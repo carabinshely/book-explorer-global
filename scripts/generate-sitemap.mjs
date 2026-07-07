@@ -56,6 +56,10 @@ const assertPathPolicy = (path, label) => {
   if (path.includes("//")) {
     fail(`${label} must not contain duplicate slashes (${path}).`);
   }
+  const segments = path.split("/").filter(Boolean);
+  if (segments.some((segment) => segment === "." || segment === "..")) {
+    fail(`${label} must not contain dot segments (${path}).`);
+  }
 };
 
 const assertLastmod = (lastmod, label) => {
