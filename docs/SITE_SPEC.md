@@ -96,7 +96,7 @@ Example snippet: [[docs/EXAMPLES#Gallery and Media Embed Snippet]].
 
 ## SEO requirements
 
-- Emit `hreflang` across UI language variants.
+- Defer `hreflang` output until reciprocal alternate URLs are generated and validated; do not emit guessed alternates from UI language variants alone.
 - Planned: JSON-LD for `Book`, `Product`, `Organization`, `BreadcrumbList`.
 - Planned: localized metadata (titles/descriptions/JSON-LD) per UI language.
 

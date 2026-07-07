@@ -1,39 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://bronerbooks.com/</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
   </url>
   <url>
     <loc>https://bronerbooks.com/books</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
   </url>
   <url>
     <loc>https://bronerbooks.com/about</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
   </url>
   <url>
     <loc>https://bronerbooks.com/contact</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
   </url>
   <url>
     <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-en-eo</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
+    <image:image>
+      <image:loc>https://bronerbooks.com/generated/books/images/the-lost-umbrella-of-niran/cover.jpg</image:loc>
+    </image:image>
   </url>
   <url>
-    <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-en-ru</loc>
-    <lastmod>2026-05-13</lastmod>
+    <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-en-es</loc>
+    <lastmod>2026-07-07</lastmod>
+    <image:image>
+      <image:loc>https://bronerbooks.com/generated/books/images/the-lost-umbrella-of-niran/cover.jpg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-en</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
+    <image:image>
+      <image:loc>https://bronerbooks.com/generated/books/images/the-lost-umbrella-of-niran/cover.jpg</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-eo</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-07-07</lastmod>
+    <image:image>
+      <image:loc>https://bronerbooks.com/generated/books/images/the-lost-umbrella-of-niran-eo/cover.jpg</image:loc>
+    </image:image>
   </url>
   <url>
-    <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-ru</loc>
-    <lastmod>2026-05-13</lastmod>
+    <loc>https://bronerbooks.com/books/the-lost-umbrella-of-niran-es</loc>
+    <lastmod>2026-07-07</lastmod>
+    <image:image>
+      <image:loc>https://bronerbooks.com/generated/books/images/the-lost-umbrella-of-niran/cover.jpg</image:loc>
+    </image:image>
   </url>
 </urlset>

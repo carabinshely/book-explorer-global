@@ -1,0 +1,107 @@
+{
+  "schema_version": "book-explorer-global-seo-v1",
+  "generated_at": "2026-07-07T16:48:27Z",
+  "site": {
+    "base_url": "https://bronerbooks.com"
+  },
+  "static_pages": [
+    {
+      "path": "/",
+      "title": "Broner Books",
+      "description": "Children's books by Muab Broner.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/books",
+      "title": "Books | Broner Books",
+      "description": "Browse Broner Books editions and languages.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/about",
+      "title": "About | Broner Books",
+      "description": "Learn about Broner Books and its publishing mission.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/contact",
+      "title": "Contact | Broner Books",
+      "description": "Contact Broner Books for reader and publishing inquiries.",
+      "lastmod": "2026-07-07"
+    }
+  ],
+  "book_pages": [
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en-eo",
+      "path": "/books/the-lost-umbrella-of-niran-en-eo",
+      "title": "The Lost Umbrella of Niran - La Perdita Ombrelo de Nirano",
+      "description": "<b>The Lost Umbrella of Niran</b> is a heartfelt children’s picture book, designed for ages 5–6.<br>During Thailand’s Songkran water festival, young Nirano loses a treasured umbrella from his grandmother. As he searches with help from kind neighbors and reflects with his wise grandmother, he learns that asking for help and sharing feelings are acts of strength—not weakness.<br>Set in a vibrant Thai village and illustrated in soft watercolor, this story is a gentle invitation to talk about emotions, family, memory, and hope.<br><br><b>La Perdita Ombrelo de Nirano</b> estas kortuŝa bildlibro por infanoj, destinita por aĝoj 5–6.<br>Dum la tajlanda akvofestivalo Songkrano, la juna Nirano perdas trezoratan ombrelon de sia avino. Dum li serĉas ĝin kun helpo de afablaj najbaroj kaj pripensas kune kun sia saĝa avino, li lernas ke peti helpon kaj dividi siajn sentojn estas agoj de forto — ne de malforto.<br>Lokita en vigla tajlanda vilaĝo kaj ilustrita per mildaj akvareloj, ĉi tiu rakonto estas delikata invito paroli pri emocioj, familio, memoro kaj espero.",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "eo"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-eo",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en-es",
+      "path": "/books/the-lost-umbrella-of-niran-en-es",
+      "title": "The Lost Umbrella of Niran - El paraguas perdido de Niran",
+      "description": "<b>The Lost Umbrella of Niran</b> is a heartfelt children’s picture book, designed for ages 5–6.<br>During Thailand’s Songkran water festival, young Nirano loses a treasured umbrella from his grandmother. As he searches with help from kind neighbors and reflects with his wise grandmother, he learns that asking for help and sharing feelings are acts of strength—not weakness.<br>Set in a vibrant Thai village and illustrated in soft watercolor, this story is a gentle invitation to talk about emotions, family, memory, and hope.<br><br><b>El paraguas perdido de Niran</b> es un cuento ilustrado y emotivo para niños de 5 a 6 años.<br>Durante el festival tailandés del agua Songkran, el pequeño Niran pierde un paraguas muy especial que le regaló su abuela. Mientras lo busca con la ayuda de vecinos amables y reflexiona junto a su sabia abuela, aprende que pedir ayuda y compartir sus sentimientos son actos de fortaleza, no de debilidad.<br>Ambientada en una vibrante aldea tailandesa e ilustrada con suaves acuarelas, esta historia invita con ternura a hablar sobre emociones, familia, recuerdos y esperanza.",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "es"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-es",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en",
+      "path": "/books/the-lost-umbrella-of-niran-en",
+      "title": "The Lost Umbrella of Niran",
+      "description": "<b>The Lost Umbrella of Niran</b> is a heartfelt children’s picture book, designed for ages 5–6.<br>During Thailand’s Songkran water festival, young Nirano loses a treasured umbrella from his grandmother. As he searches with help from kind neighbors and reflects with his wise grandmother, he learns that asking for help and sharing feelings are acts of strength—not weakness.<br>Set in a vibrant Thai village and illustrated in soft watercolor, this story is a gentle invitation to talk about emotions, family, memory, and hope.",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-eo",
+      "path": "/books/the-lost-umbrella-of-niran-eo",
+      "title": "La Perdita Ombrelo de Nirano",
+      "description": "<b>La Perdita Ombrelo de Nirano</b> estas kortuŝa bildlibro por infanoj, destinita por aĝoj 5–6.<br>Dum la tajlanda akvofestivalo Songkrano, la juna Nirano perdas trezoratan ombrelon de sia avino. Dum li serĉas ĝin kun helpo de afablaj najbaroj kaj pripensas kune kun sia saĝa avino, li lernas ke peti helpon kaj dividi siajn sentojn estas agoj de forto — ne de malforto.<br>Lokita en vigla tajlanda vilaĝo kaj ilustrita per mildaj akvareloj, ĉi tiu rakonto estas delikata invito paroli pri emocioj, familio, memoro kaj espero.",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "eo"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-eo",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-eo/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-es",
+      "path": "/books/the-lost-umbrella-of-niran-es",
+      "title": "El paraguas perdido de Niran",
+      "description": "<b>El paraguas perdido de Niran</b> es un cuento ilustrado y emotivo para niños de 5 a 6 años.<br>Durante el festival tailandés del agua Songkran, el pequeño Niran pierde un paraguas muy especial que le regaló su abuela. Mientras lo busca con la ayuda de vecinos amables y reflexiona junto a su sabia abuela, aprende que pedir ayuda y compartir sus sentimientos son actos de fortaleza, no de debilidad.<br>Ambientada en una vibrante aldea tailandesa e ilustrada con suaves acuarelas, esta historia invita con ternura a hablar sobre emociones, familia, recuerdos y esperanza.",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "es"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-es",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    }
+  ]
+}
