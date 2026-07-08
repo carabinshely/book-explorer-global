@@ -1,0 +1,136 @@
+{
+  "schema_version": "book-explorer-global-seo-v1",
+  "generated_at": "2026-07-08T13:30:06Z",
+  "site": {
+    "base_url": "https://bronerbooks.com"
+  },
+  "static_pages": [
+    {
+      "path": "/",
+      "title": "Broner Books",
+      "description": "Children's books by Muab Broner.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/books",
+      "title": "Books | Broner Books",
+      "description": "Browse Broner Books editions and languages.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/about",
+      "title": "About | Broner Books",
+      "description": "Learn about Broner Books and its publishing mission.",
+      "lastmod": "2026-07-07"
+    },
+    {
+      "path": "/contact",
+      "title": "Contact | Broner Books",
+      "description": "Contact Broner Books for reader and publishing inquiries.",
+      "lastmod": "2026-07-07"
+    }
+  ],
+  "book_pages": [
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en-eo",
+      "path": "/books/the-lost-umbrella-of-niran-en-eo",
+      "title": "The Lost Umbrella of Niran - La Perdita Ombrelo de Nirano",
+      "description": "The Lost Umbrella of Niran is a heartfelt children’s picture book, designed for ages 5–6. During Thailand’s Songkran water festival, young Nirano loses a…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "eo"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-eo",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en-es",
+      "path": "/books/the-lost-umbrella-of-niran-en-es",
+      "title": "The Lost Umbrella of Niran - El paraguas perdido de Niran",
+      "description": "The Lost Umbrella of Niran is a heartfelt children’s picture book, designed for ages 5–6. During Thailand’s Songkran water festival, young Nirano loses a…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "es"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-es",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en-ru",
+      "path": "/books/the-lost-umbrella-of-niran-en-ru",
+      "title": "The Lost Umbrella of Niran - Потерянный зонтик Нирана",
+      "description": "The Lost Umbrella of Niran is a heartfelt children’s picture book, designed for ages 5–6. During Thailand’s Songkran water festival, young Nirano loses a…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "ru"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-ru",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-en",
+      "path": "/books/the-lost-umbrella-of-niran-en",
+      "title": "The Lost Umbrella of Niran",
+      "description": "The Lost Umbrella of Niran is a heartfelt children’s picture book, designed for ages 5–6. During Thailand’s Songkran water festival, young Nirano loses a…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-en/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-eo",
+      "path": "/books/the-lost-umbrella-of-niran-eo",
+      "title": "La Perdita Ombrelo de Nirano",
+      "description": "La Perdita Ombrelo de Nirano estas kortuŝa bildlibro por infanoj, destinita por aĝoj 5–6. Dum la tajlanda akvofestivalo Songkrano, la juna Nirano perdas…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "eo"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-eo",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-eo/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-es",
+      "path": "/books/the-lost-umbrella-of-niran-es",
+      "title": "El paraguas perdido de Niran",
+      "description": "El paraguas perdido de Niran es un cuento ilustrado y emotivo para niños de 5 a 6 años. Durante el festival tailandés del agua Songkran, el pequeño Niran pierde…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "es"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-es",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-ru",
+      "path": "/books/the-lost-umbrella-of-niran-ru",
+      "title": "Потерянный зонтик Нирана",
+      "description": "Потерянный зонтик Нирана — трогательная книжка-картинка для детей 5–6 лет. Во время тайского водного праздника Сонгкран маленький Ниран теряет свой любимый…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "ru"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-ru",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-ru/cover.jpg"
+      ]
+    }
+  ]
+}

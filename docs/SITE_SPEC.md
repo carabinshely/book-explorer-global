@@ -18,11 +18,15 @@ Non-goals:
 ## Page map and routes
 
 Primary routes:
-- `/{ui_lang}/` (home)
-- `/{ui_lang}/books/` (catalog)
-- `/{ui_lang}/books/{slug}/` (product detail)
-- `/{ui_lang}/about/`
-- `/{ui_lang}/contact/`
+- `/` (home)
+- `/books` (catalog)
+- `/books/{slug}` (product detail)
+- `/about`
+- `/contact`
+
+Canonical route policy: use no trailing slash except for `/`. UI language is
+client-side state, not a URL prefix. Do not emit `hreflang` until reciprocal
+alternate relationships are explicit and validated.
 
 Routing example: [[docs/EXAMPLES#Routing Example]].
 
@@ -79,7 +83,7 @@ Examples: [[docs/EXAMPLES#Normalized Work (Site Output)]], [[docs/EXAMPLES#Norma
 
 ## i18n behavior
 
-- UI language is prefix-based (`/{ui_lang}/...`).
+- UI language is client-side state selected by the language toggle and persisted locally; it is not part of canonical route paths.
 - Content languages live on SKU data (`languages`).
 - Strings come from `i18n/{ui_lang}.json`.
 - Planned: browser-locale default with English fallback and persistent user toggle.
@@ -96,7 +100,7 @@ Example snippet: [[docs/EXAMPLES#Gallery and Media Embed Snippet]].
 
 ## SEO requirements
 
-- Emit `hreflang` across UI language variants.
+- Defer `hreflang` output until reciprocal alternate URLs are generated and validated; do not emit guessed alternates from UI language variants alone.
 - Planned: JSON-LD for `Book`, `Product`, `Organization`, `BreadcrumbList`.
 - Planned: localized metadata (titles/descriptions/JSON-LD) per UI language.
 

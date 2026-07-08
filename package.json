@@ -10,11 +10,16 @@
     "dev": "vite",
     "build": "npm run sitemap && vite build && node scripts/generate-book-pages.mjs",
     "build:dev": "vite build --mode development",
-    "sitemap": "node scripts/generate-sitemap.mjs",
+    "sitemap": "npm run seo:sitemap",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seo:sitemap": "node scripts/generate-sitemap.mjs",
+    "seo:check": "node scripts/seo-check.mjs",
+    "seo:check:committed": "npm run seo:sitemap && git diff --exit-code -- public/sitemap.xml",
+    "seo:check:dist": "node scripts/seo-check.mjs --dist",
+    "seo:smoke": "npm run seo:check && npm run seo:check:committed && npm run build && npm run seo:check:dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
