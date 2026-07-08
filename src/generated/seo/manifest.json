@@ -1,6 +1,6 @@
 {
   "schema_version": "book-explorer-global-seo-v1",
-  "generated_at": "2026-07-07T18:38:22Z",
+  "generated_at": "2026-07-08T08:00:03Z",
   "site": {
     "base_url": "https://bronerbooks.com"
   },
@@ -43,7 +43,7 @@
       ],
       "canonical_path": "/books/the-lost-umbrella-of-niran-en-eo",
       "images": [
-        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+        "/generated/books/images/the-lost-umbrella-of-niran-en-eo/cover.jpg"
       ]
     },
     {
@@ -62,6 +62,21 @@
       ]
     },
     {
+      "sku_id": "the-lost-umbrella-of-niran-en-ru",
+      "path": "/books/the-lost-umbrella-of-niran-en-ru",
+      "title": "The Lost Umbrella of Niran - Потерянный зонтик Нирана",
+      "description": "The Lost Umbrella of Niran is a heartfelt children’s picture book, designed for ages 5–6. During Thailand’s Songkran water festival, young Nirano loses a…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "en",
+        "ru"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-en-ru",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-en-ru/cover.jpg"
+      ]
+    },
+    {
       "sku_id": "the-lost-umbrella-of-niran-en",
       "path": "/books/the-lost-umbrella-of-niran-en",
       "title": "The Lost Umbrella of Niran",
@@ -72,7 +87,7 @@
       ],
       "canonical_path": "/books/the-lost-umbrella-of-niran-en",
       "images": [
-        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+        "/generated/books/images/the-lost-umbrella-of-niran-en/cover.jpg"
       ]
     },
     {
@@ -101,6 +116,20 @@
       "canonical_path": "/books/the-lost-umbrella-of-niran-es",
       "images": [
         "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
+      ]
+    },
+    {
+      "sku_id": "the-lost-umbrella-of-niran-ru",
+      "path": "/books/the-lost-umbrella-of-niran-ru",
+      "title": "Потерянный зонтик Нирана",
+      "description": "Потерянный зонтик Нирана — трогательная книжка-картинка для детей 5–6 лет. Во время тайского водного праздника Сонгкран маленький Ниран теряет свой любимый…",
+      "lastmod": "2026-07-07",
+      "languages": [
+        "ru"
+      ],
+      "canonical_path": "/books/the-lost-umbrella-of-niran-ru",
+      "images": [
+        "/generated/books/images/the-lost-umbrella-of-niran-ru/cover.jpg"
       ]
     }
   ]
