@@ -76,7 +76,7 @@ const assertPlainDescription = (description, label) => {
 };
 
 const routeOutputPath = (path) =>
-  path === "/" ? join(cwd, "dist", "index.html") : join(cwd, "dist", path.slice(1), "index.html");
+  path === "/" ? join(cwd, "dist", "index.html") : join(cwd, "dist", `${path.slice(1)}.html`);
 
 const parseSitemapLocs = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
@@ -155,6 +155,8 @@ if (mode === "dist") {
     if (jsonLdCount !== 1) fail(`representative page must have exactly one JSON-LD script; found ${jsonLdCount}.`);
     if (html.includes("hreflang=")) fail("dist pages must not emit hreflang until reciprocal alternates are validated.");
     if (!html.includes(`href=\"${baseUrl}${representative.path}\"`)) fail("representative page canonical does not match manifest path.");
+    const manifestImage = Array.isArray(representative.images) ? representative.images.find(Boolean) : undefined;
+    if (manifestImage && !html.includes(`${baseUrl}${manifestImage}`)) fail("representative page metadata does not include the manifest image URL.");
   }
 }
 

@@ -127,9 +127,12 @@ const applySeo = (template, seo) => {
   return `${beforeHead}\n${removeHeadSeo(headBody)}${seoTags(seo)}${afterHeadClose}`;
 };
 
+const routeOutputPath = (path) =>
+  path === "/" ? join(distDir, "index.html") : join(distDir, `${path.slice(1)}.html`);
+
 const writeRoutePage = (path, html) => {
   assertPathPolicy(path, "route path");
-  const outputPath = path === "/" ? join(distDir, "index.html") : join(distDir, path.slice(1), "index.html");
+  const outputPath = routeOutputPath(path);
   const relativeOutput = relative(resolve(distDir), resolve(outputPath));
   if (relativeOutput === ".." || relativeOutput.startsWith("../") || relativeOutput.startsWith("..\\")) {
     fail(`route path would escape dist output: ${path}.`);
@@ -159,8 +162,13 @@ const buildAssociatedMedia = (sku) => {
   return media.length > 0 ? media : undefined;
 };
 
+const primaryManifestImage = (page, sku) => {
+  const manifestImages = Array.isArray(page.images) ? page.images.filter(Boolean) : [];
+  return manifestImages[0] || page.image?.url || page.cover_image || sku.cover_image;
+};
+
 const buildBookJsonLd = (page, sku) => {
-  const image = toAbsoluteUrl(page.image?.url || page.cover_image || sku.cover_image);
+  const image = toAbsoluteUrl(primaryManifestImage(page, sku));
   const associatedMedia = buildAssociatedMedia(sku);
   const jsonLd = {
     "@context": "https://schema.org",
@@ -266,7 +274,7 @@ const main = () => {
       description: stripHtml(page.description),
       canonicalUrl: `${baseUrl}${page.path}`,
       type: "book",
-      imageUrl: toAbsoluteUrl(page.image?.url || page.cover_image || sku.cover_image),
+      imageUrl: toAbsoluteUrl(primaryManifestImage(page, sku)),
       jsonLd: buildBookJsonLd(page, sku),
     });
     writeRoutePage(page.path, html);
