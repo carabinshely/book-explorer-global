@@ -1,6 +1,6 @@
 {
   "schema_version": "book-explorer-global-seo-v1",
-  "generated_at": "2026-07-08T08:11:37Z",
+  "generated_at": "2026-07-08T13:30:06Z",
   "site": {
     "base_url": "https://bronerbooks.com"
   },
@@ -43,7 +43,7 @@
       ],
       "canonical_path": "/books/the-lost-umbrella-of-niran-en-eo",
       "images": [
-        "/generated/books/images/the-lost-umbrella-of-niran-en-eo/cover.jpg"
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
       ]
     },
     {
@@ -73,7 +73,7 @@
       ],
       "canonical_path": "/books/the-lost-umbrella-of-niran-en-ru",
       "images": [
-        "/generated/books/images/the-lost-umbrella-of-niran-en-ru/cover.jpg"
+        "/generated/books/images/the-lost-umbrella-of-niran/cover.jpg"
       ]
     },
     {
