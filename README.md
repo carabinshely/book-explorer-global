@@ -15,6 +15,26 @@ npm run dev
 npm run build
 ```
 
+## SEO workflow
+
+After the publish pipeline refreshes `src/generated/seo/manifest.json`, run the
+SEO checks from this directory:
+
+```sh
+npm run seo:check
+npm run build
+npm run seo:check:dist
+```
+
+For the full local SEO smoke sequence, run:
+
+```sh
+npm run seo:smoke
+```
+
+Credential-gated Search Console setup, sitemap submission, and post-deploy
+inspection steps live in `docs/search-console.md`.
+
 ## Analytics
 
 Google Analytics 4 is configured for the site with measurement ID
