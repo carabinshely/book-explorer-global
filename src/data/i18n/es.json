@@ -92,5 +92,14 @@
     "fr": "Francés",
     "ru": "Ruso",
     "he": "Hebreo"
+  },
+  "not_found": {
+    "eyebrow": "Página no encontrada",
+    "title": "Esta historia se salió del estante.",
+    "missing_path_prefix": "No pudimos encontrar",
+    "missing_path_suffix": "La colección de Broner Books sigue aquí, y puedes seguir explorando con los enlaces de abajo.",
+    "guidance": "Prueba la colección de libros, vuelve al inicio o usa la navegación principal para encontrar otra página.",
+    "browse_books": "Ver libros",
+    "return_home": "Volver al inicio"
   }
 }

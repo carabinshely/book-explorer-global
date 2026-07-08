@@ -92,5 +92,14 @@
     "fr": "French",
     "ru": "Russian",
     "he": "Hebrew"
+  },
+  "not_found": {
+    "eyebrow": "Page not found",
+    "title": "This story wandered off the shelf.",
+    "missing_path_prefix": "We could not find",
+    "missing_path_suffix": "The Broner Books collection is still here, and you can keep exploring from the links below.",
+    "guidance": "Try the book collection, return home, or use the main navigation to find another page.",
+    "browse_books": "Browse Books",
+    "return_home": "Return Home"
   }
 }

@@ -92,5 +92,14 @@
     "fr": "Franca",
     "ru": "Rusa",
     "he": "Hebrea"
+  },
+  "not_found": {
+    "eyebrow": "Paĝo ne trovita",
+    "title": "Ĉi tiu rakonto devojiĝis de la breto.",
+    "missing_path_prefix": "Ni ne povis trovi",
+    "missing_path_suffix": "La kolekto de Broner Books ankoraŭ estas ĉi tie, kaj vi povas plu esplori per la subaj ligiloj.",
+    "guidance": "Provu la librokolekton, revenu hejmen, aŭ uzu la ĉefan navigadon por trovi alian paĝon.",
+    "browse_books": "Rigardi librojn",
+    "return_home": "Reveni hejmen"
   }
 }
