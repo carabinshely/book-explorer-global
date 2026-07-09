@@ -2,6 +2,11 @@
 
 This runbook covers BronerBooks.com SEO measurement readiness. Repository agents may prepare files and checks, but Google Search Console verification, sitemap submission, DNS changes, GA/GTM changes, and account inspection are credential-gated operator actions.
 
+
+## Local MCP setup pointer
+
+Local Codex/MCP setup for Google Search Console and GA4 lives in the umbrella root runbook: `../../docs/seo-analytics-mcp.md` relative to this file, or `docs/seo-analytics-mcp.md` from the umbrella root. This website document owns deployed Search Console verification and baseline execution only; do not duplicate local credential or MCP setup here.
+
 ## Repo-complete preflight
 
 Run from `book-explorer-global/` after the publish pipeline has generated `src/generated/seo/manifest.json`:
