@@ -22,7 +22,7 @@ const About = () => {
             {/* Mission */}
             <section className="space-y-4" aria-labelledby="about-mission">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-                Mission
+                {t.about.section_labels.mission}
               </p>
               <h2 id="about-mission" className="font-display text-2xl md:text-3xl font-medium text-foreground">
                 {t.about.mission_title}
@@ -37,7 +37,7 @@ const About = () => {
             {/* Story */}
             <section className="space-y-4" aria-labelledby="about-story">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
-                Studio
+                {t.about.section_labels.studio}
               </p>
               <h2 id="about-story" className="font-display text-2xl md:text-3xl font-medium text-foreground">
                 {t.about.story_title}
@@ -50,7 +50,7 @@ const About = () => {
             {/* Values */}
             <section className="border-y border-border py-8" aria-labelledby="about-principles">
               <h2 id="about-principles" className="font-display text-2xl font-medium text-foreground mb-6">
-                What guides each edition
+                {t.about.section_labels.principles}
               </h2>
               <dl className="divide-y divide-border">
                 <div className="grid gap-2 py-5 md:grid-cols-[12rem_1fr] md:gap-8">
