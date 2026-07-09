@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SKU, getLanguageName } from '@/hooks/useBooks';
@@ -14,6 +15,8 @@ export function BookCard({ sku }: BookCardProps) {
   const format = sku.specs?.format;
   const pages = sku.specs?.pages;
   const imageUrl = sku.cover_image;
+  const [coverFailed, setCoverFailed] = useState(false);
+  const showCoverImage = Boolean(imageUrl) && !coverFailed;
 
   return (
     <Link
@@ -22,12 +25,13 @@ export function BookCard({ sku }: BookCardProps) {
     >
       {/* Cover Image */}
       <div className="relative aspect-[7/8] overflow-hidden bg-muted">
-        {imageUrl ? (
+        {showCoverImage ? (
           <img
             src={imageUrl}
             alt={`Cover of ${sku.title}`}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow group-hover:scale-105"
             loading="lazy"
+            onError={() => setCoverFailed(true)}
           />
         ) : (
           <div className="absolute inset-0 flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,rgba(138,40,57,0.16),transparent_42%),linear-gradient(135deg,hsl(var(--secondary)),hsl(var(--background)))] p-6 text-foreground">
