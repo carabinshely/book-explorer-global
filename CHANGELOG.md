@@ -10,7 +10,6 @@
 ### Changed
 
 - Raised navigation, footer, button, and book-filter controls to meet touch-target expectations.
-- Reworked the About page into a calmer editorial layout with clearer mission and studio copy.
 - Made missing book covers feel intentional instead of showing generic placeholders.
 
 ### Fixed
