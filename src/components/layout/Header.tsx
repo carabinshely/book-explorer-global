@@ -38,7 +38,7 @@ export function Header() {
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center gap-2 font-display text-xl font-semibold text-foreground transition-colors hover:text-accent"
+          className="flex min-h-11 items-center gap-2 font-display text-xl font-semibold text-foreground transition-colors hover:text-accent"
         >
           <span className="text-2xl">🛋️</span>
           <span className="hidden sm:inline">{t.site.name}</span>
@@ -51,7 +51,7 @@ export function Header() {
               key={link.href}
               to={link.href}
               className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors rounded-md",
+                "inline-flex min-h-11 items-center px-4 py-2 text-sm font-medium transition-colors rounded-md",
                 isActive(link.href)
                   ? "text-accent bg-accent/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"

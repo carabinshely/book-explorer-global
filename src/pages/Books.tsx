@@ -113,7 +113,7 @@ const Books = () => {
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder={t.catalog.search_placeholder}
                 aria-label={t.catalog.search_placeholder}
-                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               />
             </div>
             {searchQuery && (
