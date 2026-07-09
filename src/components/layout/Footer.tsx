@@ -11,7 +11,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <Link to="/" className="font-display text-xl font-semibold text-foreground">
+            <Link to="/" className="inline-flex min-h-11 items-center font-display text-xl font-semibold text-foreground">
               {t.site.name}
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -27,25 +27,25 @@ export function Footer() {
             <nav className="flex flex-col space-y-2">
               <Link 
                 to="/" 
-                className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-accent transition-colors"
               >
                 {t.nav.home}
               </Link>
               <Link 
                 to="/books" 
-                className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-accent transition-colors"
               >
                 {t.nav.books}
               </Link>
               <Link 
                 to="/about" 
-                className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-accent transition-colors"
               >
                 {t.nav.about}
               </Link>
               <Link 
                 to="/contact" 
-                className="text-sm text-muted-foreground hover:text-accent transition-colors"
+                className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-accent transition-colors"
               >
                 {t.nav.contact}
               </Link>
