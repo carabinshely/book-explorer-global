@@ -18,67 +18,67 @@ const About = () => {
       {/* Content */}
       <section className="py-12 md:py-16">
         <div className="container max-w-3xl">
-          <div className="prose prose-lg mx-auto space-y-12">
+          <div className="mx-auto space-y-12">
             {/* Mission */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">🎯</span>
-                <h2 className="font-display text-2xl md:text-3xl font-medium text-foreground m-0">
-                  {t.about.mission_title}
-                </h2>
-              </div>
+            <section className="space-y-4" aria-labelledby="about-mission">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
+                Mission
+              </p>
+              <h2 id="about-mission" className="font-display text-2xl md:text-3xl font-medium text-foreground">
+                {t.about.mission_title}
+              </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 {t.about.mission}
               </p>
-            </div>
+            </section>
 
-            <div className="divider-ornament">
-              <span className="text-xl">📖</span>
-            </div>
+            <div className="h-px bg-border" aria-hidden="true" />
 
             {/* Story */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">✨</span>
-                <h2 className="font-display text-2xl md:text-3xl font-medium text-foreground m-0">
-                  {t.about.story_title}
-                </h2>
-              </div>
+            <section className="space-y-4" aria-labelledby="about-story">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">
+                Studio
+              </p>
+              <h2 id="about-story" className="font-display text-2xl md:text-3xl font-medium text-foreground">
+                {t.about.story_title}
+              </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 {t.about.story}
               </p>
-            </div>
+            </section>
 
-            {/* Values Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
-              <div className="text-center p-6 bg-secondary/50 rounded-lg">
-                <span className="text-4xl mb-3 block">🌍</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">
-                  {t.about.values.global_reach_title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {t.about.values.global_reach_body}
-                </p>
-              </div>
-              <div className="text-center p-6 bg-secondary/50 rounded-lg">
-                <span className="text-4xl mb-3 block">📚</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">
-                  {t.about.values.quality_first_title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {t.about.values.quality_first_body}
-                </p>
-              </div>
-              <div className="text-center p-6 bg-secondary/50 rounded-lg">
-                <span className="text-4xl mb-3 block">💡</span>
-                <h3 className="font-display text-lg font-medium text-foreground mb-2">
-                  {t.about.values.education_title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {t.about.values.education_body}
-                </p>
-              </div>
-            </div>
+            {/* Values */}
+            <section className="border-y border-border py-8" aria-labelledby="about-principles">
+              <h2 id="about-principles" className="font-display text-2xl font-medium text-foreground mb-6">
+                What guides each edition
+              </h2>
+              <dl className="divide-y divide-border">
+                <div className="grid gap-2 py-5 md:grid-cols-[12rem_1fr] md:gap-8">
+                  <dt className="font-display text-lg font-medium text-foreground">
+                    {t.about.values.global_reach_title}
+                  </dt>
+                  <dd className="text-muted-foreground">
+                    {t.about.values.global_reach_body}
+                  </dd>
+                </div>
+                <div className="grid gap-2 py-5 md:grid-cols-[12rem_1fr] md:gap-8">
+                  <dt className="font-display text-lg font-medium text-foreground">
+                    {t.about.values.quality_first_title}
+                  </dt>
+                  <dd className="text-muted-foreground">
+                    {t.about.values.quality_first_body}
+                  </dd>
+                </div>
+                <div className="grid gap-2 py-5 md:grid-cols-[12rem_1fr] md:gap-8">
+                  <dt className="font-display text-lg font-medium text-foreground">
+                    {t.about.values.education_title}
+                  </dt>
+                  <dd className="text-muted-foreground">
+                    {t.about.values.education_body}
+                  </dd>
+                </div>
+              </dl>
+            </section>
           </div>
         </div>
       </section>
