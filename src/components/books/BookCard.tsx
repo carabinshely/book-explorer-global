@@ -13,7 +13,7 @@ export function BookCard({ sku }: BookCardProps) {
   const hasMarketplace = Object.values(sku.amazon?.marketplaces ?? {}).some(Boolean);
   const format = sku.specs?.format;
   const pages = sku.specs?.pages;
-  const imageUrl = sku.cover_image || '/placeholder.svg';
+  const imageUrl = sku.cover_image;
 
   return (
     <Link
@@ -22,12 +22,25 @@ export function BookCard({ sku }: BookCardProps) {
     >
       {/* Cover Image */}
       <div className="relative aspect-[7/8] overflow-hidden bg-muted">
-        <img
-          src={imageUrl}
-          alt={`Cover of ${sku.title}`}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-slow group-hover:scale-105"
-          loading="lazy"
-        />
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={`Cover of ${sku.title}`}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="absolute inset-0 flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,rgba(138,40,57,0.16),transparent_42%),linear-gradient(135deg,hsl(var(--secondary)),hsl(var(--background)))] p-6 text-foreground">
+            <div className="text-4xl" aria-hidden="true">📚</div>
+            <p
+              className="font-display text-2xl font-semibold leading-tight text-foreground"
+              dangerouslySetInnerHTML={{ __html: sku.title }}
+            />
+            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              {sku.languages.map((langCode) => langCode.toUpperCase()).join(' · ')}
+            </p>
+          </div>
+        )}
         
         {/* Edition Badge */}
         {sku.edition_type === 'bilingual' && (
