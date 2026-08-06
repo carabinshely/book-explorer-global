@@ -1,0 +1,41 @@
+name: Website bug
+about: Report reproducible rendering, routing, SEO, analytics, or accessibility behavior
+title: "Bug: "
+labels:
+  - type:bug
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Include route, language, viewport, browser, and deployment/local context.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Generated-data and commit context
+      description: Name the website commit and relevant generated manifest/catalog revision.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Do not include credentials, email addresses, subscriber data, or private assets.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and workaround
