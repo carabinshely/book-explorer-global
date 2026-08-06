@@ -1,0 +1,41 @@
+name: Website decision
+about: Decide a user-experience, architecture, integration, or visual direction
+title: "Decision: "
+labels:
+  - type:decision
+body:
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision required
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: User and business impact
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options
+      description: Include no change when credible.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Canonical-data, accessibility, multilingual, SEO, and platform constraints
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and decision criteria
+    validations:
+      required: true
+  - type: textarea
+    id: followup
+    attributes:
+      label: Resulting implementation and verification Issues

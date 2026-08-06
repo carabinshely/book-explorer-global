@@ -1,0 +1,45 @@
+name: Website task
+about: Track a concrete rendering, routing, SEO, analytics, accessibility, or verification outcome
+title: ""
+labels:
+  - type:task
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and exclusions
+      description: State whether facts must come from generated canonical data rather than website overrides.
+    validations:
+      required: true
+  - type: textarea
+    id: activation
+    attributes:
+      label: Activation condition
+      description: Name copy, canonical-data, credential, deployment, or asset gates. Write "None" when ready.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Use full owner/repository#number references.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Include automated, local browser, accessibility, SEO, analytics, and production checks as applicable.
+    validations:
+      required: true
