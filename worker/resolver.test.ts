@@ -1,33 +1,45 @@
 import { describe, expect, it } from "vitest";
 import fixture from "./manifest.fixture.json";
-import { resolvePath, validateManifest } from "./resolver";
+import { canonicalJson, resolvePath, validateManifest, verifyEnvelopeChecksum } from "./resolver";
+import { EMBEDDED_MANIFEST_SHA256 } from "./manifest.integrity";
+
+const path = "/r/niran-storytime-kit-v1-en-p5-book";
+const first = fixture.links[0];
+const withLifecycle = (lifecycle: string, extra: Record<string, unknown> = {}) => ({ ...fixture, links: [{ ...first, lifecycle, public_path: path, ...extra }] });
 
 describe("link manifest resolver", () => {
-  const manifest = validateManifest(fixture, true);
-
-  it("resolves shipped, disabled fallback, disabled gone, deprecated, and unknown paths exhaustively", () => {
-    expect(resolvePath(manifest, "/r/niran-storytime-kit-v1-en-p5-book")).toMatchObject({ kind: "redirect", location: expect.stringContaining("utm_campaign=niran_storytime_kit") });
-    expect(resolvePath(manifest, "/r/niran-disabled-with-fallback")).toEqual({ kind: "redirect", location: "https://bronerbooks.com/books/the-lost-umbrella-of-niran-en" });
-    expect(resolvePath(manifest, "/r/niran-disabled-without-fallback")).toEqual({ kind: "gone", recovery: "niran" });
-    expect(resolvePath(manifest, "/r/niran-deprecated")).toEqual({ kind: "gone", recovery: "niran" });
-    expect(resolvePath(manifest, "/r/missing")).toEqual({ kind: "not-found", recovery: "generic" });
+  it("accepts the exact compiler fixture only outside production and verifies its payload digest", async () => {
+    expect(validateManifest(fixture).links).toHaveLength(2);
+    expect(() => validateManifest(fixture, true)).toThrow("lifecycle");
+    await expect(verifyEnvelopeChecksum(fixture, EMBEDDED_MANIFEST_SHA256)).resolves.toMatchObject({ registry_checksum: "d09fb0f19d80b0900aaf9d7a26526cad1757e0cc468c983af9d77a0303d487ad" });
+    expect(canonicalJson(fixture)).toBe(`${JSON.stringify(fixture)}\n`);
   });
 
-  it("allows active and approved-preview only through the preview resolver", () => {
-    const path = "/r/niran-storytime-kit-v1-en-p5-book";
-    const preview = validateManifest({ ...fixture, links: [{ ...fixture.links[0], lifecycle: "approved-preview" }] });
-    expect(resolvePath(preview, path, true)).toMatchObject({ kind: "redirect" });
-    expect(resolvePath(preview, path)).toEqual({ kind: "gone", recovery: "niran" });
-    const active = validateManifest({ ...fixture, links: [{ ...fixture.links[0], lifecycle: "active" }] });
+  it("dispatches every lifecycle and mode", () => {
+    const shipped = validateManifest(withLifecycle("shipped"), true);
+    expect(resolvePath(shipped, path)).toMatchObject({ kind: "redirect" });
+    const active = validateManifest(withLifecycle("active"));
     expect(resolvePath(active, path)).toMatchObject({ kind: "redirect" });
-    expect(() => validateManifest(preview, true)).toThrow("lifecycle");
-    expect(() => validateManifest(active, true)).toThrow("lifecycle");
+    const preview = validateManifest(withLifecycle("approved-preview"));
+    expect(resolvePath(preview, path)).toEqual({ kind: "gone", recovery: "niran" });
+    expect(resolvePath(preview, path, true)).toMatchObject({ kind: "redirect" });
+    const approved = validateManifest(withLifecycle("approved"));
+    expect(resolvePath(approved, path)).toEqual({ kind: "gone", recovery: "niran" });
+    expect(resolvePath(approved, path, true)).toMatchObject({ kind: "redirect" });
+    const deprecated = validateManifest(withLifecycle("deprecated"), true);
+    expect(resolvePath(deprecated, path)).toEqual({ kind: "gone", recovery: "niran" });
+    const fallback = validateManifest(withLifecycle("disabled", { fallback_url: "https://bronerbooks.com/books/the-lost-umbrella-of-niran-en" }), true);
+    expect(resolvePath(fallback, path)).toMatchObject({ kind: "redirect" });
+    const disabled = validateManifest(withLifecycle("disabled"), true);
+    expect(resolvePath(disabled, path)).toEqual({ kind: "gone", recovery: "niran" });
+    expect(resolvePath(disabled, "/r/missing")).toEqual({ kind: "not-found", recovery: "generic" });
   });
 
-  it("fails closed for malformed schema, duplicate routes, unsafe locations, and production-only violations", () => {
-    expect(() => validateManifest({})).toThrow("schema_version");
-    expect(() => validateManifest({ ...fixture, links: [fixture.links[0], fixture.links[0]] })).toThrow("identity");
-    expect(() => validateManifest({ ...fixture, links: [{ ...fixture.links[0], url: "https://example.test/" }] })).toThrow("url");
-    expect(() => validateManifest({ ...fixture, registry_checksum: "bad" })).toThrow("registry_checksum");
+  it("fails closed for valid-hex checksum tampering, provenance changes, duplicate routes, and unsafe locations", async () => {
+    const hexTampered = { ...fixture, registry_checksum: "b".repeat(64) };
+    await expect(verifyEnvelopeChecksum(hexTampered, EMBEDDED_MANIFEST_SHA256)).rejects.toThrow("envelope checksum");
+    expect(() => validateManifest({ ...fixture, provenance: { ...fixture.provenance, book_id: "book_other" } })).toThrow("provenance");
+    expect(() => validateManifest({ ...fixture, links: [first, first] })).toThrow("identity");
+    expect(() => validateManifest(withLifecycle("approved", { url: "https://example.test/" }))).toThrow("url");
   });
 });

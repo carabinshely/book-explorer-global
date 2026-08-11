@@ -1,10 +1,10 @@
 import manifestSource from "./manifest.fixture.json";
-import { resolvePath, validateManifest, type LinkManifest, type Resolution } from "./resolver";
+import { EMBEDDED_MANIFEST_SHA256 } from "./manifest.integrity";
+import { resolvePath, validateManifest, verifyEnvelopeChecksum, type LinkManifest, type Resolution } from "./resolver";
 
 export interface WorkerEnvironment {
   /** Preview is the only place where an approved-preview compiler record may resolve. */
   LINK_ENVIRONMENT?: "preview" | "production";
-  LINK_MANIFEST?: unknown;
 }
 
 const COMMON_HEADERS = {
@@ -43,14 +43,14 @@ export function handle(request: Request, manifest: LinkManifest, preview = false
 }
 
 export default {
-  fetch(request: Request, env: WorkerEnvironment): Response {
+  async fetch(request: Request, env: WorkerEnvironment): Promise<Response> {
     if (request.method !== "GET" && request.method !== "HEAD") {
       return new Response(null, { status: 405, headers: { ...COMMON_HEADERS, Allow: "GET, HEAD" } });
     }
     const preview = env.LINK_ENVIRONMENT === "preview";
-    const source = env.LINK_MANIFEST ?? manifestSource;
     try {
-      return handle(request, validateManifest(source, !preview), preview);
+      const manifest = await verifyEnvelopeChecksum(manifestSource, EMBEDDED_MANIFEST_SHA256, !preview);
+      return handle(request, manifest, preview);
     } catch {
       // A malformed manifest must never redirect. It receives the generic recovery response.
       return responseFor({ kind: "not-found", recovery: "generic" }, request.method);
