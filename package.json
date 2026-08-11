@@ -29,7 +29,13 @@
     "links:deploy:production": "node scripts/links-dx.mjs deploy --environment production",
     "links:smoke:production": "node scripts/links-dx.mjs smoke --environment production",
     "links:rollback": "node scripts/links-dx.mjs rollback",
-    "links:docs:check": "node scripts/check-links-docs.mjs"
+    "links:docs:check": "node scripts/check-links-docs.mjs",
+    "links:proof:check": "node worker/release-proof.mjs check",
+    "links:proof:test": "node --test worker/release-proof.node-test.mjs",
+    "links:proof:evidence": "node worker/release-proof.mjs validate-evidence",
+    "links:preview:parity": "node worker/release-proof.mjs preview-parity",
+    "links:destination-health": "node worker/release-proof.mjs destination-health",
+    "links:canonical-smoke": "node worker/release-proof.mjs canonical-smoke"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
