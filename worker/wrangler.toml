@@ -1,0 +1,4 @@
+name = "bronerbooks-link-resolver"
+main = "index.ts"
+compatibility_date = "2025-02-01"
+# Deploy configuration is intentionally absent: this local Worker is not a publishing command.
