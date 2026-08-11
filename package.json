@@ -19,7 +19,17 @@
     "seo:check": "node scripts/seo-check.mjs",
     "seo:check:committed": "npm run seo:sitemap && git diff --exit-code -- public/sitemap.xml",
     "seo:check:dist": "node scripts/seo-check.mjs --dist",
-    "seo:smoke": "npm run seo:check && npm run seo:check:committed && npm run build && npm run seo:check:dist"
+    "seo:smoke": "npm run seo:check && npm run seo:check:committed && npm run build && npm run seo:check:dist",
+    "links:check": "node scripts/links-dx.mjs check --environment preview",
+    "links:test": "node --test scripts/links-dx.test.mjs",
+    "links:preview": "node scripts/links-dx.mjs preview --environment preview",
+    "links:smoke:local": "node scripts/links-dx.mjs smoke-local",
+    "links:deploy:preview": "node scripts/links-dx.mjs deploy --environment preview",
+    "links:smoke:preview": "node scripts/links-dx.mjs smoke --environment preview",
+    "links:deploy:production": "node scripts/links-dx.mjs deploy --environment production",
+    "links:smoke:production": "node scripts/links-dx.mjs smoke --environment production",
+    "links:rollback": "node scripts/links-dx.mjs rollback",
+    "links:docs:check": "node scripts/check-links-docs.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

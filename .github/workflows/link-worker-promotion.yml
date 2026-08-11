@@ -1,0 +1,67 @@
+name: Promote link Worker (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "check is dry-run only; deploy and rollback require protected approval"
+        required: true
+        default: check
+        type: choice
+        options: [check, deploy, rollback]
+      environment:
+        description: "Protected GitHub environment to use"
+        required: true
+        default: preview
+        type: choice
+        options: [preview, production]
+      version:
+        description: "Exact Worker version ID (required for production deploy/rollback)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-worker-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    name: ${{ inputs.operation }} link Worker (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    environment: link-worker-${{ inputs.environment }}
+    env:
+      # Secret values are never logged; repository environments must require reviewers.
+      CLOUDFLARE_API_TOKEN: ${{ inputs.environment == 'production' && secrets.CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_LINKS_PREVIEW }}
+      WRANGLER_LOG: error
+      LINK_SMOKE_URL: ${{ vars.LINK_SMOKE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run links:check
+      - name: Validate manual plan
+        run: |
+          if [ "${{ inputs.operation }}" = "check" ]; then
+            npm run links:deploy:preview -- --check
+          elif [ "${{ inputs.operation }}" = "rollback" ]; then
+            npm run links:rollback -- --environment "${{ inputs.environment }}" --version "${{ inputs.version }}" --check
+          else
+            npm run links:deploy:${{ inputs.environment }} -- --version "${{ inputs.version }}" --check
+          fi
+      - name: Execute approved operation
+        if: ${{ inputs.operation != 'check' }}
+        run: |
+          if [ "${{ inputs.operation }}" = "rollback" ]; then
+            npm run links:rollback -- --environment "${{ inputs.environment }}" --version "${{ inputs.version }}" --execute
+          else
+            npm run links:deploy:${{ inputs.environment }} -- --version "${{ inputs.version }}" --execute
+          fi
+      - name: Query-free smoke after an approved change
+        if: ${{ inputs.operation != 'check' }}
+        run: npm run links:smoke:${{ inputs.environment }} -- --execute

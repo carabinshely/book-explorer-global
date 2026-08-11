@@ -56,3 +56,9 @@ public/generated/books/images/
 ```
 
 No sync or pull scripts live in this repo anymore. Refresh those generated files from `juna_lumturo_retejo` with its `tools/ingest_cli.py --publish-target book-explorer-global --target-repo ...` flow.
+
+## Link Worker operations
+
+The owned `/r/...` resolver has a separate, protected manual path. Start with
+local-safe commands in the [Link Worker runbook](docs/runbooks/link-worker.md);
+the static GitHub Pages deployment remains separate.
