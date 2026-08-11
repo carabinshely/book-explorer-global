@@ -31,6 +31,12 @@ function requireVersion() {
   }
   return true;
 }
+function workerName() {
+  return environment === "production" ? "bronerbooks-link-resolver" : "bronerbooks-link-resolver-preview";
+}
+function versionDeployCommand() {
+  return ["versions", "deploy", version, "--name", workerName()];
+}
 function runWrangler(commandArgs) {
   const result = spawnSync("npx", ["--yes", "wrangler@4.32.0", ...commandArgs], {
     stdio: "inherit",
@@ -68,10 +74,15 @@ else if (command === "check") {
   }
 } else if (command === "deploy" || command === "rollback") {
   if (!requireEnvironment()) process.exitCode = 2;
-  else if (environment === "production" && !requireVersion()) process.exitCode = 2;
-  else if (check) plan(`${command} ${environment}${version ? ` version ${version}` : ""} is a dry-run plan; no deployment was attempted`);
+  else if ((environment === "production" || command === "rollback") && !requireVersion()) process.exitCode = 2;
+  else if (check) {
+    const intended = command === "rollback" || environment === "production"
+      ? `npx --yes wrangler@4.32.0 ${versionDeployCommand().join(" ")}`
+      : "npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --name bronerbooks-link-resolver-preview --var LINK_ENVIRONMENT:preview";
+    plan(`${command} ${environment} dry-run: ${intended}; no deployment was attempted`);
+  }
   else if (!execute) fail(`${command} is disabled by default; use --check locally or protected workflow --execute`);
   else if (!process.env.CLOUDFLARE_API_TOKEN) fail("CLOUDFLARE_API_TOKEN is required only for protected workflow execution");
-  else if (environment === "production") runWrangler(["versions", "deploy", version, "--name", "bronerbooks-link-resolver"]);
-  else runWrangler(["deploy", "--config", "worker/wrangler.toml", "--name", "bronerbooks-link-resolver-preview", "--var", "LINK_ENVIRONMENT:preview"]);
+  else if (command === "rollback" || environment === "production") runWrangler(versionDeployCommand());
+  else runWrangler(["deploy", "--config", "worker/wrangler.toml", "--name", workerName(), "--var", "LINK_ENVIRONMENT:preview"]);
 } else fail(`unknown command: ${command}`);

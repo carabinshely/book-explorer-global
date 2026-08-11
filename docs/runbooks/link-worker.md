@@ -25,8 +25,8 @@ npm run links:rollback -- --environment production --version exactWorkerVersion 
 
 `links:check`, `links:test`, and `links:smoke:local` are fully local. A remote
 smoke uses only a query-free `LINK_SMOKE_URL`; the default `--check` reports its
-plan without making a request. Every production deployment or rollback requires
-a syntactically exact version ID. Without `--execute`, deployment and rollback
+plan without making a request. Every rollback (including preview) and production deployment requires a
+syntactically exact version ID. Without `--execute`, deployment and rollback
 refuse rather than guess.
 
 ## Protected manual promotion

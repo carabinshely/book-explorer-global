@@ -45,6 +45,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run links:check
+      - run: npm run links:test
+      - run: npm run links:smoke:local
+      - run: bash worker/typecheck.sh
+      - run: npm run links:docs:check
       - name: Validate manual plan
         run: |
           if [ "${{ inputs.operation }}" = "check" ]; then

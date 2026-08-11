@@ -21,7 +21,7 @@
     "seo:check:dist": "node scripts/seo-check.mjs --dist",
     "seo:smoke": "npm run seo:check && npm run seo:check:committed && npm run build && npm run seo:check:dist",
     "links:check": "node scripts/links-dx.mjs check --environment preview",
-    "links:test": "node --test scripts/links-dx.test.mjs",
+    "links:test": "node --test scripts/links-dx.node-test.mjs",
     "links:preview": "node scripts/links-dx.mjs preview --environment preview",
     "links:smoke:local": "node scripts/links-dx.mjs smoke-local",
     "links:deploy:preview": "node scripts/links-dx.mjs deploy --environment preview",

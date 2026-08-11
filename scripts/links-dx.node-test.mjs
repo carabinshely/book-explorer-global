@@ -19,8 +19,13 @@ test("production deploy and rollback require exact version and never execute in 
     assert.match(missing.stderr, /exact --version/);
     const planned = run(command, "--environment", "production", "--version", "abc123", "--check");
     assert.equal(planned.status, 0, planned.stderr);
-    assert.match(planned.stdout, /dry-run plan/);
+    assert.match(planned.stdout, /dry-run:/);
   }
+  const previewRollback = run("rollback", "--environment", "preview", "--check");
+  assert.equal(previewRollback.status, 2);
+  const plannedRollback = run("rollback", "--environment", "preview", "--version", "abc123", "--check");
+  assert.equal(plannedRollback.status, 0, plannedRollback.stderr);
+  assert.match(plannedRollback.stdout, /wrangler@4\.32\.0 versions deploy abc123 --name bronerbooks-link-resolver-preview/);
 });
 
 test("remote operations refuse without an explicit execution mode", () => {
