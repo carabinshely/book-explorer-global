@@ -116,21 +116,51 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          worker_name="bronerbooks-link-resolver-production"
           artifact_sha="$(sha256sum worker/manifest.fixture.json | awk '{print $1}')"
-          upload="$(mktemp)"
-          npx --yes wrangler@4.32.0 versions upload --config worker/wrangler.toml --env production --message "commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+          script_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker_name}")"
+          if [ "$script_status" = "404" ]; then
+            # First deployment only: Wrangler creates the env-suffixed script and returns its version.
+            bootstrap=true
+            upload="$(mktemp)"
+            npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --env production --message "bootstrap commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+          elif [ "$script_status" = "200" ]; then
+            bootstrap=false
+            upload="$(mktemp)"
+            npx --yes wrangler@4.32.0 versions upload --config worker/wrangler.toml --env production --message "commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+          else
+            echo "ERROR: unable to determine whether ${worker_name} exists (HTTP ${script_status})" >&2
+            exit 1
+          fi
           version="$(sed -nE 's/.*[Vv]ersion ID: ([A-Za-z0-9_-]{6,128}).*/\1/p' "$upload" | tail -n 1)"
           test -n "$version" || { echo "ERROR: Wrangler did not report an uploaded version ID" >&2; exit 1; }
-          npx --yes wrangler@4.32.0 versions view "$version" --name bronerbooks-link-resolver --json > version.json
+          npx --yes wrangler@4.32.0 versions view "$version" --name "$worker_name" --json > version.json
           node --input-type=module -e 'const v = JSON.parse(await (await import("node:fs/promises")).readFile("version.json", "utf8")); if (!JSON.stringify(v).includes(process.env.GITHUB_SHA)) throw new Error("uploaded version is not tied to this commit");'
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "bootstrap=$bootstrap" >> "$GITHUB_OUTPUT"
           echo "manifest_sha256=$artifact_sha" >> "$GITHUB_OUTPUT"
-      - name: Deploy exact version and attach production route
+      - name: Deploy exact version, attach only /r, and verify recovery
         if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        shell: bash
         run: |
           set -euo pipefail
-          npm run links:deploy:production -- --version "${{ steps.production_upload.outputs.version }}" --execute
+          route_attached=false
+          detach_on_failure() {
+            if [ "$route_attached" = true ]; then
+              echo "ERROR: post-route failure; detaching production route" >&2
+              npm run links:detach-route -- --environment production --execute || echo "ERROR: automatic route detach failed; use the protected detach-route operation immediately" >&2
+            fi
+          }
+          trap detach_on_failure ERR
+          if [ "${{ steps.production_upload.outputs.bootstrap }}" != "true" ]; then
+            npm run links:deploy:production -- --version "${{ steps.production_upload.outputs.version }}" --execute
+          fi
           npm run links:attach-route -- --environment production --version "${{ steps.production_upload.outputs.version }}" --execute
+          route_attached=true
+          npm run links:smoke:production -- --execute
+          trap - ERR
       - name: Execute approved preview deployment or exact-version rollback
         if: ${{ inputs.operation == 'rollback' || inputs.operation == 'detach-route' || (inputs.operation == 'deploy' && inputs.environment == 'preview') }}
         run: |
@@ -142,5 +172,5 @@ jobs:
             npm run links:deploy:preview -- --execute
           fi
       - name: Verify exact canonical route after an approved change
-        if: ${{ inputs.operation != 'check' && inputs.operation != 'detach-route' }}
+        if: ${{ inputs.operation == 'rollback' || (inputs.operation == 'deploy' && inputs.environment == 'preview') }}
         run: npm run links:smoke:${{ inputs.environment }} -- --execute

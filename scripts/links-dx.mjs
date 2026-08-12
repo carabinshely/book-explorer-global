@@ -35,7 +35,7 @@ function requireVersion() {
   return true;
 }
 function workerName() {
-  return environment === "production" ? "bronerbooks-link-resolver" : "bronerbooks-link-resolver-preview";
+  return environment === "production" ? "bronerbooks-link-resolver-production" : "bronerbooks-link-resolver-preview";
 }
 export function resolveSmokeUrl(rawUrl) {
   let base;

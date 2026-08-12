@@ -1,4 +1,4 @@
-name = "bronerbooks-link-resolver"
+name = "bronerbooks-link-resolver-production"
 main = "index.ts"
 compatibility_date = "2025-02-01"
 # Safe recovery only: deploy this trigger configuration to detach every route from this Worker.

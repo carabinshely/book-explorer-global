@@ -29,6 +29,12 @@ test("production deploy and rollback require exact version and never execute in 
   assert.match(plannedRollback.stdout, /wrangler@4\.32\.0 versions deploy abc123 --name bronerbooks-link-resolver-preview/);
 });
 
+test("production commands use the Wrangler environment-suffixed Worker name", () => {
+  const result = run("deploy", "--environment", "production", "--version", "abc123", "--check");
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /--name bronerbooks-link-resolver-production/);
+});
+
 test("route detach has no version dependency and remains dry-run by default", () => {
   const result = run("detach-route", "--environment", "production", "--check");
   assert.equal(result.status, 0, result.stderr);
@@ -46,10 +52,15 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   const workflow = readFileSync(".github/workflows/link-worker-promotion.yml", "utf8");
   const config = readFileSync("worker/wrangler.toml", "utf8");
   const detachConfig = readFileSync("worker/wrangler.detach.toml", "utf8");
+  assert.match(workflow, /workers\/scripts\/\$\{worker_name\}/);
+  assert.match(workflow, /bronerbooks-link-resolver-production/);
+  assert.match(workflow, /wrangler@4\.32\.0 deploy --config worker\/wrangler\.toml --env production/);
   assert.match(workflow, /versions upload --config worker\/wrangler\.toml --env production/);
-  assert.match(workflow, /versions view "\$version" --name bronerbooks-link-resolver --json/);
+  assert.match(workflow, /versions view "\$version" --name "\$worker_name" --json/);
   assert.match(workflow, /links:deploy:production -- --version "\$\{\{ steps\.production_upload\.outputs\.version \}\}" --execute/);
   assert.match(workflow, /links:attach-route/);
+  assert.match(workflow, /post-route failure; detaching production route/);
+  assert.match(workflow, /links:detach-route -- --environment production --execute/);
   assert.match(workflow, /CLOUDFLARE_ZONE_ID/);
   assert.match(workflow, /Cloudflare Zone Read permission verified for bronerbooks\.com/);
   assert.match(config, /\[env\.production\]/);
@@ -57,6 +68,7 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.match(config, /preview_urls = false/);
   assert.match(config, /pattern = "bronerbooks\.com\/r\/\*", zone_name = "bronerbooks\.com"/);
   assert.doesNotMatch(config, /bronerbooks\.com\/\*"/);
+  assert.match(detachConfig, /name = "bronerbooks-link-resolver-production"/);
   assert.match(detachConfig, /routes = \[\]/);
 });
 
