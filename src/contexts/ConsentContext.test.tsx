@@ -84,4 +84,45 @@ describe('ConsentProvider', () => {
     expect(screen.getByRole('button', { name: 'Accept analytics' })).toBeInTheDocument();
     expect(localStorage.getItem('bronerbooks-analytics-consent')).toBeNull();
   });
+
+  it('discards malformed stored consent and asks again', () => {
+    localStorage.setItem('bronerbooks-analytics-consent', '{not-json');
+
+    render(
+      <MemoryRouter>
+        <ConsentProvider><ConsentBanner /></ConsentProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('button', { name: 'Accept analytics' })).toBeInTheDocument();
+    expect(localStorage.getItem('bronerbooks-analytics-consent')).toBeNull();
+  });
+
+  it('discards a future-dated stored choice instead of enabling analytics', () => {
+    localStorage.setItem('bronerbooks-analytics-consent', JSON.stringify({
+      choice: 'accepted',
+      recordedAt: new Date(Date.now() + 60_000).toISOString(),
+      version: 1,
+    }));
+
+    render(
+      <MemoryRouter>
+        <ConsentProvider><ConsentBanner /></ConsentProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('button', { name: 'Accept analytics' })).toBeInTheDocument();
+    expect(document.querySelector('script[src*="googletagmanager"]')).toBeNull();
+  });
+
+  it('hides the prompt after a visitor records a choice', () => {
+    render(
+      <MemoryRouter>
+        <ConsentProvider><ConsentBanner /></ConsentProvider>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Accept analytics' }));
+    expect(screen.queryByRole('button', { name: 'Reject analytics' })).toBeNull();
+  });
 });

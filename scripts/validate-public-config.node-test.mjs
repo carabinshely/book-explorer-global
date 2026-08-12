@@ -49,3 +49,31 @@ test('privacy validator gives explicit process environment precedence', (t) => {
   });
   assert.equal(result.status, 0, result.stderr);
 });
+
+test('privacy validator rejects an unresolved public mailbox', (t) => {
+  const cwd = withProductionEnv(t, [
+    'VITE_PUBLIC_MAILBOX_ADDRESS={{PUBLIC_MAILBOX_ADDRESS}}',
+    'PRIVACY_NOTICE_APPROVED=true',
+  ].join('\n'));
+
+  const result = runValidator(cwd, {
+    VITE_PUBLIC_MAILBOX_ADDRESS: undefined,
+    PRIVACY_NOTICE_APPROVED: undefined,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /public PO box or commercial mailbox/);
+});
+
+test('privacy validator rejects publication before approval', (t) => {
+  const cwd = withProductionEnv(t, [
+    'VITE_PUBLIC_MAILBOX_ADDRESS=PO Box 123',
+    'PRIVACY_NOTICE_APPROVED=false',
+  ].join('\n'));
+
+  const result = runValidator(cwd, {
+    VITE_PUBLIC_MAILBOX_ADDRESS: undefined,
+    PRIVACY_NOTICE_APPROVED: undefined,
+  });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /PRIVACY_NOTICE_APPROVED=true/);
+});

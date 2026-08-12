@@ -44,6 +44,7 @@ function readStoredConsent(): AnalyticsConsent {
       stored.version !== 1 ||
       !['accepted', 'rejected'].includes(stored.choice) ||
       !Number.isFinite(recordedAt) ||
+      recordedAt > Date.now() ||
       Date.now() - recordedAt > CONSENT_MAX_AGE_MS
     ) {
       localStorage.removeItem(CONSENT_STORAGE_KEY);

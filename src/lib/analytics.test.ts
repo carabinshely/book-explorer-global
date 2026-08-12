@@ -48,6 +48,20 @@ describe('Google Analytics utilities', () => {
     }));
   });
 
+  it('does not load a tag for an empty measurement id', () => {
+    enableGoogleAnalytics('   ');
+
+    expect(document.querySelector('script[src*="googletagmanager"]')).toBeNull();
+    expect(window.gtag).not.toHaveBeenCalled();
+  });
+
+  it('does not add duplicate tag scripts when enabled repeatedly', () => {
+    enableGoogleAnalytics('G-TEST123');
+    enableGoogleAnalytics('G-TEST123');
+
+    expect(document.querySelectorAll('script#bronerbooks-google-tag')).toHaveLength(1);
+  });
+
   it('removes the Google tag and sets the disable flag when rejected', () => {
     enableGoogleAnalytics('G-TEST123');
     disableGoogleAnalytics('G-TEST123');
