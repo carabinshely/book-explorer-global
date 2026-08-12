@@ -1,5 +1,8 @@
-const publicMailboxAddress = process.env.VITE_PUBLIC_MAILBOX_ADDRESS?.trim();
-const privacyNoticeApproved = process.env.PRIVACY_NOTICE_APPROVED?.trim().toLowerCase();
+import { loadEnv } from 'vite';
+
+const env = { ...loadEnv('production', process.cwd(), ''), ...process.env };
+const publicMailboxAddress = env.VITE_PUBLIC_MAILBOX_ADDRESS?.trim();
+const privacyNoticeApproved = env.PRIVACY_NOTICE_APPROVED?.trim().toLowerCase();
 
 if (!publicMailboxAddress || publicMailboxAddress.includes('{{') || publicMailboxAddress.includes('}}')) {
   console.error(

@@ -69,6 +69,19 @@ export function ConsentProvider({ children }: { children: ReactNode }) {
     }
   }, [analyticsConsent]);
 
+  useEffect(() => {
+    const synchronizeConsent = (event: StorageEvent) => {
+      if (event.key !== CONSENT_STORAGE_KEY && event.key !== null) return;
+
+      const choice = readStoredConsent();
+      setAnalyticsConsent(choice);
+      setIsPromptOpen(choice === 'unset');
+    };
+
+    window.addEventListener('storage', synchronizeConsent);
+    return () => window.removeEventListener('storage', synchronizeConsent);
+  }, []);
+
   const saveChoice = useCallback((choice: Exclude<AnalyticsConsent, 'unset'>) => {
     const stored: StoredConsent = {
       choice,

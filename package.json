@@ -13,7 +13,7 @@
     "build:verify": "node scripts/build-verification.mjs",
     "sitemap": "npm run seo:sitemap",
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "vitest run && node --test scripts/*.node-test.mjs",
     "test:watch": "vitest",
     "preview": "vite preview",
     "privacy:check": "node scripts/validate-public-config.mjs",
