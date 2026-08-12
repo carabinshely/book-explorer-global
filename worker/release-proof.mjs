@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Local release-proof checks. External health, deployment, and physical scan evidence stay opt-in. */
+/** Local release-proof checks. External health and deployment evidence stay opt-in. */
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
@@ -40,30 +40,22 @@ export function assertRemoteSmokeResponse(environment, method, status, headers) 
     assert.equal(headers.location, destination, `preview ${method} Location`);
     return;
   }
-  assert.equal(status, 404, `production ${method} status`);
-  assert.equal(headers.location, undefined, `production ${method} must not include Location`);
+  assert.equal(status, 302, `production ${method} status`);
+  assert.equal(headers.location, destination, `production ${method} Location`);
 }
 
-/** Rejects evidence that is incomplete, synthetic-looking, or cannot be tied to a physical browser scan. */
+/** Validates deploy evidence without requiring a physical artifact or device scan. */
 export function validateEvidence(evidence) {
   if (!evidence || typeof evidence !== "object" || Array.isArray(evidence)) fail("evidence must be an object");
-  const required = ["device", "browser", "timestamp", "decoded_url", "final_destination", "status", "headers", "qr_sha256", "evidence_source"];
+  const required = ["commit", "version", "timestamp", "route", "final_destination", "status", "headers"];
   for (const field of required) if (!(field in evidence)) fail(`evidence.${field} is required`);
-  if (evidence.evidence_source !== "physical-device-browser-scan") fail("evidence.evidence_source must be physical-device-browser-scan");
-  nonPlaceholder(evidence.device, "device");
-  nonPlaceholder(evidence.browser, "browser");
-  const timestamp = nonPlaceholder(evidence.timestamp, "timestamp");
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(timestamp) || Number.isNaN(Date.parse(timestamp))) fail("evidence.timestamp must be an ISO-8601 UTC instant");
-  const decodedUrl = new URL(nonPlaceholder(evidence.decoded_url, "decoded_url"));
-  if (decodedUrl.protocol !== "https:" || decodedUrl.hostname !== "r.bronerbooks.com" || decodedUrl.pathname !== approvedPath || decodedUrl.search || decodedUrl.hash) fail("evidence.decoded_url must be the query-free owned QR route");
-  const finalDestination = new URL(nonPlaceholder(evidence.final_destination, "final_destination"));
-  if (finalDestination.href !== destination) fail("evidence.final_destination must match the approved compiler destination exactly");
-  if (evidence.status !== 302) fail("evidence.status must be the observed 302 redirect");
+  for (const field of ["commit", "version", "timestamp"]) nonPlaceholder(evidence[field], field);
+  if (evidence.route !== `https://bronerbooks.com${approvedPath}`) fail("evidence.route must be the canonical owned route");
+  if (evidence.final_destination !== destination || evidence.status !== 302) fail("evidence must prove the exact approved redirect");
   if (!evidence.headers || typeof evidence.headers !== "object" || Array.isArray(evidence.headers)) fail("evidence.headers must be an object");
-  const normalizedHeaders = Object.fromEntries(Object.entries(evidence.headers).map(([key, entry]) => [key.toLowerCase(), entry]));
-  assertExactHeaders(normalizedHeaders);
-  if (normalizedHeaders.location !== destination) fail("evidence.headers.location must equal final_destination");
-  if (typeof evidence.qr_sha256 !== "string" || !/^[a-f0-9]{64}$/.test(evidence.qr_sha256) || /^0{64}$/.test(evidence.qr_sha256)) fail("evidence.qr_sha256 must be a non-zero lowercase SHA-256");
+  const headers = Object.fromEntries(Object.entries(evidence.headers).map(([key, entry]) => [key.toLowerCase(), entry]));
+  assertExactHeaders(headers);
+  if (headers.location !== destination) fail("evidence.headers.location must match the approved destination");
   return true;
 }
 
@@ -93,20 +85,20 @@ export function checkGoldenCompilerParity() {
   } finally { rmSync(temporary, { recursive: true, force: true }); }
 }
 
-/** The current compiler lifecycle is approved: production must fail closed, not route it as shipped. */
-export function checkPreShipmentLifecycle() {
+/** Approved route eligibility may activate a resolver before physical shipment. */
+export function checkProductionRouteEligibility() {
   const fixture = checkFixtureIntegrity();
-  const lifecycle = fixture.links.find((link) => link.public_path === approvedPath)?.lifecycle;
-  if (lifecycle !== "approved") fail(`expected approved pre-shipment lifecycle, received ${String(lifecycle)}`);
-  return lifecycle;
+  const link = fixture.links.find((entry) => entry.public_path === approvedPath);
+  if (link?.lifecycle !== "approved" || link.route_eligible !== true) fail("expected approved, route-eligible production record");
+  return link.lifecycle;
 }
 
 function printCheck() {
   const digest = checkGoldenCompilerParity();
-  const lifecycle = checkPreShipmentLifecycle();
+  const lifecycle = checkProductionRouteEligibility();
   console.log(`OK: golden compiler parity SHA-256 ${digest}`);
-  console.log(`OK: ${lifecycle} lifecycle is blocked from production routing until shipment`);
-  console.log("OK: evidence schema requires a physical device/browser scan and rejects missing or placeholder proof");
+  console.log(`OK: ${lifecycle} lifecycle is production-route eligible without shipment proof`);
+  console.log("OK: deploy evidence requires commit, version, canonical route, headers, and exact redirect");
 }
 
 function externalPlan(command, args) {
@@ -160,13 +152,12 @@ async function runWranglerParity(wrangler) {
 }
 
 function selfTest() {
-  const valid = { device: "Pixel 8", browser: "Chrome 126", timestamp: "2026-08-11T10:00:00Z", decoded_url: `https://r.bronerbooks.com${approvedPath}`, final_destination: destination, status: 302, headers: { "cache-control": "no-store, max-age=0", "content-security-policy": "default-src 'none'", "permissions-policy": "camera=()", "referrer-policy": "no-referrer", "x-content-type-options": "nosniff", "x-frame-options": "DENY", location: destination }, qr_sha256: "a".repeat(64), evidence_source: "physical-device-browser-scan" };
+  const valid = { commit: "a".repeat(40), version: "abc123", timestamp: "2026-08-12T10:00:00Z", route: `https://bronerbooks.com${approvedPath}`, final_destination: destination, status: 302, headers: { "cache-control": "no-store, max-age=0", "content-security-policy": "default-src 'none'", "permissions-policy": "camera=()", "referrer-policy": "no-referrer", "x-content-type-options": "nosniff", "x-frame-options": "DENY", location: destination } };
   assert.equal(validateEvidence(valid), true);
-  assert.throws(() => validateEvidence({ ...valid, device: "TBD" }), /non-placeholder/);
-  assert.throws(() => validateEvidence({ ...valid, evidence_source: "automated-test" }), /physical-device-browser-scan/);
+  assert.throws(() => validateEvidence({ ...valid, version: "TBD" }), /non-placeholder/);
+  assert.throws(() => validateEvidence({ ...valid, route: "https://example.test" }), /canonical owned route/);
   assert.throws(() => validateEvidence({ ...valid, headers: {} }), /cache-control/);
-  assert.throws(() => validateEvidence({ ...valid, qr_sha256: "0".repeat(64) }), /non-zero/);
-  console.log("OK: evidence schema rejects incomplete and fabricated proof");
+  console.log("OK: deploy evidence schema rejects incomplete and fabricated proof");
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

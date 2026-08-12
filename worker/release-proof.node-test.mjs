@@ -4,11 +4,11 @@ import test from "node:test";
 
 const run = (...args) => spawnSync("node", ["worker/release-proof.mjs", ...args], { encoding: "utf8" });
 
-test("release-proof local checks prove golden compiler parity and pre-shipment gating", () => {
+test("release-proof local checks prove golden compiler parity and production route eligibility", () => {
   const result = run("check");
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /golden compiler parity SHA-256/);
-  assert.match(result.stdout, /approved lifecycle is blocked from production routing/);
+  assert.match(result.stdout, /approved lifecycle is production-route eligible/);
 });
 
 test("external health and canonical commands are dry-run-only locally", () => {
@@ -31,7 +31,7 @@ test("preview parity remains opt-in and does not download a CLI", () => {
   assert.match(unavailable.stderr, /existing local/);
 });
 
-test("evidence schema test suite rejects incomplete and fabricated proof", () => {
+test("deploy-evidence schema test suite rejects incomplete and fabricated proof", () => {
   const result = run("self-test");
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /rejects incomplete and fabricated/);

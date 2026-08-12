@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: "check is dry-run only; deploy and rollback require protected approval"
+        description: "check is dry-run only; deploy uploads this exact commit then deploys its captured version"
         required: true
         default: check
         type: choice
-        options: [check, deploy, rollback]
+        options: [check, deploy, rollback, detach-route]
       environment:
         description: "Protected GitHub environment to use"
         required: true
@@ -16,7 +16,7 @@ on:
         type: choice
         options: [preview, production]
       version:
-        description: "Exact Worker version ID (required for production deploy/rollback)"
+        description: "Exact healthy Worker version ID (required only for rollback)"
         required: false
         type: string
 
@@ -33,17 +33,19 @@ jobs:
     runs-on: ubuntu-latest
     environment: link-worker-${{ inputs.environment }}
     env:
-      # GitHub masks secret values; repository environments must require reviewers.
       CLOUDFLARE_API_TOKEN: ${{ inputs.environment == 'production' && secrets.CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_LINKS_PREVIEW }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       LINK_SMOKE_URL: ${{ vars.LINK_SMOKE_URL }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22.16.0
           cache: npm
       - run: npm ci
+      - run: git diff --exit-code -- worker/manifest.fixture.json worker/manifest.integrity.ts worker/wrangler.toml
       - run: npm run links:check
       - run: npm run links:test
       - run: npm run links:smoke:local
@@ -53,10 +55,16 @@ jobs:
         run: |
           if [ "${{ inputs.operation }}" = "check" ]; then
             npm run links:deploy:preview -- --check
+          elif [ "${{ inputs.operation }}" = "detach-route" ]; then
+            npm run links:detach-route -- --environment production --check
           elif [ "${{ inputs.operation }}" = "rollback" ]; then
             npm run links:rollback -- --environment "${{ inputs.environment }}" --version "${{ inputs.version }}" --check
+          elif [ "${{ inputs.environment }}" = "production" ]; then
+            # Production deploy uploads and captures the immutable version below.
+            npm run links:deploy:production -- --version pending_version --check
+            npm run links:attach-route -- --environment production --version pending_version --check
           else
-            npm run links:deploy:${{ inputs.environment }} -- --version "${{ inputs.version }}" --check
+            npm run links:deploy:preview -- --check
           fi
       - name: Verify Cloudflare token and account configuration
         if: ${{ inputs.operation != 'check' }}
@@ -81,14 +89,37 @@ jobs:
                   }
                 });
               '
-      - name: Execute approved operation
-        if: ${{ inputs.operation != 'check' }}
+      - name: Upload exact production commit artifact and capture version
+        id: production_upload
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact_sha="$(sha256sum worker/manifest.fixture.json | awk '{print $1}')"
+          upload="$(mktemp)"
+          npx --yes wrangler@4.32.0 versions upload --config worker/wrangler.toml --env production --message "commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+          version="$(sed -nE 's/.*[Vv]ersion ID: ([A-Za-z0-9_-]{6,128}).*/\1/p' "$upload" | tail -n 1)"
+          test -n "$version" || { echo "ERROR: Wrangler did not report an uploaded version ID" >&2; exit 1; }
+          npx --yes wrangler@4.32.0 versions view "$version" --name bronerbooks-link-resolver --json > version.json
+          node --input-type=module -e 'const v = JSON.parse(await (await import("node:fs/promises")).readFile("version.json", "utf8")); if (!JSON.stringify(v).includes(process.env.GITHUB_SHA)) throw new Error("uploaded version is not tied to this commit");'
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "manifest_sha256=$artifact_sha" >> "$GITHUB_OUTPUT"
+      - name: Deploy exact version and attach production route
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        run: |
+          set -euo pipefail
+          npm run links:deploy:production -- --version "${{ steps.production_upload.outputs.version }}" --execute
+          npm run links:attach-route -- --environment production --version "${{ steps.production_upload.outputs.version }}" --execute
+      - name: Execute approved preview deployment or exact-version rollback
+        if: ${{ inputs.operation == 'rollback' || inputs.operation == 'detach-route' || (inputs.operation == 'deploy' && inputs.environment == 'preview') }}
         run: |
           if [ "${{ inputs.operation }}" = "rollback" ]; then
             npm run links:rollback -- --environment "${{ inputs.environment }}" --version "${{ inputs.version }}" --execute
+          elif [ "${{ inputs.operation }}" = "detach-route" ]; then
+            npm run links:detach-route -- --environment production --execute
           else
-            npm run links:deploy:${{ inputs.environment }} -- --version "${{ inputs.version }}" --execute
+            npm run links:deploy:preview -- --execute
           fi
-      - name: Query-free smoke after an approved change
-        if: ${{ inputs.operation != 'check' }}
+      - name: Verify exact canonical route after an approved change
+        if: ${{ inputs.operation != 'check' && inputs.operation != 'detach-route' }}
         run: npm run links:smoke:${{ inputs.environment }} -- --execute

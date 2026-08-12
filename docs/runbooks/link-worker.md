@@ -19,13 +19,16 @@ npm run links:smoke:local
 npm run links:deploy:preview -- --check
 npm run links:smoke:preview -- --check
 npm run links:deploy:production -- --version exactWorkerVersion --check
+npm run links:attach-route -- --environment production --version exactWorkerVersion --check
 npm run links:smoke:production -- --check
 npm run links:rollback -- --environment production --version exactWorkerVersion --check
 ```
 
 `links:check`, `links:test`, and `links:smoke:local` are fully local. A remote
-smoke accepts only a query-free, fragment-free HTTPS origin/base `LINK_SMOKE_URL`; it appends the approved `/r/niran-storytime-kit-v1-en-p5-book` route and rejects path-bearing URLs to avoid ambiguity. The default `--check` reports its plan without making a request. A remote preview smoke sends query input only to prove it is dropped, then requires GET and HEAD to return the exact 302 destination plus the security and no-store cache headers. Every rollback (including preview) and production deployment requires a
-syntactically exact version ID. Without `--execute`, deployment and rollback
+smoke accepts only a query-free, fragment-free HTTPS origin/base `LINK_SMOKE_URL`; it appends the approved `/r/niran-storytime-kit-v1-en-p5-book` route and rejects path-bearing URLs to avoid ambiguity. The default `--check` reports its plan without making a request. A remote preview smoke sends query input only to prove it is dropped, then requires GET and HEAD to return the exact 302 destination plus the security and no-store cache headers. Production deployment uploads the checked-out commit artifact first, records Wrangler's returned version ID, then deploys that exact version and attaches only
+`bronerbooks.com/r/*`. The production Worker configuration sets `workers_dev=false`
+and `preview_urls=false`; no non-`/r` website path is routed to it. Every rollback
+(including preview) requires a syntactically exact healthy version ID. Without `--execute`, deployment and rollback
 refuse rather than guess.
 
 ## Protected manual promotion
@@ -52,14 +55,15 @@ prints only a fixed success or failure message; it does not print the token,
 account ID, or API response. `CLOUDFLARE_ACCOUNT_ID` is then supplied to Wrangler
 for the approved operation, avoiding account auto-discovery. Select `check`
 first. An authorized reviewer then selects `deploy` or `rollback`;
-production requires the exact already-known Worker version ID. Capture only
-status, headers, version ID, commit, timestamp, and the query-free URL in release
-evidence.
+production deploy captures the new exact Worker version ID from the commit artifact;
+rollback requires the exact already-known healthy version ID. Capture only status,
+headers, version ID, commit, timestamp, the canonical route, and the query-free URL
+in release evidence. Route eligibility is independent of physical shipment.
 
 ## Recovery and rollback
 
 Do not modify the static Pages deployment to repair a resolver. First run local
 checks, identify a previously healthy Worker version, and use the dry-run above.
-A protected reviewer performs the exact-version rollback in the manual workflow.
+A protected reviewer performs the exact-version rollback in the manual workflow. If the route itself is suspect, leave it detached by stopping after the rollback before any route-attach step; do not redirect unrelated site paths.
 If a token or protected environment is unavailable, stop: this repository does
 not provide or retrieve credentials.

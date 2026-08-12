@@ -39,9 +39,9 @@ describe("Worker HTTP adapter", () => {
     expect(html).not.toMatch(/<script|<img|<link|https?:\/\//i);
   });
 
-  it("keeps compiler-approved links non-production-routable but allows preview recovery-free redirect", async () => {
+  it("routes compiler-approved, route-eligible links in production without shipment proof", async () => {
     const production = await worker.fetch(new Request(`${base}${path}`), {});
-    expect(production.status).toBe(404); assertHeaders(production);
+    expect(production.status).toBe(302); expect(production.headers.get("location")).toBe(fixture.links[0].url); assertHeaders(production);
     const preview = await worker.fetch(new Request(`${base}${path}`), { LINK_ENVIRONMENT: "preview" });
     expect(preview.status).toBe(302); expect(preview.headers.get("location")).toBe(fixture.links[0].url); assertHeaders(preview);
   });

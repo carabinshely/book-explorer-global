@@ -1,4 +1,15 @@
 name = "bronerbooks-link-resolver"
 main = "index.ts"
 compatibility_date = "2025-02-01"
-# Deploy configuration is intentionally absent: this local Worker is not a publishing command.
+
+# Production owns only this route; all other website paths remain with the site host.
+[env.production]
+workers_dev = false
+preview_urls = false
+routes = [{ pattern = "bronerbooks.com/r/*" }]
+
+# Preview remains a separate workers.dev Worker and cannot attach the canonical route.
+[env.preview]
+name = "bronerbooks-link-resolver-preview"
+workers_dev = true
+preview_urls = true

@@ -36,6 +36,22 @@ test("remote operations refuse without an explicit execution mode", () => {
 });
 
 // Keep workflow diagnostics inspectable while retaining the guarded deployment boundary.
+test("production workflow uploads the exact commit artifact, deploys its captured version, and attaches only /r", () => {
+  const workflow = readFileSync(".github/workflows/link-worker-promotion.yml", "utf8");
+  const config = readFileSync("worker/wrangler.toml", "utf8");
+  const detachConfig = readFileSync("worker/wrangler.detach.toml", "utf8");
+  assert.match(workflow, /versions upload --config worker\/wrangler\.toml --env production/);
+  assert.match(workflow, /versions view "\$version" --name bronerbooks-link-resolver --json/);
+  assert.match(workflow, /links:deploy:production -- --version "\$\{\{ steps\.production_upload\.outputs\.version \}\}" --execute/);
+  assert.match(workflow, /links:attach-route/);
+  assert.match(config, /\[env\.production\]/);
+  assert.match(config, /workers_dev = false/);
+  assert.match(config, /preview_urls = false/);
+  assert.match(config, /pattern = "bronerbooks\.com\/r\/\*"/);
+  assert.doesNotMatch(config, /bronerbooks\.com\/\*"/);
+  assert.match(detachConfig, /routes = \[\]/);
+});
+
 test("promotion workflow authenticates before execution without suppressing Wrangler diagnostics", () => {
   const workflow = readFileSync(".github/workflows/link-worker-promotion.yml", "utf8");
   const runner = readFileSync("scripts/links-dx.mjs", "utf8");
@@ -48,7 +64,7 @@ test("promotion workflow authenticates before execution without suppressing Wran
   assert.match(workflow, /https:\/\/api\.cloudflare\.com\/client\/v4\/user\/tokens\/verify/);
   assert.match(workflow, /OK: Cloudflare API token verified/);
   assert.doesNotMatch(workflow, /console\.log\(body\)/);
-  assert.ok(workflow.indexOf("name: Verify Cloudflare token and account configuration") < workflow.indexOf("name: Execute approved operation"));
+  assert.ok(workflow.indexOf("name: Verify Cloudflare token and account configuration") < workflow.indexOf("name: Upload exact production commit artifact and capture version"));
   assert.match(runbook, /`\/memberships` endpoint/);
   assert.match(runbook, /does not print the token,\naccount ID, or API response/);
 });

@@ -1,2 +1,2 @@
 /** Generated alongside manifest.fixture.json; update with `worker/verify-fixture.mjs`. */
-export const EMBEDDED_MANIFEST_SHA256 = "b118923564a3c12160f5224b0394e41df72d5ce48852f5998999628ac1ac37da";
+export const EMBEDDED_MANIFEST_SHA256 = "a935495c7bd03c8994b0b556d8559dd170ed0a1505fe2df9532f0e208294043a";

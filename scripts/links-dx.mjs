@@ -53,7 +53,7 @@ async function smokeRemote(url) {
   }
 }
 function versionDeployCommand() {
-  return ["versions", "deploy", version, "--name", workerName()];
+  return ["versions", "deploy", version, "--name", workerName(), "--env", environment, "--yes"];
 }
 function runWrangler(commandArgs) {
   const result = spawnSync("npx", ["--yes", "wrangler@4.32.0", ...commandArgs], {
@@ -63,7 +63,7 @@ function runWrangler(commandArgs) {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-if (!command) fail("expected check, preview, smoke-local, smoke, deploy, or rollback");
+if (!command) fail("expected check, preview, smoke-local, smoke, deploy, rollback, attach-route, or detach-route");
 else if (command === "check") {
   if (!requireEnvironment()) process.exitCode = 2;
   else {
@@ -89,19 +89,25 @@ else if (command === "check") {
       plan(`${environment} remote smoke passed for ${url.pathname} (GET/HEAD, security/cache headers, exact redirect contract, query dropped)`);
     } catch (error) { fail(error.message); }
   }
-} else if (command === "deploy" || command === "rollback") {
+} else if (command === "deploy" || command === "rollback" || command === "attach-route" || command === "detach-route") {
   if (!requireEnvironment()) process.exitCode = 2;
-  else if ((environment === "production" || command === "rollback") && !requireVersion()) process.exitCode = 2;
+  else if ((environment === "production" || command === "rollback" || command === "attach-route") && !requireVersion()) process.exitCode = 2;
   else if (check) {
-    const intended = command === "rollback" || environment === "production"
-      ? `npx --yes wrangler@4.32.0 ${versionDeployCommand().join(" ")}`
-      : "npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --name bronerbooks-link-resolver-preview --var LINK_ENVIRONMENT:preview";
+    const intended = command === "detach-route"
+      ? "npx --yes wrangler@4.32.0 triggers deploy --config worker/wrangler.detach.toml"
+      : command === "attach-route"
+        ? "npx --yes wrangler@4.32.0 triggers deploy --config worker/wrangler.toml --env production"
+      : command === "rollback" || environment === "production"
+        ? `npx --yes wrangler@4.32.0 ${versionDeployCommand().join(" ")}`
+        : "npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --env preview --var LINK_ENVIRONMENT:preview";
     plan(`${command} ${environment} dry-run: ${intended}; no deployment was attempted`);
   }
   else if (!execute) fail(`${command} is disabled by default; use --check locally or protected workflow --execute`);
   else if (!process.env.CLOUDFLARE_API_TOKEN) fail("CLOUDFLARE_API_TOKEN is required only for protected workflow execution");
+  else if (command === "detach-route") runWrangler(["triggers", "deploy", "--config", "worker/wrangler.detach.toml"]);
+  else if (command === "attach-route") runWrangler(["triggers", "deploy", "--config", "worker/wrangler.toml", "--env", "production"]);
   else if (command === "rollback" || environment === "production") runWrangler(versionDeployCommand());
-  else runWrangler(["deploy", "--config", "worker/wrangler.toml", "--name", workerName(), "--var", "LINK_ENVIRONMENT:preview"]);
+  else runWrangler(["deploy", "--config", "worker/wrangler.toml", "--env", "preview", "--var", "LINK_ENVIRONMENT:preview"]);
 } else fail(`unknown command: ${command}`);
 
 }
