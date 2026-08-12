@@ -37,11 +37,15 @@ Configure GitHub environments **before** using
 
 - `link-worker-preview`: reviewer protection appropriate to preview work.
 - `link-worker-production`: required reviewers and a deployment wait timer.
-- Secret names only: `CLOUDFLARE_API_TOKEN_LINKS_PREVIEW` and
-  `CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION`; scope both to their matching
+- Secret names only: `CLOUDFLARE_API_TOKEN_LINKS_PREVIEW`,
+  `CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION`, and production-only
+  `MARKETING_REPO_DEPLOY_KEY`. The latter is a read-only SSH deploy key for
+  `carabinshely/bronerbooks-marketing-ops`; it lets the protected workflow
+  check out the exact compiler commit embedded in the fixture before upload.
+  Scope all secrets to their matching
   environment and grant the least Cloudflare permission needed to upload/deploy versions, attach routes, and read the configured `bronerbooks.com` zone; the workflow verifies Zone Read before route attachment. Never put values in repository variables, logs, or issues.
 - Variables: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID` (the `bronerbooks.com` zone ID, explicitly checked so route attachment cannot silently depend on Zone Read), and
-  `LINK_SMOKE_URL`, a query-free, fragment-free HTTPS Worker origin/base URL (for example `https://preview-worker.example.workers.dev`), in the matching environment. Do not include a resolver path, query string, fragment, or credentials.
+  `LINK_SMOKE_URL`, a query-free, fragment-free HTTPS Worker origin/base URL in the matching environment. Preview may use its configured Worker origin (for example `https://preview-worker.example.workers.dev`); production smoke rejects every value except `https://bronerbooks.com`. Do not include a resolver path, query string, fragment, or credentials.
   The account ID is configuration metadata (not a secret); setting it prevents
   Wrangler from discovering an account through the `/memberships` endpoint.
 

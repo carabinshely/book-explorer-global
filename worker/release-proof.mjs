@@ -2,7 +2,7 @@
 /** Local release-proof checks. External health and deployment evidence stay opt-in. */
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -76,15 +76,26 @@ export function checkFixtureIntegrity() {
   return fixture;
 }
 
-/** Compiles the authoritative marketing registry into a temporary file and requires byte-for-byte fixture parity. */
+/** Compiles the fixture's pinned marketing Git tree and requires byte-for-byte parity. */
 export function checkGoldenCompilerParity() {
   const marketing = resolve(workspace, "bronerbooks-marketing-ops");
-  if (!existsSync(resolve(marketing, "attribution_links", "__main__.py"))) fail("authoritative attribution compiler is unavailable at ../bronerbooks-marketing-ops");
+  if (!existsSync(resolve(marketing, ".git"))) fail("authoritative marketing Git checkout is unavailable at ../bronerbooks-marketing-ops");
+  const fixture = readJson(fixturePath);
+  const sourceCommit = fixture.provenance?.marketing_source_commit;
+  if (typeof sourceCommit !== "string" || !/^[0-9a-f]{40}$/.test(sourceCommit)) fail("fixture marketing_source_commit must be a full Git SHA-1");
   const temporary = mkdtempSync(resolve(tmpdir(), "bronerbooks-link-proof-"));
+  const source = resolve(temporary, "marketing-source");
   const output = resolve(temporary, "attribution-map.json");
   try {
+    mkdirSync(source);
+    const archive = spawnSync("git", ["archive", "--format=tar", sourceCommit], { cwd: marketing });
+    if (archive.status !== 0) fail("pinned marketing source commit is unavailable locally");
+    const archivePath = resolve(temporary, "marketing-source.tar");
+    writeFileSync(archivePath, archive.stdout);
+    const unpack = spawnSync("tar", ["-xf", archivePath, "-C", source], { encoding: "utf8" });
+    if (unpack.status !== 0) fail(`pinned marketing source extraction failed: ${unpack.stderr ?? `exit ${unpack.status}`}`.trim());
     const python = process.env.PYTHON ?? "python3";
-    const result = spawnSync(python, ["-m", "attribution_links", "compile", "--environment", "preview", "--output", output], { cwd: marketing, encoding: "utf8" });
+    const result = spawnSync(python, ["-m", "attribution_links", "compile", "--environment", "production", "--source-commit", sourceCommit, "--output", output], { cwd: source, encoding: "utf8" });
     if (result.status !== 0) fail(`golden compiler failed: ${result.error?.message ?? result.stderr ?? result.stdout ?? `exit ${result.status}`}`.trim());
     const expected = readFileSync(fixturePath);
     const actual = readFileSync(output);

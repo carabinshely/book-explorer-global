@@ -62,7 +62,7 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.match(workflow, /versions view "\$version" --name "\$worker_name" --json/);
   assert.match(workflow, /links:deploy:production -- --version "\$\{\{ steps\.production_upload\.outputs\.version \}\}" --execute/);
   assert.match(workflow, /links:attach-route/);
-  assert.match(workflow, /post-route failure; detaching production route/);
+  assert.match(workflow, /bootstrap route operation failed; detaching production route/);
   assert.match(workflow, /links:detach-route -- --environment production --execute/);
   assert.match(workflow, /CLOUDFLARE_ZONE_ID/);
   assert.match(workflow, /Cloudflare Zone Read permission verified for bronerbooks\.com/);
@@ -75,6 +75,19 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.doesNotMatch(bootstrapConfig, /routes/);
   assert.match(detachConfig, /name = "bronerbooks-link-resolver-production"/);
   assert.match(detachConfig, /routes = \[\]/);
+});
+
+test("production workflow proves pinned marketing parity and arms rollback recovery", () => {
+  const workflow = readFileSync(".github/workflows/link-worker-promotion.yml", "utf8");
+  assert.match(workflow, /MARKETING_REPO_DEPLOY_KEY/);
+  assert.match(workflow, /repository: carabinshely\/bronerbooks-marketing-ops/);
+  assert.match(workflow, /Verify pinned marketing compiler parity/);
+  assert.match(workflow, /cmp --silent \/tmp\/pinned-attribution-map\.json worker\/manifest\.fixture\.json/);
+  assert.match(workflow, /deployments list --name "\$worker_name" --json/);
+  assert.match(workflow, /100%-healthy Worker version/);
+  assert.match(workflow, /rolling back to prior exact version/);
+  assert.match(workflow, /release-evidence\.json/);
+  assert.match(workflow, /always\(\) && inputs.operation == 'deploy'/);
 });
 
 test("promotion workflow authenticates before execution without suppressing Wrangler diagnostics", () => {
@@ -126,6 +139,13 @@ test("remote smoke captures redirect contract headers with direct case-insensiti
   const headers = proof.captureSmokeHeaders(source);
   for (const method of ["GET", "HEAD"]) assert.doesNotThrow(() => proof.assertRemoteSmokeResponse("production", method, 302, headers));
   assert.deepEqual(Object.keys(headers).sort(), ["cache-control", "content-security-policy", "location", "permissions-policy", "referrer-policy", "x-content-type-options", "x-frame-options"]);
+});
+
+test("production smoke rejects every origin except canonical bronerbooks.com", () => {
+  assert.equal(linksDx.productionSmokeUrl("https://bronerbooks.com").href, `https://bronerbooks.com${proof.approvedPath}`);
+  for (const rawUrl of ["https://preview.example.test", "https://www.bronerbooks.com", "https://bronerbooks.com:444"]) {
+    assert.throws(() => linksDx.productionSmokeUrl(rawUrl), /exactly https:\/\/bronerbooks\.com/);
+  }
 });
 
 test("shared release-proof contract requires exact GET/HEAD preview redirects", () => {

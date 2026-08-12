@@ -110,6 +110,28 @@ jobs:
                   }
                 });
               '
+      - name: Read pinned marketing source commit
+        id: marketing_source
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        run: |
+          set -euo pipefail
+          commit="$(node -e 'const m=require("./worker/manifest.fixture.json"); const c=m.provenance?.marketing_source_commit; if (!/^[0-9a-f]{40}$/.test(c ?? "")) process.exit(1); process.stdout.write(c)')"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        with:
+          repository: carabinshely/bronerbooks-marketing-ops
+          ref: ${{ steps.marketing_source.outputs.commit }}
+          path: marketing-source
+          ssh-key: ${{ secrets.MARKETING_REPO_DEPLOY_KEY }}
+          persist-credentials: false
+      - name: Verify pinned marketing compiler parity
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        run: |
+          set -euo pipefail
+          test "$(git -C marketing-source rev-parse HEAD)" = "${{ steps.marketing_source.outputs.commit }}"
+          (cd marketing-source && python3 -m attribution_links compile --environment production --output /tmp/pinned-attribution-map.json)
+          cmp --silent /tmp/pinned-attribution-map.json worker/manifest.fixture.json
       - name: Upload exact production commit artifact and capture version
         id: production_upload
         if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
@@ -117,10 +139,16 @@ jobs:
         run: |
           set -euo pipefail
           worker_name="bronerbooks-link-resolver-production"
+          previous=""
           artifact_sha="$(sha256sum worker/manifest.fixture.json | awk '{print $1}')"
           script_status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 15 --proto '=https' \
             --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker_name}")"
+          if [ "$script_status" = "200" ]; then
+            # Only a deployment serving 100% of traffic is safe as an automatic recovery target.
+            npm exec -- wrangler deployments list --name "$worker_name" --json > previous-deployments.json
+            previous="$(node -e 'const data=require("./previous-deployments.json"); const deployments=Array.isArray(data) ? data : data.result ?? data.items ?? []; for (const deployment of deployments) { const version=(deployment.versions ?? []).find((entry) => Number(entry.percentage) === 100)?.version_id; if (version) { if (!/^[A-Za-z0-9_-]{6,128}$/.test(version)) process.exit(1); process.stdout.write(version); process.exit(0); } } console.error("ERROR: no current 100%-healthy Worker version is available for recovery"); process.exit(1);')"
+          fi
           if [ "$script_status" = "404" ]; then
             # First deployment only: Wrangler creates the env-suffixed script and returns its version.
             bootstrap=true
@@ -145,28 +173,46 @@ jobs:
             node --input-type=module -e 'const v = JSON.parse(await (await import("node:fs/promises")).readFile("version.json", "utf8")); if (!JSON.stringify(v).includes(process.env.GITHUB_SHA)) throw new Error("uploaded version is not tied to this commit");'
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "previous_version=$previous" >> "$GITHUB_OUTPUT"
           echo "bootstrap=$bootstrap" >> "$GITHUB_OUTPUT"
           echo "manifest_sha256=$artifact_sha" >> "$GITHUB_OUTPUT"
+          PREVIOUS="$previous" VERSION="$version" MANIFEST="$artifact_sha" node -e 'require("fs").writeFileSync("release-evidence.json", JSON.stringify({commit:process.env.GITHUB_SHA,previous_version:process.env.PREVIOUS || null,new_version:process.env.VERSION,manifest_sha256:process.env.MANIFEST,route:"bronerbooks.com/r/*"},null,2)+"\n")'
       - name: Deploy exact version, attach only /r, and verify recovery
         if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
         shell: bash
         run: |
           set -euo pipefail
-          route_attached=false
-          detach_on_failure() {
-            if [ "$route_attached" = true ]; then
-              echo "ERROR: post-route failure; detaching production route" >&2
-              npm run links:detach-route -- --environment production --execute || echo "ERROR: automatic route detach failed; use the protected detach-route operation immediately" >&2
+          recovery_armed=true
+          prior="${{ steps.production_upload.outputs.previous_version }}"
+          recover_on_failure() {
+            if [ "$recovery_armed" = true ]; then
+              if [ -n "$prior" ]; then
+                echo "ERROR: route operation failed; rolling back to prior exact version" >&2
+                npm run links:rollback -- --environment production --version "$prior" --execute || true
+              else
+                echo "ERROR: bootstrap route operation failed; detaching production route" >&2
+                npm run links:detach-route -- --environment production --execute || true
+              fi
             fi
           }
-          trap detach_on_failure ERR
+          trap recover_on_failure ERR
           if [ "${{ steps.production_upload.outputs.bootstrap }}" != "true" ]; then
             npm run links:deploy:production -- --version "${{ steps.production_upload.outputs.version }}" --execute
           fi
           npm run links:attach-route -- --environment production --version "${{ steps.production_upload.outputs.version }}" --execute
-          route_attached=true
           npm run links:smoke:production -- --execute
+          recovery_armed=false
           trap - ERR
+      - name: Persist sanitized production release evidence
+        if: ${{ always() && inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-worker-release-evidence
+          path: release-evidence.json
+          if-no-files-found: error
+      - name: Publish sanitized release summary
+        if: ${{ always() && inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        run: test -f release-evidence.json && cat release-evidence.json >> "$GITHUB_STEP_SUMMARY" || true
       - name: Execute approved preview deployment or exact-version rollback
         if: ${{ inputs.operation == 'rollback' || inputs.operation == 'detach-route' || (inputs.operation == 'deploy' && inputs.environment == 'preview') }}
         run: |

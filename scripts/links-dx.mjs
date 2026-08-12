@@ -45,6 +45,11 @@ export function resolveSmokeUrl(rawUrl) {
   }
   return new URL(approvedPath, base);
 }
+export function productionSmokeUrl(rawUrl) {
+  const url = resolveSmokeUrl(rawUrl);
+  if (url.origin !== "https://bronerbooks.com") throw new Error("production LINK_SMOKE_URL must be exactly https://bronerbooks.com");
+  return url;
+}
 async function smokeRemote(url) {
   for (const method of ["GET", "HEAD"]) {
     const response = await fetch(`${url.href}?hostile=https%3A%2F%2Fevil.test`, { method, redirect: "manual", signal: AbortSignal.timeout(15_000) });
@@ -84,7 +89,7 @@ else if (command === "check") {
   else if (!process.env.LINK_SMOKE_URL) fail("LINK_SMOKE_URL is required for a remote smoke");
   else {
     try {
-      const url = resolveSmokeUrl(process.env.LINK_SMOKE_URL);
+      const url = environment === "production" ? productionSmokeUrl(process.env.LINK_SMOKE_URL) : resolveSmokeUrl(process.env.LINK_SMOKE_URL);
       await smokeRemote(url);
       plan(`${environment} remote smoke passed for ${url.pathname} (GET/HEAD, security/cache headers, exact redirect contract, query dropped)`);
     } catch (error) { fail(error.message); }

@@ -42,18 +42,22 @@ export function handle(request: Request, manifest: LinkManifest, preview = false
   return responseFor(resolvePath(manifest, new URL(request.url).pathname, preview), request.method);
 }
 
-export default {
-  async fetch(request: Request, env: WorkerEnvironment): Promise<Response> {
-    if (request.method !== "GET" && request.method !== "HEAD") {
-      return new Response(null, { status: 405, headers: { ...COMMON_HEADERS, Allow: "GET, HEAD" } });
-    }
-    const preview = env.LINK_ENVIRONMENT === "preview";
-    try {
-      const manifest = await verifyEnvelopeChecksum(manifestSource, EMBEDDED_MANIFEST_SHA256, !preview);
-      return handle(request, manifest, preview);
-    } catch {
-      // A malformed manifest must never redirect. It receives the generic recovery response.
-      return responseFor({ kind: "not-found", recovery: "generic" }, request.method);
-    }
-  },
-};
+export function createWorker(source: unknown, expectedManifestSha256: string) {
+  return {
+    async fetch(request: Request, env: WorkerEnvironment): Promise<Response> {
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return new Response(null, { status: 405, headers: { ...COMMON_HEADERS, Allow: "GET, HEAD" } });
+      }
+      const preview = env.LINK_ENVIRONMENT === "preview";
+      try {
+        const manifest = await verifyEnvelopeChecksum(source, expectedManifestSha256);
+        return handle(request, manifest, preview);
+      } catch {
+        // A malformed manifest must never redirect. It receives the generic recovery response.
+        return responseFor({ kind: "not-found", recovery: "generic" }, request.method);
+      }
+    },
+  };
+}
+
+export default createWorker(manifestSource, EMBEDDED_MANIFEST_SHA256);

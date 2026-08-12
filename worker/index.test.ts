@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import worker, { handle } from "./index";
+import worker, { createWorker, handle } from "./index";
 import fixture from "./manifest.fixture.json";
 import { validateManifest } from "./resolver";
+import { EMBEDDED_MANIFEST_SHA256 } from "./manifest.integrity";
 
 const base = "https://r.bronerbooks.com";
 const path = "/r/niran-storytime-kit-v1-en-p5-book";
@@ -37,6 +38,15 @@ describe("Worker HTTP adapter", () => {
     const html = await handle(new Request(`${base}/r/no-such-link`), manifest("shipped")).text();
     expect(html).toMatch(/<main[ >]/); expect(html).toMatch(/<h1>/); expect(html).toMatch(/<a href="\/"/); expect(html).toContain("a:focus"); expect(html).toContain('meta name="viewport"'); expect(html).toContain("@media(max-width:480px)");
     expect(html).not.toMatch(/<script|<img|<link|https?:\/\//i);
+  });
+
+  it("fails closed at runtime for a malformed compiled manifest", async () => {
+    const malformed = { ...fixture, provenance: { ...fixture.provenance, marketing_source_commit: "not-a-commit" } };
+    const malformedWorker = createWorker(malformed, EMBEDDED_MANIFEST_SHA256);
+    const response = await malformedWorker.fetch(new Request(`${base}${path}`), {});
+    expect(response.status).toBe(404);
+    expect(response.headers.get("location")).toBeNull();
+    assertHeaders(response);
   });
 
   it("routes compiler-approved, route-eligible links in production without shipment proof", async () => {

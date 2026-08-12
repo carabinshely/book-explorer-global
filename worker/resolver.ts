@@ -13,6 +13,7 @@ const LIFECYCLES = new Set<RuntimeLifecycle>(["shipped", "active", "approved-pre
 const EXPECTED_PROVENANCE = {
   book_id: "book_niran_umbrella",
   campaign_id: "camp_2026q2_niran_validation",
+  marketing_source_commit: "b48283f9017f182ff9b4939fa23b879cdb6a519d",
   sku_id: "the-lost-umbrella-of-niran-en",
   source_files: ["02_catalog/books.yaml", "02_catalog/editions.yaml", "04_campaigns/2026-q2-niran-validation/campaign.yaml", "07_automation/utm-rules.yaml"],
   work_id: "the-lost-umbrella-of-niran",
@@ -33,7 +34,7 @@ function readDestination(value: unknown, field: string): string {
 function provenanceIsExpected(value: Record<string, unknown>): boolean { return JSON.stringify(value) === JSON.stringify(EXPECTED_PROVENANCE); }
 
 /** Validates the exact compiler envelope before it can influence HTTP behavior. */
-export function validateManifest(value: unknown, production = false): LinkManifest {
+export function validateManifest(value: unknown): LinkManifest {
   if (!isRecord(value)) throw new Error("invalid manifest: expected object");
   requireKeys(value, ["schema_version", "registry_id", "registry_checksum", "provenance", "links"], "envelope keys");
   if (value.schema_version !== MANIFEST_SCHEMA || value.registry_id !== "niran_storytime_kit") throw new Error("invalid manifest: schema");
@@ -68,8 +69,8 @@ export function canonicalJson(value: unknown): string {
   return `${JSON.stringify(sort(value))}\n`;
 }
 
-export async function verifyEnvelopeChecksum(value: unknown, expectedSha256: string, production = false): Promise<LinkManifest> {
-  const manifest = validateManifest(value, production);
+export async function verifyEnvelopeChecksum(value: unknown, expectedSha256: string): Promise<LinkManifest> {
+  const manifest = validateManifest(value);
   const bytes = new TextEncoder().encode(canonicalJson(manifest));
   const hash = await crypto.subtle.digest("SHA-256", bytes);
   const actual = Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, "0")).join("");
