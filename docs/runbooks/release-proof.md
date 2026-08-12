@@ -31,12 +31,14 @@ installed, pinned CLI; the tool never downloads one.
 
 ## Release evidence and deferred physical work
 
-The protected promotion workflow records only sanitized route-release evidence:
-commit, Worker versions, manifest digest, canonical route, status, headers,
-and exact redirect destination. This stable-link activation task explicitly
-excludes physical PDF/QR hashes, freeze records, device scans, and shipment
-proof. Those artifacts remain deferred to the separate physical-release
-process; do not infer shipment from an approved, route-eligible record.
+The protected promotion workflow persists a sanitized route-release artifact
+containing the commit, previous and new Worker version IDs, manifest digest, and
+canonical route. Its production smoke validates status, security/cache headers,
+and the exact redirect destination, but those response values are not persisted
+in that artifact. This stable-link activation task explicitly excludes physical
+PDF/QR hashes, freeze records, device scans, and shipment proof. Those artifacts
+remain deferred to the separate physical-release process; do not infer shipment
+from an approved, route-eligible record.
 
 ## Stop: protected external steps
 
