@@ -83,6 +83,9 @@ test("production workflow proves pinned marketing parity and arms rollback recov
   assert.match(workflow, /repository: carabinshely\/bronerbooks-marketing-ops/);
   assert.match(workflow, /Verify pinned marketing compiler parity/);
   assert.match(workflow, /cmp --silent \/tmp\/pinned-attribution-map\.json worker\/manifest\.fixture\.json/);
+  assert.match(workflow, /python3 -m venv \/tmp\/marketing-compiler-venv/);
+  assert.match(workflow, /PyYAML==6\.0\.2/);
+  assert.match(workflow, /marketing-compiler-venv\/bin\/python -m attribution_links compile/);
   assert.match(workflow, /deployments list --name "\$worker_name" --json/);
   assert.match(workflow, /100%-healthy Worker version/);
   assert.match(workflow, /rolling back to prior exact version/);

@@ -130,7 +130,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git -C marketing-source rev-parse HEAD)" = "${{ steps.marketing_source.outputs.commit }}"
-          (cd marketing-source && python3 -m attribution_links compile --environment production --output /tmp/pinned-attribution-map.json)
+          python3 -m venv /tmp/marketing-compiler-venv
+          /tmp/marketing-compiler-venv/bin/pip install --disable-pip-version-check --no-input "PyYAML==6.0.2"
+          (cd marketing-source && /tmp/marketing-compiler-venv/bin/python -m attribution_links compile --environment production --output /tmp/pinned-attribution-map.json)
           cmp --silent /tmp/pinned-attribution-map.json worker/manifest.fixture.json
       - name: Upload exact production commit artifact and capture version
         id: production_upload
