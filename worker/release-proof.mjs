@@ -6,15 +6,16 @@ import { existsSync, readFileSync } from "node:fs";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { spawn, spawnSync } from "node:child_process";
 
 const root = resolve(import.meta.dirname, "..");
 const workspace = resolve(root, "..");
 const fixturePath = resolve(import.meta.dirname, "manifest.fixture.json");
 const integrityPath = resolve(import.meta.dirname, "manifest.integrity.ts");
-const approvedPath = "/r/niran-storytime-kit-v1-en-p5-book";
-const destination = "https://bronerbooks.com/books/the-lost-umbrella-of-niran-en?utm_campaign=niran_storytime_kit&utm_content=storytime_kit_v1_en_p5_book&utm_medium=qr&utm_source=storytime_kit";
-const requiredHeaders = ["cache-control", "content-security-policy", "permissions-policy", "referrer-policy", "x-content-type-options", "x-frame-options"];
+export const approvedPath = "/r/niran-storytime-kit-v1-en-p5-book";
+export const destination = "https://bronerbooks.com/books/the-lost-umbrella-of-niran-en?utm_campaign=niran_storytime_kit&utm_content=storytime_kit_v1_en_p5_book&utm_medium=qr&utm_source=storytime_kit";
+export const requiredHeaders = ["cache-control", "content-security-policy", "permissions-policy", "referrer-policy", "x-content-type-options", "x-frame-options"];
 const prohibitedEvidenceValues = /^(?:n\/?a|none|null|unknown|tbd|todo|example|sample|placeholder|fabricated)$/i;
 
 function fail(message) { throw new Error(message); }
@@ -26,9 +27,21 @@ function nonPlaceholder(value, field) {
   if (typeof value !== "string" || !value.trim() || prohibitedEvidenceValues.test(value.trim())) fail(`evidence.${field} must be a non-placeholder string`);
   return value;
 }
-function assertExactHeaders(headers) {
+export function assertExactHeaders(headers) {
   for (const name of requiredHeaders) if (typeof headers[name] !== "string" || !headers[name]) fail(`evidence.headers.${name} is required`);
   if (headers["cache-control"] !== "no-store, max-age=0") fail("evidence.headers.cache-control must prove no-store, max-age=0");
+}
+
+/** Validates the redirect contract shared by remote smoke and local preview parity. */
+export function assertRemoteSmokeResponse(environment, method, status, headers) {
+  assertExactHeaders(headers);
+  if (environment === "preview") {
+    assert.equal(status, 302, `preview ${method} status`);
+    assert.equal(headers.location, destination, `preview ${method} Location`);
+    return;
+  }
+  assert.equal(status, 404, `production ${method} status`);
+  assert.equal(headers.location, undefined, `production ${method} must not include Location`);
 }
 
 /** Rejects evidence that is incomplete, synthetic-looking, or cannot be tied to a physical browser scan. */
@@ -132,10 +145,8 @@ async function runWranglerParity(wrangler) {
       for (const method of ["GET", "HEAD"]) {
         const response = await fetch(`http://127.0.0.1:${port}${approvedPath}?hostile=https://evil.test/`, { method, redirect: "manual" });
         const headers = Object.fromEntries([...response.headers].map(([name, item]) => [name.toLowerCase(), item]));
-        assert.equal(response.status, preview ? 302 : 404, `${preview ? "preview" : "production"} ${method} status`);
-        assertExactHeaders(headers);
-        if (preview) { assert.equal(headers.location, destination); assert.ok(!headers.location.includes("evil"), "query input must not reach Location"); }
-        else assert.equal(headers.location, undefined);
+        assertRemoteSmokeResponse(preview ? "preview" : "production", method, response.status, headers);
+        if (preview) assert.ok(!headers.location.includes("evil"), "query input must not reach Location");
         output.push({ method, status: response.status, headers });
       }
       return output;
@@ -158,12 +169,14 @@ function selfTest() {
   console.log("OK: evidence schema rejects incomplete and fabricated proof");
 }
 
-const [command, ...args] = process.argv.slice(2);
-try {
-  if (command === "check") printCheck();
-  else if (command === "validate-evidence") { const input = value(args, "--input"); if (!input) fail("validate-evidence requires --input <evidence.json>"); validateEvidence(readJson(resolve(input))); console.log("OK: release evidence schema is complete and non-fabricated"); }
-  else if (command === "destination-health" || command === "canonical-smoke") externalPlan(command, args);
-  else if (command === "preview-parity") await parityPlan(args);
-  else if (command === "self-test") selfTest();
-  else fail("expected check, validate-evidence, destination-health, canonical-smoke, preview-parity, or self-test");
-} catch (error) { console.error(`ERROR: ${error.message}`); process.exitCode = 2; }
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const [command, ...args] = process.argv.slice(2);
+  try {
+    if (command === "check") printCheck();
+    else if (command === "validate-evidence") { const input = value(args, "--input"); if (!input) fail("validate-evidence requires --input <evidence.json>"); validateEvidence(readJson(resolve(input))); console.log("OK: release evidence schema is complete and non-fabricated"); }
+    else if (command === "destination-health" || command === "canonical-smoke") externalPlan(command, args);
+    else if (command === "preview-parity") await parityPlan(args);
+    else if (command === "self-test") selfTest();
+    else fail("expected check, validate-evidence, destination-health, canonical-smoke, preview-parity, or self-test");
+  } catch (error) { console.error(`ERROR: ${error.message}`); process.exitCode = 2; }
+}

@@ -52,3 +52,38 @@ test("promotion workflow authenticates before execution without suppressing Wran
   assert.match(runbook, /`\/memberships` endpoint/);
   assert.match(runbook, /does not print the token,\naccount ID, or API response/);
 });
+
+const linksDx = await import("./links-dx.mjs");
+const proof = await import("../worker/release-proof.mjs");
+
+test("remote smoke targets the approved route and rejects ambiguous base URLs", () => {
+  assert.equal(
+    linksDx.resolveSmokeUrl("https://preview.example.test").href,
+    `https://preview.example.test${proof.approvedPath}`,
+  );
+  for (const rawUrl of [
+    "http://preview.example.test",
+    "https://preview.example.test/?unexpected=1",
+    "https://preview.example.test/#fragment",
+    "https://preview.example.test/not-the-worker-root",
+    "https://user:pass@preview.example.test",
+  ]) {
+    assert.throws(() => linksDx.resolveSmokeUrl(rawUrl), /LINK_SMOKE_URL/);
+  }
+});
+
+test("shared release-proof contract requires exact GET/HEAD preview redirects", () => {
+  const headers = {
+    "cache-control": "no-store, max-age=0",
+    "content-security-policy": "default-src 'none'",
+    "permissions-policy": "camera=()",
+    "referrer-policy": "no-referrer",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    location: proof.destination,
+  };
+  for (const method of ["GET", "HEAD"]) assert.doesNotThrow(() => proof.assertRemoteSmokeResponse("preview", method, 302, headers));
+  assert.throws(() => proof.assertRemoteSmokeResponse("preview", "GET", 302, { ...headers, location: `${proof.destination}&hostile=1` }), /Location/);
+  assert.throws(() => proof.assertRemoteSmokeResponse("preview", "HEAD", 200, headers), /status/);
+  assert.throws(() => proof.assertRemoteSmokeResponse("preview", "GET", 302, { ...headers, "cache-control": "max-age=60" }), /cache-control/);
+});

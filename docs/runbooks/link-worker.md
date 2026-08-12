@@ -24,8 +24,7 @@ npm run links:rollback -- --environment production --version exactWorkerVersion 
 ```
 
 `links:check`, `links:test`, and `links:smoke:local` are fully local. A remote
-smoke uses only a query-free `LINK_SMOKE_URL`; the default `--check` reports its
-plan without making a request. Every rollback (including preview) and production deployment requires a
+smoke accepts only a query-free, fragment-free HTTPS origin/base `LINK_SMOKE_URL`; it appends the approved `/r/niran-storytime-kit-v1-en-p5-book` route and rejects path-bearing URLs to avoid ambiguity. The default `--check` reports its plan without making a request. A remote preview smoke sends query input only to prove it is dropped, then requires GET and HEAD to return the exact 302 destination plus the security and no-store cache headers. Every rollback (including preview) and production deployment requires a
 syntactically exact version ID. Without `--execute`, deployment and rollback
 refuse rather than guess.
 
@@ -41,7 +40,7 @@ Configure GitHub environments **before** using
   environment and grant the least Cloudflare permission needed to deploy this
   Worker. Never put values in repository variables, logs, or issues.
 - Variables: `CLOUDFLARE_ACCOUNT_ID`, the target Cloudflare account ID, and
-  `LINK_SMOKE_URL`, a query-free HTTPS Worker URL, in the matching environment.
+  `LINK_SMOKE_URL`, a query-free, fragment-free HTTPS Worker origin/base URL (for example `https://preview-worker.example.workers.dev`), in the matching environment. Do not include a resolver path, query string, fragment, or credentials.
   The account ID is configuration metadata (not a secret); setting it prevents
   Wrangler from discovering an account through the `/memberships` endpoint.
 

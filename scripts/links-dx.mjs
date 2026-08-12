@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { approvedPath, assertRemoteSmokeResponse } from "../worker/release-proof.mjs";
 
 const [command, ...args] = process.argv.slice(2);
 const has = (flag) => args.includes(flag);
@@ -34,6 +37,21 @@ function requireVersion() {
 function workerName() {
   return environment === "production" ? "bronerbooks-link-resolver" : "bronerbooks-link-resolver-preview";
 }
+export function resolveSmokeUrl(rawUrl) {
+  let base;
+  try { base = new URL(rawUrl); } catch { throw new Error("LINK_SMOKE_URL must be an absolute query-free HTTPS origin/base URL"); }
+  if (base.protocol !== "https:" || base.search || base.hash || base.pathname !== "/" || base.username || base.password) {
+    throw new Error("LINK_SMOKE_URL must be a query-free, fragment-free HTTPS origin/base URL without a path or credentials");
+  }
+  return new URL(approvedPath, base);
+}
+async function smokeRemote(url) {
+  for (const method of ["GET", "HEAD"]) {
+    const response = await fetch(`${url.href}?hostile=https%3A%2F%2Fevil.test`, { method, redirect: "manual", signal: AbortSignal.timeout(15_000) });
+    const headers = Object.fromEntries([...response.headers].map(([name, item]) => [name.toLowerCase(), item]));
+    assertRemoteSmokeResponse(environment, method, response.status, headers);
+  }
+}
 function versionDeployCommand() {
   return ["versions", "deploy", version, "--name", workerName()];
 }
@@ -44,6 +62,7 @@ function runWrangler(commandArgs) {
   if (result.error || result.status !== 0) process.exitCode = result.status ?? 1;
 }
 
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 if (!command) fail("expected check, preview, smoke-local, smoke, deploy, or rollback");
 else if (command === "check") {
   if (!requireEnvironment()) process.exitCode = 2;
@@ -64,12 +83,11 @@ else if (command === "check") {
   else if (!execute) fail("remote smoke is disabled by default; rerun with --check or use protected workflow execution");
   else if (!process.env.LINK_SMOKE_URL) fail("LINK_SMOKE_URL is required for a remote smoke");
   else {
-    const url = new URL(process.env.LINK_SMOKE_URL);
-    if (url.protocol !== "https:" || url.search) fail("LINK_SMOKE_URL must be query-free HTTPS");
-    else {
-      const result = spawnSync("curl", ["--fail", "--silent", "--show-error", "--max-time", "15", "--proto", "=https", "--output", "/dev/null", "--write-out", "%{http_code}\n", url.href], { stdio: "inherit" });
-      if (result.error || result.status !== 0) process.exitCode = result.status ?? 1;
-    }
+    try {
+      const url = resolveSmokeUrl(process.env.LINK_SMOKE_URL);
+      await smokeRemote(url);
+      plan(`${environment} remote smoke passed for ${url.pathname} (GET/HEAD, security/cache headers, exact redirect contract, query dropped)`);
+    } catch (error) { fail(error.message); }
   }
 } else if (command === "deploy" || command === "rollback") {
   if (!requireEnvironment()) process.exitCode = 2;
@@ -85,3 +103,5 @@ else if (command === "check") {
   else if (command === "rollback" || environment === "production") runWrangler(versionDeployCommand());
   else runWrangler(["deploy", "--config", "worker/wrangler.toml", "--name", workerName(), "--var", "LINK_ENVIRONMENT:preview"]);
 } else fail(`unknown command: ${command}`);
+
+}
