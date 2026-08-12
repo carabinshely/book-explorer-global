@@ -43,7 +43,12 @@ test("promotion workflow authenticates before execution without suppressing Wran
 
   assert.doesNotMatch(workflow, /WRANGLER_LOG\s*:/);
   assert.doesNotMatch(runner, /WRANGLER_LOG/);
-  assert.match(workflow, /name: Verify Cloudflare authentication\n        if: \$\{\{ inputs\.operation != 'check' \}\}\n        run: npx --yes wrangler@4\.32\.0 whoami/);
-  assert.ok(workflow.indexOf("name: Verify Cloudflare authentication") < workflow.indexOf("name: Execute approved operation"));
-  assert.match(runbook, /default sanitized, non-debug\nlogging so fatal diagnostics remain visible/);
+  assert.match(workflow, /CLOUDFLARE_ACCOUNT_ID: \$\{\{ vars\.CLOUDFLARE_ACCOUNT_ID \}\}/);
+  assert.doesNotMatch(workflow, /wrangler@4\.32\.0 whoami/);
+  assert.match(workflow, /https:\/\/api\.cloudflare\.com\/client\/v4\/user\/tokens\/verify/);
+  assert.match(workflow, /OK: Cloudflare API token verified/);
+  assert.doesNotMatch(workflow, /console\.log\(body\)/);
+  assert.ok(workflow.indexOf("name: Verify Cloudflare token and account configuration") < workflow.indexOf("name: Execute approved operation"));
+  assert.match(runbook, /`\/memberships` endpoint/);
+  assert.match(runbook, /does not print the token,\naccount ID, or API response/);
 });

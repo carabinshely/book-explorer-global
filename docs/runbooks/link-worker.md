@@ -40,14 +40,19 @@ Configure GitHub environments **before** using
   `CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION`; scope both to their matching
   environment and grant the least Cloudflare permission needed to deploy this
   Worker. Never put values in repository variables, logs, or issues.
-- Variable: `LINK_SMOKE_URL`, a query-free HTTPS Worker URL in the matching
-  environment.
+- Variables: `CLOUDFLARE_ACCOUNT_ID`, the target Cloudflare account ID, and
+  `LINK_SMOKE_URL`, a query-free HTTPS Worker URL, in the matching environment.
+  The account ID is configuration metadata (not a secret); setting it prevents
+  Wrangler from discovering an account through the `/memberships` endpoint.
 
 The manual workflow has `contents: read` only and serializes each environment.
 GitHub masks secret values, and Wrangler uses its default sanitized, non-debug
 logging so fatal diagnostics remain visible. Before an approved operation, the
-workflow runs `wrangler whoami` to verify the selected environment's credentials.
-Select `check` first. An authorized reviewer then selects `deploy` or `rollback`;
+workflow verifies the token through Cloudflare's token-verification endpoint and
+prints only a fixed success or failure message; it does not print the token,
+account ID, or API response. `CLOUDFLARE_ACCOUNT_ID` is then supplied to Wrangler
+for the approved operation, avoiding account auto-discovery. Select `check`
+first. An authorized reviewer then selects `deploy` or `rollback`;
 production requires the exact already-known Worker version ID. Capture only
 status, headers, version ID, commit, timestamp, and the query-free URL in release
 evidence.
