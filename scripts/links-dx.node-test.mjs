@@ -26,7 +26,7 @@ test("production deploy and rollback require exact version and never execute in 
   assert.equal(previewRollback.status, 2);
   const plannedRollback = run("rollback", "--environment", "preview", "--version", "abc123", "--check");
   assert.equal(plannedRollback.status, 0, plannedRollback.stderr);
-  assert.match(plannedRollback.stdout, /wrangler@4\.32\.0 versions deploy abc123 --name bronerbooks-link-resolver-preview/);
+  assert.match(plannedRollback.stdout, /wrangler versions deploy abc123 --name bronerbooks-link-resolver-preview/);
 });
 
 test("production commands use the Wrangler environment-suffixed Worker name", () => {
@@ -55,7 +55,7 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   const bootstrapConfig = readFileSync("worker/wrangler.bootstrap.toml", "utf8");
   assert.match(workflow, /workers\/scripts\/\$\{worker_name\}/);
   assert.match(workflow, /bronerbooks-link-resolver-production/);
-  assert.match(workflow, /wrangler@4\.32\.0 deploy --config worker\/wrangler\.bootstrap\.toml/);
+  assert.match(workflow, /wrangler deploy --config worker\/wrangler\.bootstrap\.toml/);
   assert.doesNotMatch(workflow, /bootstrap commit:.*--message/);
   assert.match(workflow, /git show "\$\{GITHUB_SHA\}:worker\/manifest\.fixture\.json"/);
   assert.match(workflow, /versions upload --config worker\/wrangler\.toml --env production/);
@@ -85,7 +85,7 @@ test("promotion workflow authenticates before execution without suppressing Wran
   assert.doesNotMatch(workflow, /WRANGLER_LOG\s*:/);
   assert.doesNotMatch(runner, /WRANGLER_LOG/);
   assert.match(workflow, /CLOUDFLARE_ACCOUNT_ID: \$\{\{ vars\.CLOUDFLARE_ACCOUNT_ID \}\}/);
-  assert.doesNotMatch(workflow, /wrangler@4\.32\.0 whoami/);
+  assert.doesNotMatch(workflow, /wrangler whoami/);
   assert.match(workflow, /https:\/\/api\.cloudflare\.com\/client\/v4\/user\/tokens\/verify/);
   assert.match(workflow, /OK: Cloudflare API token verified/);
   assert.doesNotMatch(workflow, /console\.log\(body\)/);

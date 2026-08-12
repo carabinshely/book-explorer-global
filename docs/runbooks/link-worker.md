@@ -7,8 +7,7 @@ Cloudflare, or deploy unless `--execute` is used inside the manual workflow.
 
 ## Pinned runtime and local checks
 
-Use Node **22.16.0** (the CI pin) and npm. The Worker CLI is pinned at
-`wrangler@4.32.0` only when an approved workflow executes it.
+Use Node **22.16.0** (the CI pin) and npm. The Worker CLI is pinned in `devDependencies` at `wrangler@4.32.0`; `npm ci` installs its platform optional dependency before an approved workflow executes it.
 
 ```sh
 npm ci

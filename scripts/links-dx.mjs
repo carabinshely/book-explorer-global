@@ -56,7 +56,7 @@ function versionDeployCommand() {
   return ["versions", "deploy", version, "--name", workerName(), "--env", environment, "--yes"];
 }
 function runWrangler(commandArgs) {
-  const result = spawnSync("npx", ["--yes", "wrangler@4.32.0", ...commandArgs], {
+  const result = spawnSync("npm", ["exec", "--", "wrangler", ...commandArgs], {
     stdio: "inherit",
   });
   if (result.error || result.status !== 0) process.exitCode = result.status ?? 1;
@@ -94,12 +94,12 @@ else if (command === "check") {
   else if (((command === "deploy" && environment === "production") || command === "rollback" || command === "attach-route") && !requireVersion()) process.exitCode = 2;
   else if (check) {
     const intended = command === "detach-route"
-      ? "npx --yes wrangler@4.32.0 triggers deploy --config worker/wrangler.detach.toml"
+      ? "npm exec -- wrangler triggers deploy --config worker/wrangler.detach.toml"
       : command === "attach-route"
-        ? "npx --yes wrangler@4.32.0 triggers deploy --config worker/wrangler.toml --env production"
+        ? "npm exec -- wrangler triggers deploy --config worker/wrangler.toml --env production"
       : command === "rollback" || environment === "production"
-        ? `npx --yes wrangler@4.32.0 ${versionDeployCommand().join(" ")}`
-        : "npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --env preview --var LINK_ENVIRONMENT:preview";
+        ? `npm exec -- wrangler ${versionDeployCommand().join(" ")}`
+        : "npm exec -- wrangler deploy --config worker/wrangler.toml --env preview --var LINK_ENVIRONMENT:preview";
     plan(`${command} ${environment} dry-run: ${intended}; no deployment was attempted`);
   }
   else if (!execute) fail(`${command} is disabled by default; use --check locally or protected workflow --execute`);

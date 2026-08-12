@@ -125,18 +125,18 @@ jobs:
             # First deployment only: Wrangler creates the env-suffixed script and returns its version.
             bootstrap=true
             upload="$(mktemp)"
-            npx --yes wrangler@4.32.0 deploy --config worker/wrangler.bootstrap.toml 2>&1 | tee "$upload"
+            npm exec -- wrangler deploy --config worker/wrangler.bootstrap.toml 2>&1 | tee "$upload"
           elif [ "$script_status" = "200" ]; then
             bootstrap=false
             upload="$(mktemp)"
-            npx --yes wrangler@4.32.0 versions upload --config worker/wrangler.toml --env production --message "commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+            npm exec -- wrangler versions upload --config worker/wrangler.toml --env production --message "commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
           else
             echo "ERROR: unable to determine whether ${worker_name} exists (HTTP ${script_status})" >&2
             exit 1
           fi
           version="$(sed -nE 's/.*[Vv]ersion ID:[[:space:]]*([^[:space:]]+).*/\1/p' "$upload" | tail -n 1)"
           [[ "$version" =~ ^[A-Za-z0-9_-]{6,128}$ ]] || { echo "ERROR: Wrangler did not report a valid version ID" >&2; exit 1; }
-          npx --yes wrangler@4.32.0 versions view "$version" --name "$worker_name" --json > version.json
+          npm exec -- wrangler versions view "$version" --name "$worker_name" --json > version.json
           if [ "$bootstrap" = true ]; then
             # Bootstrap deploy has no --message. Verify its exact local bundle input instead.
             test "$artifact_sha" = "$(git show "${GITHUB_SHA}:worker/manifest.fixture.json" | sha256sum | awk '{print $1}')"
