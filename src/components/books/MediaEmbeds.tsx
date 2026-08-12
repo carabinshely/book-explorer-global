@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MediaEntry, getLanguageName } from '@/hooks/useBooks';
 import { LanguageIcon } from '@/components/books/LanguageIcon';
+import { ExternalMediaEmbed } from '@/components/privacy/ExternalMediaEmbed';
 
 interface MediaEmbedsProps {
   media?: {
@@ -41,7 +42,7 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
   // Convert YouTube URL to embed format
   const getYouTubeEmbedUrl = (url: string) => {
     const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1];
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : url;
   };
 
   const getAppleMusicEmbedUrl = (url: string) => {
@@ -78,15 +79,17 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                         )}
                       </p>
                     )}
-                    <iframe
-                      title={`Spotify player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
-                      src={getSpotifyEmbedUrl(url)}
-                      width="100%"
-                      height="152"
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                      loading="lazy"
-                      className="rounded-lg"
-                    />
+                    <ExternalMediaEmbed provider="Spotify">
+                      <iframe
+                        title={`Spotify player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
+                        src={getSpotifyEmbedUrl(url)}
+                        width="100%"
+                        height="152"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        className="rounded-lg"
+                      />
+                    </ExternalMediaEmbed>
                   </div>
                 ))}
               </div>
@@ -113,15 +116,17 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                         )}
                       </p>
                     )}
-                    <iframe
-                      title={`Apple Music player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
-                      src={getAppleMusicEmbedUrl(url)}
-                      width="100%"
-                      height="175"
-                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                      loading="lazy"
-                      className="rounded-lg"
-                    />
+                    <ExternalMediaEmbed provider="Apple Music">
+                      <iframe
+                        title={`Apple Music player - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
+                        src={getAppleMusicEmbedUrl(url)}
+                        width="100%"
+                        height="175"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy"
+                        className="rounded-lg"
+                      />
+                    </ExternalMediaEmbed>
                   </div>
                 ))}
               </div>
@@ -152,18 +157,20 @@ export function MediaEmbeds({ media }: MediaEmbedsProps) {
                     )}
                   </p>
                 )}
-                <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                  <iframe
-                    title={`YouTube video - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
-                    src={getYouTubeEmbedUrl(url)}
-                    width="100%"
-                    height="100%"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                    className="absolute inset-0"
-                  />
-                </div>
+                <ExternalMediaEmbed provider="YouTube" className="aspect-video rounded-lg border border-border bg-muted/40 p-5">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+                    <iframe
+                      title={`YouTube video - ${lang === 'mixed' ? 'Mixed' : getLanguageName(lang)}`}
+                      src={getYouTubeEmbedUrl(url)}
+                      width="100%"
+                      height="100%"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      loading="lazy"
+                      className="absolute inset-0"
+                    />
+                  </div>
+                </ExternalMediaEmbed>
               </div>
             ))}
           </div>

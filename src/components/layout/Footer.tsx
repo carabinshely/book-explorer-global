@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useOptionalConsent } from '@/contexts/ConsentContext';
 
 export function Footer() {
   const { t } = useLanguage();
+  const consent = useOptionalConsent();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -60,6 +62,19 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">
               © {currentYear} {t.site.name}. {t.footer.rights}
             </p>
+            <div className="flex flex-col items-start gap-2">
+              <Link className="inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-accent" to="/privacy">
+                {t.footer.privacy}
+              </Link>
+              <button
+                className="min-h-11 text-sm text-muted-foreground hover:text-accent"
+                disabled={!consent}
+                onClick={consent?.openPrivacySettings}
+                type="button"
+              >
+                {t.footer.privacy_settings}
+              </button>
+            </div>
           </div>
         </div>
 

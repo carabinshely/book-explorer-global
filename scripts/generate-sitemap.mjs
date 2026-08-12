@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
-const REQUIRED_STATIC_PATHS = new Set(["/", "/books", "/about", "/contact"]);
+const REQUIRED_STATIC_PATHS = new Set(["/", "/books", "/about", "/contact", "/privacy"]);
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
 const MAX_SEO_DESCRIPTION_LENGTH = 161;
 const HTML_TAG_PATTERN = /<[^>]+>/;

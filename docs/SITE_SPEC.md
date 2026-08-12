@@ -121,7 +121,8 @@ Example snippet: [[docs/EXAMPLES#Gallery and Media Embed Snippet]].
   `docs/GOOGLE_ANALYTICS.md`.
 - Disclose analytics usage in the privacy/legal experience before broader paid
   traffic campaigns.
-- Provide Privacy/Terms pages if required by hosting or embeds.
+- Provide the English Privacy Notice at `/privacy`, link it globally, and block production builds until the approved public mailbox is configured.
+- Block GA4 until affirmative consent and optional external media until explicit click-to-load.
 
 ## Hosting and previews (planned)
 

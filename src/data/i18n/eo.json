@@ -65,7 +65,7 @@
     "title": "Kontaktu Nin",
     "subtitle": "Ni volonte aŭdus de vi",
     "email_label": "Retpoŝtu Nin",
-    "email": "bronerbooks@gmail.com",
+    "email": "hello@bronerbooks.com",
     "follow_label": "Sekvu Nin",
     "quote": "Legado estas konversacio. Ĉiuj libroj parolas. Sed bona libro ankaŭ aŭskultas.",
     "quote_author": "— Mark Haddon"
@@ -74,7 +74,9 @@
     "rights": "Ĉiuj rajtoj rezervitaj.",
     "tagline": "Rakontoj kiuj lumigas la vojon",
     "navigation": "Navigado",
-    "legal": "Jura"
+    "legal": "Jura",
+    "privacy": "Privacy Notice (English)",
+    "privacy_settings": "Privacy settings"
   },
   "a11y": {
     "skip_to_content": "Salti al enhavo",
