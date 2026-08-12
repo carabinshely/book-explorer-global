@@ -8,13 +8,15 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run sitemap && vite build && node scripts/generate-book-pages.mjs",
+    "build": "npm run privacy:check && npm run sitemap && vite build && node scripts/generate-book-pages.mjs",
     "build:dev": "vite build --mode development",
+    "build:verify": "node scripts/build-verification.mjs",
     "sitemap": "npm run seo:sitemap",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
+    "privacy:check": "node scripts/validate-public-config.mjs",
     "seo:sitemap": "node scripts/generate-sitemap.mjs",
     "seo:check": "node scripts/seo-check.mjs",
     "seo:check:committed": "npm run seo:sitemap && git diff --exit-code -- public/sitemap.xml",
@@ -35,7 +37,9 @@
     "links:proof:evidence": "node worker/release-proof.mjs validate-evidence",
     "links:preview:parity": "node worker/release-proof.mjs preview-parity",
     "links:destination-health": "node worker/release-proof.mjs destination-health",
-    "links:canonical-smoke": "node worker/release-proof.mjs canonical-smoke"
+    "links:canonical-smoke": "node worker/release-proof.mjs canonical-smoke",
+    "links:attach-route": "node scripts/links-dx.mjs attach-route",
+    "links:detach-route": "node scripts/links-dx.mjs detach-route"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

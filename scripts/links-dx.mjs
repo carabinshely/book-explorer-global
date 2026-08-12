@@ -91,7 +91,7 @@ else if (command === "check") {
   }
 } else if (command === "deploy" || command === "rollback" || command === "attach-route" || command === "detach-route") {
   if (!requireEnvironment()) process.exitCode = 2;
-  else if ((environment === "production" || command === "rollback" || command === "attach-route") && !requireVersion()) process.exitCode = 2;
+  else if (((command === "deploy" && environment === "production") || command === "rollback" || command === "attach-route") && !requireVersion()) process.exitCode = 2;
   else if (check) {
     const intended = command === "detach-route"
       ? "npx --yes wrangler@4.32.0 triggers deploy --config worker/wrangler.detach.toml"

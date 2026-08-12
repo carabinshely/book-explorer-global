@@ -36,6 +36,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ inputs.environment == 'production' && secrets.CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_LINKS_PREVIEW }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       LINK_SMOKE_URL: ${{ vars.LINK_SMOKE_URL }}
+      CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -72,6 +73,7 @@ jobs:
         run: |
           set -euo pipefail
           : "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID GitHub environment variable is required}"
+          : "${CLOUDFLARE_ZONE_ID:?CLOUDFLARE_ZONE_ID GitHub environment variable is required for the exact production route}"
           curl --fail --silent --show-error --max-time 15 --proto '=https' \
             --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             "https://api.cloudflare.com/client/v4/user/tokens/verify" \
@@ -85,6 +87,25 @@ jobs:
                     console.log("OK: Cloudflare API token verified");
                   } catch {
                     console.error("ERROR: Cloudflare API token verification failed");
+                    process.exitCode = 1;
+                  }
+                });
+              '
+          # Wrangler resolves the route zone; make the required Zone Read permission explicit.
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}" \
+            | node --input-type=module -e '
+                let body = "";
+                process.stdin.setEncoding("utf8");
+                process.stdin.on("data", (chunk) => { body += chunk; });
+                process.stdin.on("end", () => {
+                  try {
+                    const result = JSON.parse(body);
+                    if (result.success !== true || result.result?.name !== "bronerbooks.com") throw new Error("zone verification failed");
+                    console.log("OK: Cloudflare Zone Read permission verified for bronerbooks.com");
+                  } catch {
+                    console.error("ERROR: Cloudflare Zone Read permission for bronerbooks.com is required");
                     process.exitCode = 1;
                   }
                 });

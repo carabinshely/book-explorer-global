@@ -29,6 +29,12 @@ test("production deploy and rollback require exact version and never execute in 
   assert.match(plannedRollback.stdout, /wrangler@4\.32\.0 versions deploy abc123 --name bronerbooks-link-resolver-preview/);
 });
 
+test("route detach has no version dependency and remains dry-run by default", () => {
+  const result = run("detach-route", "--environment", "production", "--check");
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /wrangler\.detach\.toml/);
+});
+
 test("remote operations refuse without an explicit execution mode", () => {
   const result = run("deploy", "--environment", "preview");
   assert.equal(result.status, 2);
@@ -44,6 +50,8 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.match(workflow, /versions view "\$version" --name bronerbooks-link-resolver --json/);
   assert.match(workflow, /links:deploy:production -- --version "\$\{\{ steps\.production_upload\.outputs\.version \}\}" --execute/);
   assert.match(workflow, /links:attach-route/);
+  assert.match(workflow, /CLOUDFLARE_ZONE_ID/);
+  assert.match(workflow, /Cloudflare Zone Read permission verified for bronerbooks\.com/);
   assert.match(config, /\[env\.production\]/);
   assert.match(config, /workers_dev = false/);
   assert.match(config, /preview_urls = false/);
