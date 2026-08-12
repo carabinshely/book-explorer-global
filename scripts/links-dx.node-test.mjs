@@ -52,9 +52,12 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   const workflow = readFileSync(".github/workflows/link-worker-promotion.yml", "utf8");
   const config = readFileSync("worker/wrangler.toml", "utf8");
   const detachConfig = readFileSync("worker/wrangler.detach.toml", "utf8");
+  const bootstrapConfig = readFileSync("worker/wrangler.bootstrap.toml", "utf8");
   assert.match(workflow, /workers\/scripts\/\$\{worker_name\}/);
   assert.match(workflow, /bronerbooks-link-resolver-production/);
-  assert.match(workflow, /wrangler@4\.32\.0 deploy --config worker\/wrangler\.toml --env production/);
+  assert.match(workflow, /wrangler@4\.32\.0 deploy --config worker\/wrangler\.bootstrap\.toml/);
+  assert.doesNotMatch(workflow, /bootstrap commit:.*--message/);
+  assert.match(workflow, /git show "\$\{GITHUB_SHA\}:worker\/manifest\.fixture\.json"/);
   assert.match(workflow, /versions upload --config worker\/wrangler\.toml --env production/);
   assert.match(workflow, /versions view "\$version" --name "\$worker_name" --json/);
   assert.match(workflow, /links:deploy:production -- --version "\$\{\{ steps\.production_upload\.outputs\.version \}\}" --execute/);
@@ -68,6 +71,8 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.match(config, /preview_urls = false/);
   assert.match(config, /pattern = "bronerbooks\.com\/r\/\*", zone_name = "bronerbooks\.com"/);
   assert.doesNotMatch(config, /bronerbooks\.com\/\*"/);
+  assert.match(bootstrapConfig, /name = "bronerbooks-link-resolver-production"/);
+  assert.doesNotMatch(bootstrapConfig, /routes/);
   assert.match(detachConfig, /name = "bronerbooks-link-resolver-production"/);
   assert.match(detachConfig, /routes = \[\]/);
 });

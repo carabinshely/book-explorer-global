@@ -125,7 +125,7 @@ jobs:
             # First deployment only: Wrangler creates the env-suffixed script and returns its version.
             bootstrap=true
             upload="$(mktemp)"
-            npx --yes wrangler@4.32.0 deploy --config worker/wrangler.toml --env production --message "bootstrap commit:${GITHUB_SHA};manifest:${artifact_sha}" 2>&1 | tee "$upload"
+            npx --yes wrangler@4.32.0 deploy --config worker/wrangler.bootstrap.toml 2>&1 | tee "$upload"
           elif [ "$script_status" = "200" ]; then
             bootstrap=false
             upload="$(mktemp)"
@@ -134,10 +134,16 @@ jobs:
             echo "ERROR: unable to determine whether ${worker_name} exists (HTTP ${script_status})" >&2
             exit 1
           fi
-          version="$(sed -nE 's/.*[Vv]ersion ID: ([A-Za-z0-9_-]{6,128}).*/\1/p' "$upload" | tail -n 1)"
-          test -n "$version" || { echo "ERROR: Wrangler did not report an uploaded version ID" >&2; exit 1; }
+          version="$(sed -nE 's/.*[Vv]ersion ID:[[:space:]]*([^[:space:]]+).*/\1/p' "$upload" | tail -n 1)"
+          [[ "$version" =~ ^[A-Za-z0-9_-]{6,128}$ ]] || { echo "ERROR: Wrangler did not report a valid version ID" >&2; exit 1; }
           npx --yes wrangler@4.32.0 versions view "$version" --name "$worker_name" --json > version.json
-          node --input-type=module -e 'const v = JSON.parse(await (await import("node:fs/promises")).readFile("version.json", "utf8")); if (!JSON.stringify(v).includes(process.env.GITHUB_SHA)) throw new Error("uploaded version is not tied to this commit");'
+          if [ "$bootstrap" = true ]; then
+            # Bootstrap deploy has no --message. Verify its exact local bundle input instead.
+            test "$artifact_sha" = "$(git show "${GITHUB_SHA}:worker/manifest.fixture.json" | sha256sum | awk '{print $1}')"
+            node worker/verify-fixture.mjs
+          else
+            node --input-type=module -e 'const v = JSON.parse(await (await import("node:fs/promises")).readFile("version.json", "utf8")); if (!JSON.stringify(v).includes(process.env.GITHUB_SHA)) throw new Error("uploaded version is not tied to this commit");'
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "bootstrap=$bootstrap" >> "$GITHUB_OUTPUT"
           echo "manifest_sha256=$artifact_sha" >> "$GITHUB_OUTPUT"

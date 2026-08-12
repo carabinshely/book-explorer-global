@@ -1,0 +1,6 @@
+# First-deployment bootstrap only: creates the production Worker without any public route.
+name = "bronerbooks-link-resolver-production"
+main = "index.ts"
+compatibility_date = "2025-02-01"
+workers_dev = false
+preview_urls = false
