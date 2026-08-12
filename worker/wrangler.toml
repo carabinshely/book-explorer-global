@@ -6,7 +6,7 @@ compatibility_date = "2025-02-01"
 [env.production]
 workers_dev = false
 preview_urls = false
-routes = [{ pattern = "bronerbooks.com/r/*" }]
+routes = [{ pattern = "bronerbooks.com/r/*", zone_name = "bronerbooks.com" }]
 
 # Preview remains a separate workers.dev Worker and cannot attach the canonical route.
 [env.preview]

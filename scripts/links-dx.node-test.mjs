@@ -55,7 +55,7 @@ test("production workflow uploads the exact commit artifact, deploys its capture
   assert.match(config, /\[env\.production\]/);
   assert.match(config, /workers_dev = false/);
   assert.match(config, /preview_urls = false/);
-  assert.match(config, /pattern = "bronerbooks\.com\/r\/\*"/);
+  assert.match(config, /pattern = "bronerbooks\.com\/r\/\*", zone_name = "bronerbooks\.com"/);
   assert.doesNotMatch(config, /bronerbooks\.com\/\*"/);
   assert.match(detachConfig, /routes = \[\]/);
 });
