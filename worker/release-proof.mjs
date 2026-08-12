@@ -27,6 +27,14 @@ function nonPlaceholder(value, field) {
   if (typeof value !== "string" || !value.trim() || prohibitedEvidenceValues.test(value.trim())) fail(`evidence.${field} must be a non-placeholder string`);
   return value;
 }
+/** Read only contract headers directly; some fetch implementations do not enumerate redirect headers consistently. */
+export function captureSmokeHeaders(headers) {
+  return Object.fromEntries(
+    [...requiredHeaders, "location"]
+      .map((name) => [name, headers.get(name)])
+      .filter(([, value]) => value !== null),
+  );
+}
 export function assertExactHeaders(headers) {
   for (const name of requiredHeaders) if (typeof headers[name] !== "string" || !headers[name]) fail(`evidence.headers.${name} is required`);
   if (headers["cache-control"] !== "no-store, max-age=0") fail("evidence.headers.cache-control must prove no-store, max-age=0");

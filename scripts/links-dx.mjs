@@ -2,7 +2,7 @@
 import { spawnSync } from "node:child_process";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { approvedPath, assertRemoteSmokeResponse } from "../worker/release-proof.mjs";
+import { approvedPath, assertRemoteSmokeResponse, captureSmokeHeaders } from "../worker/release-proof.mjs";
 
 const [command, ...args] = process.argv.slice(2);
 const has = (flag) => args.includes(flag);
@@ -48,7 +48,7 @@ export function resolveSmokeUrl(rawUrl) {
 async function smokeRemote(url) {
   for (const method of ["GET", "HEAD"]) {
     const response = await fetch(`${url.href}?hostile=https%3A%2F%2Fevil.test`, { method, redirect: "manual", signal: AbortSignal.timeout(15_000) });
-    const headers = Object.fromEntries([...response.headers].map(([name, item]) => [name.toLowerCase(), item]));
+    const headers = captureSmokeHeaders(response.headers);
     assertRemoteSmokeResponse(environment, method, response.status, headers);
   }
 }

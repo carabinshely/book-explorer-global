@@ -113,6 +113,21 @@ test("remote smoke targets the approved route and rejects ambiguous base URLs", 
   }
 });
 
+test("remote smoke captures redirect contract headers with direct case-insensitive reads", () => {
+  const source = new Headers({
+    "Cache-Control": "no-store, max-age=0",
+    "Content-Security-Policy": "default-src 'none'",
+    "Permissions-Policy": "camera=()",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    Location: proof.destination,
+  });
+  const headers = proof.captureSmokeHeaders(source);
+  for (const method of ["GET", "HEAD"]) assert.doesNotThrow(() => proof.assertRemoteSmokeResponse("production", method, 302, headers));
+  assert.deepEqual(Object.keys(headers).sort(), ["cache-control", "content-security-policy", "location", "permissions-policy", "referrer-policy", "x-content-type-options", "x-frame-options"]);
+});
+
 test("shared release-proof contract requires exact GET/HEAD preview redirects", () => {
   const headers = {
     "cache-control": "no-store, max-age=0",
