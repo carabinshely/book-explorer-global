@@ -43,11 +43,14 @@ Configure GitHub environments **before** using
 - Variable: `LINK_SMOKE_URL`, a query-free HTTPS Worker URL in the matching
   environment.
 
-The manual workflow has `contents: read` only, serializes each environment, and
-sets `WRANGLER_LOG=error`. Select `check` first. An authorized reviewer then
-selects `deploy` or `rollback`; production requires the exact already-known
-Worker version ID. Capture only status, headers, version ID, commit, timestamp,
-and the query-free URL in release evidence.
+The manual workflow has `contents: read` only and serializes each environment.
+GitHub masks secret values, and Wrangler uses its default sanitized, non-debug
+logging so fatal diagnostics remain visible. Before an approved operation, the
+workflow runs `wrangler whoami` to verify the selected environment's credentials.
+Select `check` first. An authorized reviewer then selects `deploy` or `rollback`;
+production requires the exact already-known Worker version ID. Capture only
+status, headers, version ID, commit, timestamp, and the query-free URL in release
+evidence.
 
 ## Recovery and rollback
 

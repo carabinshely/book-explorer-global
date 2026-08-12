@@ -40,7 +40,6 @@ function versionDeployCommand() {
 function runWrangler(commandArgs) {
   const result = spawnSync("npx", ["--yes", "wrangler@4.32.0", ...commandArgs], {
     stdio: "inherit",
-    env: { ...process.env, WRANGLER_LOG: "error" },
   });
   if (result.error || result.status !== 0) process.exitCode = result.status ?? 1;
 }

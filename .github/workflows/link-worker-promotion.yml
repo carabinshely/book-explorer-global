@@ -33,9 +33,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: link-worker-${{ inputs.environment }}
     env:
-      # Secret values are never logged; repository environments must require reviewers.
+      # GitHub masks secret values; repository environments must require reviewers.
       CLOUDFLARE_API_TOKEN: ${{ inputs.environment == 'production' && secrets.CLOUDFLARE_API_TOKEN_LINKS_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_LINKS_PREVIEW }}
-      WRANGLER_LOG: error
       LINK_SMOKE_URL: ${{ vars.LINK_SMOKE_URL }}
     steps:
       - uses: actions/checkout@v4
@@ -58,6 +57,9 @@ jobs:
           else
             npm run links:deploy:${{ inputs.environment }} -- --version "${{ inputs.version }}" --check
           fi
+      - name: Verify Cloudflare authentication
+        if: ${{ inputs.operation != 'check' }}
+        run: npx --yes wrangler@4.32.0 whoami
       - name: Execute approved operation
         if: ${{ inputs.operation != 'check' }}
         run: |
