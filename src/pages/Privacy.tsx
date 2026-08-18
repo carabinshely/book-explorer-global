@@ -7,49 +7,64 @@ const Privacy = () => (
     <div className="container max-w-4xl py-12 md:py-16">
       <article className="prose prose-slate max-w-none dark:prose-invert" lang="en">
         <h1>Privacy Notice</h1>
-        <p><strong>Effective:</strong> August 9, 2026</p>
-        <p>This notice explains how Broner Books, operated by Michael Broner, handles personal information through BronerBooks.com, the Magic Umbrella Storytime Kit form, and related email communications.</p>
+        <p><strong>Effective:</strong> August 18, 2026</p>
+        <p>This notice explains how Michael Broner, operating as Broner Books, handles personal information through BronerBooks.com, Storytime Kit requests, related email communications, and the website services described below.</p>
 
-        <h2>Contact and controller</h2>
-        <p>The controller is Broner Books, operated by Michael Broner. Email <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a>, or write to: {publicMailboxAddress}.</p>
+        <h2>Who is responsible and how to contact us</h2>
+        <p>Michael Broner, operating as Broner Books, is responsible for the personal information described in this notice. Email <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a>, or write to: {publicMailboxAddress}.</p>
 
-        <h2>Information we collect</h2>
-        <p>We may collect your email address; consent choices and supporting evidence such as time, IP address, source, and consent version; source and campaign fields; an optional language preference; links clicked in our emails; correspondence you send us; and website analytics only after you accept analytics cookies. We do not place email addresses or subscriber identifiers in URLs, campaign parameters, analytics, or ordinary website logs.</p>
+        <h2>Information we process</h2>
+        <p>Depending on how you use the site, we may process your email address; Storytime Kit request, confirmation, marketing-choice, unsubscribe, and suppression status; relevant timestamps, form/source information, and consent version; coarse campaign or UTM source fields; correspondence you send us; essential site preferences such as language and privacy choices; and website analytics after you accept analytics.</p>
+        <p>Hosting, network, email, and security providers may also process ordinary technical information needed to deliver and protect their services, such as Internet Protocol (IP) address, request, routing, browser/device, and security metadata. We do not intentionally place email addresses, names, subscriber IDs, or other direct identifiers in URLs, UTM parameters, or Google Analytics 4 (GA4) event payloads.</p>
 
-        <h2>How and why we use it</h2>
-        <p>We use information to confirm and deliver a requested kit, send email only when consented, manage preferences, measure the funnel, protect our services, comply with law, and enforce opt-outs. Kit delivery is separate from optional marketing consent. We do not sell or rent subscriber data, use it for targeted advertising, or use advertising pixels in this campaign.</p>
+        <h2>Storytime Kit requests and marketing emails</h2>
+        <p>When you ask for a Storytime Kit, we use your email address to verify the request and send the Kit. Providing your email address is voluntary, but we cannot email the Kit without it. Asking for the Kit does not subscribe you to marketing.</p>
+        <p>The Niran Storytime email series and occasional Broner Books news or book updates are a separate, optional choice. We send marketing only where we have the required permission. You can unsubscribe at any time using the link in a marketing email or by contacting us. Unsubscribing does not affect a Storytime Kit you already requested.</p>
+        <p>Double opt-in may be used to verify that the address belongs to the person making the request and to preserve reliable permission evidence; it is not presented as a universal legal requirement.</p>
 
-        <h2>Legal bases — provisional pending review</h2>
-        <p>This proposed mapping remains subject to owner and legal review before publication. Requested kit confirmation and delivery are based on taking steps at your request and providing the service you asked for. Optional marketing emails and Google Analytics are based on consent. Security, legal compliance, and opt-out enforcement may rely on legitimate interests or legal obligations where applicable. You may withdraw consent at any time without affecting processing already carried out lawfully.</p>
+        <h2>Legal basis and permissions</h2>
+        <p>For the current Israeli operation, personal information is collected voluntarily for the purposes disclosed when you provide it. Optional marketing is sent only with the required prior permission. Security, provider operations, correspondence, suppression, and legal-compliance records are used only for their disclosed and proportionate purposes or where a specific legal duty requires them.</p>
+        <p>Where European Economic Area or United Kingdom data-protection law applies to a particular activity, we rely on consent for optional marketing and analytics; legitimate interests where appropriate for the limited processing needed to fulfil an explicit Storytime Kit request, respond to ordinary correspondence, maintain security, and enforce suppression preferences; and legal obligations where processing is required to handle a statutory privacy request or another specific duty. We rely on contractual necessity only where processing is genuinely necessary for an actual contract.</p>
+        <p>You may withdraw consent at any time without affecting processing already carried out lawfully before withdrawal.</p>
+
+        <h2>Analytics, essential preferences, and optional media</h2>
+        <p>GA4 does not load until you select “Accept analytics.” You can reject analytics and later change your choice through “Privacy settings” in the footer. Rejecting analytics does not prevent normal access to the site.</p>
+        <p>GA4 may use an IP address transiently as part of collection and location processing, but Google states that GA4 does not log or store visitor IP addresses in GA4. We do not intentionally send email addresses, names, subscriber IDs, or other direct identifiers to GA4. Google Signals, user-provided-data collection, advertising personalization, and Google Ads linking are disabled under the approved configuration. GA4 user and event-level retention is configured to 14 months; aggregated reports and provider-controlled technical records may follow different retention behavior.</p>
+        <p>Essential storage may remember your privacy choice or a language/interface preference. Optional YouTube, Spotify, Apple Music, and similar players use a click-to-load design: the external service is not contacted by the embedded player until you choose to load it.</p>
 
         <h2>Providers and international processing</h2>
-        <p>We use MailerLite for forms and email delivery, Google Analytics for consented website analytics, GitHub Pages for website hosting, Cloudflare for DNS and email routing, and an operational Gmail mailbox for correspondence. These providers may process information internationally. MailerLite provides a data processing agreement and Standard Contractual Clauses for relevant transfers. When you follow an external link, including to Amazon, that destination handles information under its own privacy terms.</p>
+        <p>We use a small set of providers to operate the website and email flow. MailerLite provides subscriber, form, verification, and email-delivery services. Google provides GA4 and an operational email mailbox. GitHub Pages hosts the website and may process visitor IP and related security information. Cloudflare provides DNS, email-routing, and related network/security infrastructure and may process routing or security metadata in connection with those services.</p>
+        <p>These providers and their subprocessors may process information in Israel, the European Economic Area, the United States, or other service locations. The applicable transfer arrangement depends on the recipient, location, and law that applies to the particular transfer. Where required, protections may include an adequacy arrangement, an applicable data-privacy framework, contractual safeguards, or another legally permitted transfer mechanism. We do not assume that every provider uses the same transfer mechanism.</p>
 
-        <h2>Analytics, essential preferences, and external media</h2>
-        <p>Google Analytics 4 does not load until you select “Accept analytics.” You can reject it and later change your choice through “Privacy settings” in the footer. We ask again after six months. Google Signals, advertising features, and Ads linking are disabled, and analytics user and event data is retained for 14 months. Essential storage, such as your selected site language and storage needed to submit a requested form, is separate from analytics. Optional YouTube, Spotify, Apple Music, and similar players load only after you explicitly request them.</p>
-
-        <h2>Retention</h2>
+        <h2>How long we keep information</h2>
+        <p>We keep personal information only for as long as it remains necessary for the purpose for which we use it, subject to any continuing legal, security, dispute, or compliance need.</p>
         <ul>
-          <li>Unconfirmed signups are forgotten after 30 days.</li>
-          <li>Kit-only recipients are forgotten 30 days after successful delivery.</li>
-          <li>Consented subscribers are kept while subscribed and meaningfully active.</li>
-          <li>At 23 months without a click, preference update, reply, or renewed confirmation, we send one re-permission message; without a response, we unsubscribe the address at 24 months. Opens do not count.</li>
-          <li>Ordinary unsubscribes retain only the minimum suppression and consent history needed to honor the opt-out; nonessential profile information is removed.</li>
-          <li>Bounces and spam complaints are suppressed immediately, with nonessential profile information removed within 90 days.</li>
-          <li>Temporary approved exports are kept outside Git and deleted within seven days.</li>
-          <li>Ordinary correspondence is kept for 24 months after resolution, unless a transaction, dispute, or law requires longer.</li>
-          <li>Aggregated, non-identifying reports may be retained indefinitely.</li>
+          <li>Unconfirmed Storytime Kit requests are removed after a short verification period when they are no longer useful.</li>
+          <li>Delivery-only records are cleaned up after delivery and troubleshooting are complete and the active profile is no longer needed.</li>
+          <li>Marketing subscriber information is kept while the subscription remains current and useful, subject to periodic necessity review.</li>
+          <li>After an unsubscribe, bounce, spam complaint, or deletion request, we may retain the minimum suppression or compliance record needed to prevent unwanted re-mailing, demonstrate the permission history, handle a dispute, or meet a legal requirement. Unnecessary profile and engagement information is removed.</li>
+          <li>Correspondence is kept according to the nature of the enquiry and any continuing business or legal need.</li>
+          <li>GA4 user and event-level data is configured for 14-month retention. Aggregated reporting and provider-controlled security, fraud, billing, legal, or backup records may follow different retention rules.</li>
+          <li>Genuinely aggregated, non-identifying reports may be retained while useful.</li>
         </ul>
 
-        <h2>Your choices and rights</h2>
-        <p>You may request access, correction, withdrawal of consent, objection, or deletion by emailing <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a>. We may verify that you control the address. Marketing withdrawal takes effect immediately. For a verified erasure request, we use MailerLite’s “Forget” process, remove local exports, and aim to complete the request within 30 days, unless specific law requires isolated retention.</p>
+        <h2>Your choices and privacy rights</h2>
+        <p>You can withdraw marketing consent using the unsubscribe link in a marketing email or by contacting us. You can withdraw analytics consent through “Privacy settings.” Marketing withdrawal stops future marketing as soon as the unsubscribe is processed, while a minimal suppression record may remain so that we do not contact the address again by mistake.</p>
+        <p>You may contact <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a> to ask about personal information we hold about you and to request correction, deletion, objection, withdrawal, or other rights available under the law that applies to you. Israeli law provides statutory access and correction rights; additional rights may apply where other data-protection laws apply. We may take proportionate steps to verify that you control the relevant address and will respond within the time required by applicable law.</p>
+        <p>Where applicable law gives you the right to complain to a data-protection or supervisory authority, you may also use that route.</p>
 
-        <h2>Adults only</h2>
-        <p>Our services and forms are intended for parents, caregivers, teachers, gift buyers, and other adults. Do not submit a child’s name, age, school, contact details, or personal circumstances. We do not knowingly collect children’s information; contact us to request removal if it was submitted.</p>
+        <h2>Children's content and adult data collection</h2>
+        <p>Broner Books publishes books, printable activities, and other content for children and families. Our website forms, Storytime Kit requests, email subscriptions, and marketing features are intended for parents, caregivers, teachers, gift buyers, and other adults.</p>
+        <p>Please use your own adult contact information and do not submit a child's name, email address, age, school, contact details, or other identifying information. Fields that a child or family may complete on a downloaded or printed Storytime Kit are intended to stay on that local copy and are not meant to be sent back to Broner Books.</p>
+        <p>If we receive reliable information that a particular submission came directly from a child in circumstances where the information should not be retained, we will stop the related marketing or automation, avoid asking for additional child details, and take appropriate steps to remove the information from active systems, subject to any limited legal, security, or compliance record that must remain. Contact us if you believe a child has submitted personal information directly to Broner Books.</p>
+        <p>Broner Books may separately publish child-oriented audio or video through third-party platforms such as YouTube. Viewing that content does not enroll the viewer in Broner Books email marketing. A future service designed directly for children will be reviewed separately before Broner Books adds personal-data collection, non-essential analytics, or tracking to that service.</p>
 
-        <h2>Changes</h2>
-        <p>We will update the effective date and maintain an update history here. For material changes affecting subscribers, we will also provide an appropriate notice through the website or email before the change takes effect where required.</p>
-        <p><strong>Update history:</strong> August 9, 2026 — initial notice.</p>
+        <h2>External retailers and platforms</h2>
+        <p>BronerBooks.com links to independent retailers and platforms such as Amazon, IngramSpark-related stores, YouTube, Spotify, and Apple Music. When you follow an external link or activate an external service, that provider handles the interaction under its own privacy terms. A purchase made on an external retailer is not a Broner Books checkout, and Broner Books does not receive the retailer's checkout or order data merely because the site links there.</p>
+
+        <h2>Changes to this notice</h2>
+        <p>We update this notice when our data practices or legal requirements materially change. The effective date above identifies the current version. Where required, we will provide an appropriate additional notice before a material change affecting existing subscribers takes effect.</p>
+        <p><strong>Update history:</strong> August 18, 2026 — revised controller, purpose/permission, provider, retention, rights, analytics, and child-data wording following the Issue #28 legal and data-flow review.</p>
       </article>
     </div>
   </Layout>
