@@ -65,7 +65,7 @@
     "title": "צרו קשר",
     "subtitle": "נשמח לשמוע מכם",
     "email_label": "דוא\"ל",
-    "email": "bronerbooks@gmail.com",
+    "email": "hello@bronerbooks.com",
     "follow_label": "עקבו אחרינו",
     "quote": "קריאה היא שיחה. כל הספרים מדברים. אבל ספר טוב גם מקשיב.",
     "quote_author": "— מארק האדון"
@@ -74,7 +74,9 @@
     "rights": "כל הזכויות שמורות.",
     "tagline": "סיפורים שמאירים את הדרך",
     "navigation": "ניווט",
-    "legal": "משפטי"
+    "legal": "משפטי",
+    "privacy": "Privacy Notice (English)",
+    "privacy_settings": "Privacy settings"
   },
   "a11y": {
     "skip_to_content": "דלגו לתוכן",

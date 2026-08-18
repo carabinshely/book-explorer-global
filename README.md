@@ -11,9 +11,26 @@ npm run dev
 
 ## Build
 
+Production builds require the approved public PO box or commercial-mailbox
+address. Copy `.env.example` to a local environment file or configure the
+hosting environment, then replace the placeholder:
+
+```sh
+VITE_PUBLIC_MAILBOX_ADDRESS=your-approved-public-mailbox
+PRIVACY_NOTICE_APPROVED=true
+```
+
+Never use a residential address. The build intentionally fails while this
+value is missing or still a placeholder, or until the owner/legal reviewer and
+approval date are recorded and `PRIVACY_NOTICE_APPROVED` is explicitly true.
+
 ```sh
 npm run build
 ```
+
+Pull-request checks use `npm run build:verify` to create a conspicuous,
+test-only artifact. That command bypasses the publication gate but is never used
+or uploaded by the deployment workflow.
 
 ## SEO workflow
 

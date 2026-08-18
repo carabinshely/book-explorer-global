@@ -1,6 +1,6 @@
 {
   "schema_version": "book-explorer-global-seo-v1",
-  "generated_at": "2026-08-09T09:54:08Z",
+  "generated_at": "2026-08-09T20:12:22Z",
   "site": {
     "base_url": "https://bronerbooks.com"
   },
@@ -9,25 +9,31 @@
       "path": "/",
       "title": "Broner Books",
       "description": "Children's books by Michael Broner.",
-      "lastmod": "2026-07-07"
+      "lastmod": "2026-08-09"
     },
     {
       "path": "/books",
       "title": "Books | Broner Books",
       "description": "Browse Broner Books editions and languages.",
-      "lastmod": "2026-07-07"
+      "lastmod": "2026-08-09"
     },
     {
       "path": "/about",
       "title": "About | Broner Books",
       "description": "Learn about Broner Books and its publishing mission.",
-      "lastmod": "2026-07-07"
+      "lastmod": "2026-08-09"
     },
     {
       "path": "/contact",
       "title": "Contact | Broner Books",
       "description": "Contact Broner Books for reader and publishing inquiries.",
-      "lastmod": "2026-07-07"
+      "lastmod": "2026-08-09"
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy Notice | Broner Books",
+      "description": "How Broner Books handles personal information, consent, and retention.",
+      "lastmod": "2026-08-09"
     }
   ],
   "book_pages": [

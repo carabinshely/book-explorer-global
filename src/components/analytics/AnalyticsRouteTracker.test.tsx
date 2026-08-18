@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnalyticsRouteTracker } from './AnalyticsRouteTracker';
+import { disableGoogleAnalytics, enableGoogleAnalytics } from '@/lib/analytics';
 
 function TestRoutes() {
   return (
@@ -19,6 +20,9 @@ function TestRoutes() {
 describe('AnalyticsRouteTracker', () => {
   beforeEach(() => {
     window.gtag = vi.fn();
+    disableGoogleAnalytics('G-TEST123');
+    enableGoogleAnalytics('G-TEST123');
+    vi.mocked(window.gtag).mockClear();
   });
 
   it('skips the static initial page view and tracks later route changes', () => {

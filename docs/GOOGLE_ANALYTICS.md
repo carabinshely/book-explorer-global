@@ -10,10 +10,24 @@ measurement.
 - Route tracking: `src/components/analytics/AnalyticsRouteTracker.tsx`
 - Custom event currently tracked: `amazon_click`
 - Hosting override: `VITE_GA_MEASUREMENT_ID`
+- Consent storage: six months in `bronerbooks-analytics-consent`
+- Tag behavior: GA4 is dynamically loaded only after `Accept analytics`
 
 The measurement ID is not a secret. It is visible in the website JavaScript by
 design. Use the environment variable only when the ID needs to change without a
 code edit.
+
+## Consent and Data Settings
+
+- Keep basic consent behavior: no Google request before affirmative consent.
+- Initialize Consent Mode v2 locally with analytics and every advertising purpose denied.
+- On acceptance, grant analytics storage only; keep ad storage, ad user data, and ad personalization denied.
+- Keep `Privacy settings` available in the global footer for rejection or revocation.
+- Set GA4 user and event retention to 14 months.
+- Disable and verify Google Signals, advertising features, and Google Ads linking at the property/account level before publication.
+- On revocation, return every consent purpose to denied, disable the property, remove the tag, and clear GA cookies at host and Broner Books domain scopes.
+- Never send email addresses, subscriber IDs, or other personal data in events, URLs, or UTMs.
+- Consent rejection must not affect essential site language storage.
 
 ## Create the GA4 Account
 
@@ -33,11 +47,11 @@ code edit.
 1. Deploy the website build.
 2. Open Google Analytics.
 3. Go to `Reports > Realtime`.
-4. Visit the live website in a normal browser.
-5. Open a book detail page.
-6. Click the Amazon CTA once.
-7. Confirm that page views appear in Realtime.
-8. Confirm that the `amazon_click` event appears after GA processes events.
+4. Visit the live website in a clean browser and confirm no GA4 request occurs before a choice.
+5. Select `Reject analytics`, navigate between routes, and confirm rejection remains respected.
+6. Open `Privacy settings`, select `Accept analytics`, and confirm GA4 begins loading.
+7. Open a book detail page and click the Amazon CTA once.
+8. Confirm that page views and `amazon_click` appear after GA processes events.
 
 If the production host injects a different environment value, set
 `VITE_GA_MEASUREMENT_ID=G-DD2217GBC7` and redeploy.
