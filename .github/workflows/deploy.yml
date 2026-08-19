@@ -77,7 +77,7 @@ jobs:
               fi
 
               if curl --fail --silent --show-error --location --retry 2 --retry-delay 2 "${asset_url}" --output "${bundle_file}"; then
-                if grep -Fq 'P.O. Box 4244, Haifa, Israel' "${bundle_file}" \
+                if grep -Fq 'P.O. Box 4244, Haifa 3104201, Israel' "${bundle_file}" \
                   && grep -Fq 'August 19, 2026' "${bundle_file}" \
                   && grep -Fq "Children's content and adult data collection" "${bundle_file}" \
                   && ! grep -Fq 'provisional pending review' "${bundle_file}" \
