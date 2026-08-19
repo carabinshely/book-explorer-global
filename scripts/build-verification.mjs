@@ -1,14 +1,10 @@
 import { spawnSync } from 'node:child_process';
 
 const npmCli = process.env.npm_execpath;
-const verificationEnvironment = {
-  ...process.env,
-  VITE_PUBLIC_MAILBOX_ADDRESS: 'TEST ONLY — NOT FOR PUBLICATION',
-};
 
 function run(command, args) {
   const result = spawnSync(command, args, {
-    env: verificationEnvironment,
+    env: process.env,
     stdio: 'inherit',
   });
 
@@ -23,7 +19,7 @@ function runNpm(args) {
   run(process.execPath, [npmCli, ...args]);
 }
 
-console.log('Building a non-publishable verification artifact with test-only privacy data.');
+console.log('Building the pull-request verification artifact. Public legal identity is versioned in the repository.');
 runNpm(['run', 'sitemap']);
 runNpm(['run', 'build:dev']);
 run(process.execPath, ['scripts/generate-book-pages.mjs']);
