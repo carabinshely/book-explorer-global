@@ -1,79 +1,66 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 
 const validator = resolve('scripts/validate-public-config.mjs');
 
-function runValidator(cwd, overrides = {}) {
-  const env = { ...process.env };
-  for (const [key, value] of Object.entries(overrides)) {
-    if (value === undefined) delete env[key];
-    else env[key] = value;
-  }
-  return spawnSync(process.execPath, [validator], { cwd, env, encoding: 'utf8' });
+function runValidator(cwd) {
+  return spawnSync(process.execPath, [validator], { cwd, encoding: 'utf8' });
 }
 
-function withProductionEnv(t, contents) {
+function withPublicIdentity(t, identity) {
   const cwd = mkdtempSync(join(tmpdir(), 'bronerbooks-public-config-'));
-  writeFileSync(join(cwd, '.env.production'), contents);
+  const configPath = join(cwd, 'src/config/public-identity.json');
+  mkdirSync(dirname(configPath), { recursive: true });
+  writeFileSync(configPath, `${JSON.stringify(identity, null, 2)}\n`);
   t.after(() => rmSync(cwd, { force: true, recursive: true }));
   return cwd;
 }
 
-test('privacy validator loads approved values from .env.production', (t) => {
-  const cwd = withProductionEnv(t, [
-    'VITE_PUBLIC_MAILBOX_ADDRESS=PO Box 123',
-    'PRIVACY_NOTICE_APPROVED=true',
-  ].join('\n'));
+const approvedIdentity = {
+  controller: 'Michael Broner, operating as Broner Books',
+  brand: 'Broner Books',
+  contactEmail: 'hello@bronerbooks.com',
+  publicPostalAddress: 'P.O. Box 4244, Haifa, Israel',
+  privacyNoticeApproved: true,
+  privacyNoticeApprovalDate: '2026-08-19',
+  privacyNoticeEffectiveDate: '2026-08-19',
+  authority: 'carabinshely/bronerbooks-marketing-ops#28',
+};
 
-  const result = runValidator(cwd, {
-    VITE_PUBLIC_MAILBOX_ADDRESS: undefined,
-    PRIVACY_NOTICE_APPROVED: undefined,
-  });
+test('privacy validator accepts the approved versioned public identity', (t) => {
+  const result = runValidator(withPublicIdentity(t, approvedIdentity));
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Privacy publication configuration is complete/);
-});
-
-test('privacy validator gives explicit process environment precedence', (t) => {
-  const cwd = withProductionEnv(t, [
-    'VITE_PUBLIC_MAILBOX_ADDRESS={{PUBLIC_MAILBOX_ADDRESS}}',
-    'PRIVACY_NOTICE_APPROVED=false',
-  ].join('\n'));
-
-  const result = runValidator(cwd, {
-    VITE_PUBLIC_MAILBOX_ADDRESS: 'PO Box 456',
-    PRIVACY_NOTICE_APPROVED: 'true',
-  });
-  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /P\.O\. Box 4244, Haifa, Israel/);
+  assert.match(result.stdout, /approved 2026-08-19/);
 });
 
 test('privacy validator rejects an unresolved public mailbox', (t) => {
-  const cwd = withProductionEnv(t, [
-    'VITE_PUBLIC_MAILBOX_ADDRESS={{PUBLIC_MAILBOX_ADDRESS}}',
-    'PRIVACY_NOTICE_APPROVED=true',
-  ].join('\n'));
-
-  const result = runValidator(cwd, {
-    VITE_PUBLIC_MAILBOX_ADDRESS: undefined,
-    PRIVACY_NOTICE_APPROVED: undefined,
-  });
+  const result = runValidator(withPublicIdentity(t, {
+    ...approvedIdentity,
+    publicPostalAddress: '{{PUBLIC_MAILBOX_ADDRESS}}',
+  }));
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /public PO box or commercial mailbox/);
+  assert.match(result.stderr, /approved public PO box or commercial mailbox/);
 });
 
 test('privacy validator rejects publication before approval', (t) => {
-  const cwd = withProductionEnv(t, [
-    'VITE_PUBLIC_MAILBOX_ADDRESS=PO Box 123',
-    'PRIVACY_NOTICE_APPROVED=false',
-  ].join('\n'));
-
-  const result = runValidator(cwd, {
-    VITE_PUBLIC_MAILBOX_ADDRESS: undefined,
-    PRIVACY_NOTICE_APPROVED: undefined,
-  });
+  const result = runValidator(withPublicIdentity(t, {
+    ...approvedIdentity,
+    privacyNoticeApproved: false,
+  }));
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /PRIVACY_NOTICE_APPROVED=true/);
+  assert.match(result.stderr, /privacyNoticeApproved must be true/);
+});
+
+test('privacy validator rejects a missing approval date', (t) => {
+  const result = runValidator(withPublicIdentity(t, {
+    ...approvedIdentity,
+    privacyNoticeApprovalDate: '',
+  }));
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /privacyNoticeApprovalDate/);
 });
