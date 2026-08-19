@@ -8,6 +8,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  statuses: write
 
 concurrency:
   group: "pages"
@@ -36,5 +37,99 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Mark live Privacy Notice verification pending
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data '{"state":"pending","context":"privacy-live-smoke","description":"Waiting for deployed Privacy Notice verification"}'
+
       - uses: actions/deploy-pages@v4
         id: deployment
+
+      - name: Verify approved Privacy Notice in the live bundle
+        id: privacy_smoke
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origin="https://bronerbooks.com"
+          bundle_file="$(mktemp)"
+          trap 'rm -f "${bundle_file}"' EXIT
+
+          for attempt in $(seq 1 12); do
+            html="$(curl --fail --silent --show-error --location --retry 2 --retry-delay 2 "${origin}/")" || true
+            asset_path="$(printf '%s' "${html}" | grep -oE 'src="[^"]+\.js"' | head -n 1 | cut -d '"' -f 2 || true)"
+
+            if [[ -n "${asset_path}" ]]; then
+              if [[ "${asset_path}" =~ ^https?:// ]]; then
+                asset_url="${asset_path}"
+              elif [[ "${asset_path}" == /* ]]; then
+                asset_url="${origin}${asset_path}"
+              else
+                asset_url="${origin}/${asset_path}"
+              fi
+
+              if curl --fail --silent --show-error --location --retry 2 --retry-delay 2 "${asset_url}" --output "${bundle_file}"; then
+                if grep -Fq 'P.O. Box 4244, Haifa, Israel' "${bundle_file}" \
+                  && grep -Fq 'August 19, 2026' "${bundle_file}" \
+                  && grep -Fq "Children's content and adult data collection" "${bundle_file}" \
+                  && ! grep -Fq 'provisional pending review' "${bundle_file}" \
+                  && ! grep -Fq '{{PUBLIC_MAILBOX_ADDRESS}}' "${bundle_file}"; then
+                  echo "Live Broner Books bundle contains the approved Privacy Notice identity/version and no superseded placeholder/provisional wording."
+                  exit 0
+                fi
+              fi
+            fi
+
+            sleep 5
+          done
+
+          echo "Live Privacy Notice verification did not observe the approved bundle." >&2
+          exit 1
+
+      - name: Publish live Privacy Notice verification status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SMOKE_OUTCOME: ${{ steps.privacy_smoke.outcome }}
+          DEPLOYMENT_URL: ${{ steps.deployment.outputs.page_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${SMOKE_OUTCOME}" == "success" ]]; then
+            state="success"
+            description="Live Privacy Notice matches approved identity/version"
+          else
+            state="failure"
+            description="Live Privacy Notice verification failed"
+          fi
+
+          payload="$(STATE="${state}" DESC="${description}" TARGET="${DEPLOYMENT_URL}" python - <<'PY'
+          import json, os
+          print(json.dumps({
+              "state": os.environ["STATE"],
+              "context": "privacy-live-smoke",
+              "description": os.environ["DESC"],
+              "target_url": os.environ["TARGET"],
+          }))
+          PY
+          )"
+
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data "${payload}"
+
+      - name: Enforce live Privacy Notice verification
+        if: always() && steps.privacy_smoke.outcome != 'success'
+        run: exit 1
