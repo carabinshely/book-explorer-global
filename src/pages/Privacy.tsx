@@ -1,17 +1,16 @@
 import { Layout } from '@/components/layout/Layout';
-
-const publicMailboxAddress = import.meta.env.VITE_PUBLIC_MAILBOX_ADDRESS || '{{PUBLIC_MAILBOX_ADDRESS}}';
+import publicIdentity from '@/config/public-identity.json';
 
 const Privacy = () => (
   <Layout>
     <div className="container max-w-4xl py-12 md:py-16">
       <article className="prose prose-slate max-w-none dark:prose-invert" lang="en">
         <h1>Privacy Notice</h1>
-        <p><strong>Effective:</strong> August 18, 2026</p>
+        <p><strong>Effective:</strong> August 19, 2026</p>
         <p>This notice explains how Michael Broner, operating as Broner Books, handles personal information through BronerBooks.com, Storytime Kit requests, related email communications, and the website services described below.</p>
 
         <h2>Who is responsible and how to contact us</h2>
-        <p>Michael Broner, operating as Broner Books, is responsible for the personal information described in this notice. Email <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a>, or write to: {publicMailboxAddress}.</p>
+        <p>Michael Broner, operating as Broner Books, is responsible for the personal information described in this notice. Email <a href="mailto:hello@bronerbooks.com">hello@bronerbooks.com</a>, or write to: {publicIdentity.publicPostalAddress}.</p>
 
         <h2>Information we process</h2>
         <p>Depending on how you use the site, we may process your email address; Storytime Kit request, confirmation, marketing-choice, unsubscribe, and suppression status; relevant timestamps, form/source information, and consent version; coarse campaign or UTM source fields; correspondence you send us; essential site preferences such as language and privacy choices; and website analytics after you accept analytics.</p>
@@ -64,7 +63,7 @@ const Privacy = () => (
 
         <h2>Changes to this notice</h2>
         <p>We update this notice when our data practices or legal requirements materially change. The effective date above identifies the current version. Where required, we will provide an appropriate additional notice before a material change affecting existing subscribers takes effect.</p>
-        <p><strong>Update history:</strong> August 18, 2026 — revised controller, purpose/permission, provider, retention, rights, analytics, and child-data wording following the Issue #28 legal and data-flow review.</p>
+        <p><strong>Update history:</strong> August 19, 2026 — revised controller, purpose/permission, provider, retention, rights, analytics, child-data, and approved public-contact wording following the Issue #28 legal and data-flow review.</p>
       </article>
     </div>
   </Layout>
