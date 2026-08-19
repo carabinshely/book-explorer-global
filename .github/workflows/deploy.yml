@@ -25,9 +25,6 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-        env:
-          PRIVACY_NOTICE_APPROVED: ${{ vars.PRIVACY_NOTICE_APPROVED }}
-          VITE_PUBLIC_MAILBOX_ADDRESS: ${{ vars.VITE_PUBLIC_MAILBOX_ADDRESS }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
