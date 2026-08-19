@@ -1,12 +1,7 @@
-import { FormEvent, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import {
-  NIRAN_CONSENT_VERSION,
-  niranAttributionFields,
-  readNiranAttribution,
-  trackNiranEvent,
-} from '@/lib/niranCampaign';
+import { readNiranAttribution, trackNiranEvent } from '@/lib/niranCampaign';
 
 const MAILERLITE_FORM_URL = 'https://preview.mailerlite.io/forms/2565293/195350280476296614/share';
 
@@ -27,19 +22,11 @@ const NiranStorytimeKit = () => {
     [attribution, location.pathname]
   );
 
-  const recordFormStart = () => {
-    if (started.current) return;
-    started.current = true;
-    trackNiranEvent('lead_form_started', analyticsProperties);
-  };
-
-  const handleProviderHandoff = (event: FormEvent<HTMLFormElement>) => {
-    trackNiranEvent('lead_form_submitted', analyticsProperties);
-    // The current MailerLite connector does not expose the provider's generated
-    // static HTML POST contract. Until that exact contract is reconciled, use
-    // the provider-owned double-opt-in form without loading its universal
-    // tracking script into bronerbooks.com.
-    event.currentTarget.submit();
+  const recordProviderHandoff = () => {
+    if (!started.current) {
+      started.current = true;
+      trackNiranEvent('lead_form_started', analyticsProperties);
+    }
   };
 
   return (
@@ -66,70 +53,31 @@ const NiranStorytimeKit = () => {
                 Send me the Storytime Kit
               </h2>
               <p className="text-muted-foreground">
-                Enter your email and confirm it to receive the printable kit and accessible reading version.
+                Confirm your email to receive the printable kit and accessible reading version.
               </p>
             </div>
 
-            <form
-              action={MAILERLITE_FORM_URL}
-              method="get"
-              target="_self"
-              onFocus={recordFormStart}
-              onSubmit={handleProviderHandoff}
-              className="space-y-5"
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Providing your email is voluntary, but we cannot email the Kit without it. Michael Broner, operating as Broner Books, uses MailerLite to process the request. See our{' '}
+              <Link to="/privacy" className="underline underline-offset-2">
+                Privacy Notice
+              </Link>.
+            </p>
+
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              For parents, caregivers, teachers, gift buyers, and other adults. Please do not submit a child&apos;s information.
+            </p>
+
+            <a
+              href={MAILERLITE_FORM_URL}
+              onClick={recordProviderHandoff}
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 py-2.5 font-medium text-primary-foreground"
             >
-              {niranAttributionFields(attribution).map(([name, value]) => (
-                <input key={name} type="hidden" name={name} value={value} />
-              ))}
-              <input type="hidden" name="consent_version" value={NIRAN_CONSENT_VERSION} />
-
-              <div className="space-y-2">
-                <label htmlFor="niran-email" className="block text-sm font-medium text-foreground">
-                  Email address
-                </label>
-                <input
-                  id="niran-email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-foreground"
-                />
-              </div>
-
-              <label className="flex items-start gap-3 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  name="marketing_consent"
-                  value="yes"
-                  className="mt-1"
-                />
-                <span>
-                  Yes — email me the three-message Niran Storytime series and occasional Broner Books news and book updates. I can unsubscribe at any time.
-                </span>
-              </label>
-
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Enter your email to receive the Storytime Kit. Providing it is voluntary, but we cannot email the Kit without it. Michael Broner, operating as Broner Books, uses MailerLite to process the request. See our{' '}
-                <Link to="/privacy" className="underline underline-offset-2">
-                  Privacy Notice
-                </Link>.
-              </p>
-
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                For parents, caregivers, teachers, gift buyers, and other adults. Please do not submit a child&apos;s information.
-              </p>
-
-              <button
-                type="submit"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 py-2.5 font-medium text-primary-foreground"
-              >
-                Continue to secure email confirmation
-              </button>
-            </form>
+              Continue to secure signup
+            </a>
 
             <p className="text-xs text-muted-foreground">
-              The next step is hosted by MailerLite so the email address can be verified through double opt-in. Requesting the Kit does not by itself subscribe you to marketing.
+              The signup form is temporarily hosted by MailerLite while the exact static form contract is reconciled. No email address is placed in a Broner Books URL. Requesting the Kit does not by itself subscribe you to marketing.
             </p>
           </div>
 
