@@ -24,7 +24,7 @@ const approvedIdentity = {
   controller: 'Michael Broner, operating as Broner Books',
   brand: 'Broner Books',
   contactEmail: 'hello@bronerbooks.com',
-  publicPostalAddress: 'P.O. Box 4244, Haifa, Israel',
+  publicPostalAddress: 'P.O. Box 4244, Haifa 3104201, Israel',
   privacyNoticeApproved: true,
   privacyNoticeApprovalDate: '2026-08-19',
   privacyNoticeEffectiveDate: '2026-08-19',
@@ -34,7 +34,7 @@ const approvedIdentity = {
 test('privacy validator accepts the approved versioned public identity', (t) => {
   const result = runValidator(withPublicIdentity(t, approvedIdentity));
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /P\.O\. Box 4244, Haifa, Israel/);
+  assert.match(result.stdout, /P\.O\. Box 4244, Haifa 3104201, Israel/);
   assert.match(result.stdout, /approved 2026-08-19/);
 });
 
