@@ -18,7 +18,7 @@ describe('Niran campaign analytics contract', () => {
   it('captures only the approved current-page UTM fields', () => {
     expect(
       readNiranAttribution(
-        '?utm_source=instagram&utm_medium=organic_social&utm_campaign=niran_storytime_2026&utm_content=post_01&utm_term=parent_utility&email=test%40example.com&arbitrary=nope'
+        '?utm_source=instagram&utm_medium=organic_social&utm_campaign=niran_storytime_2026&utm_content=post_01&utm_term=parent_utility&email=person%40example.test&arbitrary=nope'
       )
     ).toEqual({
       utm_source: 'instagram',
@@ -37,7 +37,7 @@ describe('Niran campaign analytics contract', () => {
   it('removes direct identifiers and child fields from event properties', () => {
     expect(
       sanitizeNiranEventProperties({
-        email: 'person@example.com',
+        email: 'person@example.test',
         subscriber_id: '123',
         confirmation_token: 'secret',
         child_name: 'Nope',
@@ -60,7 +60,7 @@ describe('Niran campaign analytics contract', () => {
     vi.mocked(window.gtag).mockClear();
 
     trackNiranEvent('lead_form_submitted', {
-      email: 'person@example.com',
+      email: 'person@example.test',
       utm_source: 'instagram',
       page_path: '/niran-storytime-kit',
     });

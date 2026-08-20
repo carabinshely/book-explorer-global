@@ -16,12 +16,19 @@ describe('MailerLiteClient', () => {
     const client = new MailerLiteClient({ apiToken: TEST_TOKEN, fetch: transport });
     const email = 'person+tag@example.test';
 
-    await client.lookupSubscriber(email);
+    const result = await client.lookupSubscriber(email);
 
     expect(transport).toHaveBeenCalledWith(
       `${MAILERLITE_API_BASE}/subscribers/person%2Btag%40example.test`,
       expect.objectContaining({ method: 'GET' })
     );
+    expect(result).toEqual({
+      kind: 'found',
+      subscriber: { status: 'active', groupIds: [] },
+    });
+    if (result.kind === 'found') {
+      expect(result.subscriber).not.toHaveProperty('id');
+    }
   });
 
   it('does not surface raw provider bodies or a transport error message', async () => {

@@ -1,0 +1,48 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "bronerbooks-niran-signup",
+  "main": "./index.ts",
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "MAILERLITE_DELIVERY_GROUP_ID": "195350273067058787",
+    "MAILERLITE_MARKETING_GROUP_ID": "195356534701556956",
+    "MAILERLITE_PENDING_MARKETING_GROUP_ID": "",
+    "NIRAN_CONSENT_VERSION": "niran_form_en_v2",
+    "SIGNUP_ENVIRONMENT": "local",
+    "SIGNUP_ENABLED": "false"
+  },
+  "env": {
+    "preview": {
+      "name": "bronerbooks-niran-signup-preview",
+      "workers_dev": true,
+      "vars": {
+        "MAILERLITE_DELIVERY_GROUP_ID": "195350273067058787",
+        "MAILERLITE_MARKETING_GROUP_ID": "195356534701556956",
+        "MAILERLITE_PENDING_MARKETING_GROUP_ID": "",
+        "NIRAN_CONSENT_VERSION": "niran_form_en_v2",
+        "SIGNUP_ENVIRONMENT": "preview",
+        "SIGNUP_ENABLED": "false"
+      }
+    },
+    "production": {
+      "name": "bronerbooks-niran-signup-production",
+      "workers_dev": false,
+      "routes": [
+        {
+          "pattern": "bronerbooks.com/api/niran-storytime-signup",
+          "zone_name": "bronerbooks.com"
+        }
+      ],
+      "vars": {
+        "MAILERLITE_DELIVERY_GROUP_ID": "195350273067058787",
+        "MAILERLITE_MARKETING_GROUP_ID": "195356534701556956",
+        "MAILERLITE_PENDING_MARKETING_GROUP_ID": "",
+        "NIRAN_CONSENT_VERSION": "niran_form_en_v2",
+        "SIGNUP_ENVIRONMENT": "production",
+        "SIGNUP_ENABLED": "false"
+      }
+    }
+  }
+}
