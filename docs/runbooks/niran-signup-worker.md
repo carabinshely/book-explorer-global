@@ -4,7 +4,7 @@
 
 This runbook covers the local, fail-closed implementation for the Niran Storytime Kit signup path. It does not authorize production deployment, route attachment, MailerLite subscriber mutation, automation activation, or public email.
 
-Every committed Worker environment has `SIGNUP_ENABLED=false` and an empty `MAILERLITE_PENDING_MARKETING_GROUP_ID`. A deployed copy therefore returns a generic unavailable response until the provider gates below are complete and the required runtime values are deliberately provisioned.
+Every committed Worker environment has `SIGNUP_ENABLED=false`. The real non-secret MailerLite group IDs are committed so preview and production deployments use the reviewed provider resources, but a deployed copy still returns a generic unavailable response until the required runtime secret and enablement are deliberately provisioned.
 
 ## Architecture
 
@@ -94,7 +94,7 @@ Each token should have only the Cloudflare permissions required to deploy the co
 | --- | --- |
 | DELIVERY | `195350273067058787` |
 | MARKETING | `195356534701556956` |
-| PENDING_MARKETING | `NOT YET CONFIGURED` |
+| PENDING_MARKETING | `196325716650886774` |
 
 Verified MailerLite custom field keys:
 
@@ -113,13 +113,13 @@ Before any live subscriber test:
 
 1. Verify `Account settings -> Subscribe settings -> Double opt-in for API and integrations = ON`.
 2. Verify the API double-opt-in sender, confirmation email, and confirmation destination.
-3. Create the `PENDING_MARKETING` group and record its production ID outside Git until the configuration change is reviewed.
+3. Re-verify the existing `PENDING_MARKETING` group `196325716650886774` before controlled QA.
 4. Configure MARKETING as the relevant explicit preference-center interest.
-5. Create a pending-marketing confirmation flow containing the personalized MailerLite preference-center link.
+5. Re-verify pending-confirmation automation `196332811592926777`, including its personalized MailerLite preference-center link, one-email shape, inactive status, and open tracking off.
 6. Prove that PENDING_MARKETING never directly adds MARKETING.
 7. Keep existing delivery and marketing automations disabled until controlled QA is complete and activation is separately authorized.
 8. Provision the production MailerLite Worker secret without copying it into GitHub output, source, config vars, or local tracked files.
-9. Replace the committed blank pending-group value, review the config diff, and only then consider changing `SIGNUP_ENABLED` from `false` in a separately authorized change.
+9. Review the committed group IDs and keep `SIGNUP_ENABLED=false` except during a bounded, separately authorized preview test window.
 
 ## Controlled provider test matrix
 
