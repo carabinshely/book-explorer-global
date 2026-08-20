@@ -43,7 +43,6 @@ export type AdditiveSubscriberUpsert = Readonly<{
   email: string;
   fields?: MailerLiteFields;
   groups: readonly string[];
-  status?: 'unconfirmed';
 }>;
 
 export type MailerLiteClientOptions = Readonly<{

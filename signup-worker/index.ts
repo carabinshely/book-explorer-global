@@ -250,6 +250,6 @@ export async function handleSignupRequest(
 
 export default {
   fetch(request, env): Promise<Response> {
-    return handleSignupRequest(request, env, fetch);
+    return handleSignupRequest(request, env, fetch.bind(globalThis));
   },
 } satisfies ExportedHandler<Env>;

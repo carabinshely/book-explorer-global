@@ -107,7 +107,6 @@ export async function evaluateSignupRequest(
           ? [DELIVERY_GROUP_ID, MARKETING_GROUP_ID]
           : [DELIVERY_GROUP_ID]
       ),
-      status: 'unconfirmed',
     });
   }
 

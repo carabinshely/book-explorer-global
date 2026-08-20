@@ -96,7 +96,6 @@ describe('MailerLite subscriber state machine', () => {
         utm_source: 'instagram',
       },
       groups: [DELIVERY_GROUP_ID],
-      status: 'unconfirmed',
     });
   });
 
@@ -110,7 +109,7 @@ describe('MailerLite subscriber state machine', () => {
     const body = mutationBody(calls);
     expect(body.groups).toEqual([DELIVERY_GROUP_ID, MARKETING_GROUP_ID]);
     expect(body.groups).not.toContain(PENDING_GROUP_ID);
-    expect(body.status).toBe('unconfirmed');
+    expect(body).not.toHaveProperty('status');
     expect(body.fields).toEqual({
       consent_version: NIRAN_CONSENT_VERSION,
       utm_campaign: 'niran_storytime_2026',

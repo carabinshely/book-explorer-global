@@ -250,7 +250,6 @@ describe('Niran signup Worker HTTP boundary', () => {
         utm_source: 'social',
       },
       groups: [DELIVERY_GROUP_ID],
-      status: 'unconfirmed',
     });
   });
 
