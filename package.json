@@ -39,7 +39,16 @@
     "links:destination-health": "node worker/release-proof.mjs destination-health",
     "links:canonical-smoke": "node worker/release-proof.mjs canonical-smoke",
     "links:attach-route": "node scripts/links-dx.mjs attach-route",
-    "links:detach-route": "node scripts/links-dx.mjs detach-route"
+    "links:detach-route": "node scripts/links-dx.mjs detach-route",
+    "signup:test": "vitest run signup-worker src/components/niran/NiranStorytimeSignup.test.tsx src/lib/niranCampaign.test.ts",
+    "signup:types": "node scripts/generate-signup-worker-types.mjs",
+    "signup:types:check": "npm run signup:types && git diff --exit-code -- signup-worker/worker-configuration.d.ts",
+    "signup:typecheck": "npm run signup:types && tsc -p signup-worker/tsconfig.json --noEmit",
+    "signup:check:preview": "npm run signup:typecheck && wrangler deploy --dry-run --config signup-worker/wrangler.jsonc --env preview",
+    "signup:check:production": "npm run signup:typecheck && wrangler deploy --dry-run --config signup-worker/wrangler.jsonc --env production",
+    "signup:check": "npm run signup:test && npm run signup:types:check && tsc -p signup-worker/tsconfig.json --noEmit && wrangler deploy --dry-run --config signup-worker/wrangler.jsonc --env preview && wrangler deploy --dry-run --config signup-worker/wrangler.jsonc --env production",
+    "signup:deploy:preview": "wrangler deploy --config signup-worker/wrangler.jsonc --env preview",
+    "signup:deploy:production": "wrangler deploy --config signup-worker/wrangler.jsonc --env production"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

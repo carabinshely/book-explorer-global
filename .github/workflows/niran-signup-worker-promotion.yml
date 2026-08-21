@@ -1,0 +1,58 @@
+name: Promote Niran signup Worker (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "check is non-mutating; deploy publishes the selected fail-closed Worker configuration"
+        required: true
+        default: check
+        type: choice
+        options: [check, deploy]
+      environment:
+        description: "Protected target; production deploy attaches only bronerbooks.com/api/niran-storytime-signup"
+        required: true
+        default: preview
+        type: choice
+        options: [preview, production]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: niran-signup-worker-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    name: ${{ inputs.operation }} Niran signup Worker (${{ inputs.environment }})
+    runs-on: ubuntu-latest
+    environment: niran-signup-worker-${{ inputs.environment }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ inputs.environment == 'production' && secrets.CLOUDFLARE_API_TOKEN_SIGNUP_PRODUCTION || secrets.CLOUDFLARE_API_TOKEN_SIGNUP_PREVIEW }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+      - run: npm ci
+      - run: npm run signup:test
+      - run: npm run signup:types:check
+      - run: npx tsc -p signup-worker/tsconfig.json --noEmit
+      - name: Validate selected Worker configuration without deployment
+        run: npm run signup:check:${{ inputs.environment }}
+      - name: Validate production route metadata
+        if: ${{ inputs.operation == 'deploy' && inputs.environment == 'production' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID environment variable is required}"
+          : "${CLOUDFLARE_ZONE_ID:?CLOUDFLARE_ZONE_ID environment variable is required}"
+      - name: Deploy selected fail-closed Worker configuration
+        if: ${{ inputs.operation == 'deploy' }}
+        run: npm run signup:deploy:${{ inputs.environment }}
