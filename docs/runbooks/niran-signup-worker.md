@@ -4,7 +4,7 @@
 
 This runbook covers the local, fail-closed implementation for the Niran Storytime Kit signup path. It does not authorize production deployment, route attachment, MailerLite subscriber mutation, automation activation, or public email.
 
-Every committed Worker environment has `SIGNUP_ENABLED=false`. The real non-secret MailerLite group IDs are committed so preview and production deployments use the reviewed provider resources, but a deployed copy still returns a generic unavailable response until the required runtime secret and enablement are deliberately provisioned.
+Every committed Worker environment has `SIGNUP_ENABLED=false`. The real non-secret MailerLite group IDs are committed so preview and production deployments use the reviewed provider resources, but a deployed copy still returns a generic unavailable response until the required runtime secret and enablement are deliberately provisioned. The website route is independently fail-closed behind `VITE_NIRAN_STORYTIME_ENABLED=false`, so merging the integration does not publish the campaign page.
 
 ## Architecture
 
@@ -25,6 +25,18 @@ bronerbooks.com/api/niran-storytime-signup
 ```
 
 It does not capture unrelated `/api/*` paths.
+
+## Website publication gate
+
+`/niran-storytime-kit` renders the normal site 404 unless the build receives the exact value:
+
+```text
+VITE_NIRAN_STORYTIME_ENABLED=true
+```
+
+Missing, empty, case-variant, and truthy-looking values such as `1` all remain disabled. Production must not set this variable until website Issue #5 authorizes the public route, the signup Worker, and the remaining launch gates. While disabled, the route stays out of the sitemap and the production Worker remains unattached.
+
+For controlled local QA only, Vite accepts a server-side `SIGNUP_WORKER_DEV_URL`. It must be an `http://` URL whose host is `127.0.0.1`, `localhost`, or `[::1]`; non-local and HTTPS targets fail startup. When present, Vite proxies only `/api/niran-storytime-signup` to the local Wrangler process. This variable is not exposed to browser code and does not change the production endpoint contract.
 
 ## Data boundary
 
@@ -93,7 +105,7 @@ Each token should have only the Cloudflare permissions required to deploy the co
 | Resource | Value |
 | --- | --- |
 | DELIVERY | `195350273067058787` |
-| MARKETING | `195356534701556956` |
+| MARKETING (`BronerBooks Storytime Emails | Marketing Interest`) | `196395918279313018` |
 | PENDING_MARKETING | `196325716650886774` |
 
 Verified MailerLite custom field keys:
@@ -171,6 +183,12 @@ Controlled live testing must verify:
 
 Do not solve these deferred provider-concurrency and automation-timing questions with custom infrastructure in this implementation.
 
+## Analytics ownership
+
+The protected integration verifies the website-owned events `lead_form_started` and `lead_form_submitted` after analytics consent. Their allowed properties are the campaign ID, approved current-page UTM fields, `content_id`, and `page_path`; direct identifiers and raw query strings are removed before GA4 dispatch.
+
+MailerLite remains the confirmation source of truth. The browser must never infer or emit `lead_signup_confirmed` from a generic `202` response. Website Issue #7 owns the remaining confirmation, lead-magnet, retailer, contact, and broader attribution implementation.
+
 ## Validation and promotion
 
 Local non-mutating checks:
@@ -183,6 +201,23 @@ npm run signup:check:production
 ```
 
 The manual workflow `.github/workflows/niran-signup-worker-promotion.yml` defaults to `check`. A future deployment requires an explicit `deploy` operation and protected preview or production environment. Selecting production explicitly means Wrangler will attach only the exact production route in the reviewed config. Do not dispatch a production deployment until that route change is separately authorized and all provider gates are ready.
+
+## Controlled local live-provider QA
+
+Use an owner-controlled test address and keep all ordinary automations inactive. Never put the MailerLite token on the command line, in shell history, in source, or in a tracked environment file.
+
+1. Create ignored `signup-worker/.dev.vars.preview` containing only `MAILERLITE_API_TOKEN`.
+2. Start Wrangler locally with the preview config and override only `SIGNUP_ENABLED:true` for the bounded session.
+3. Start Vite with `VITE_NIRAN_STORYTIME_ENABLED=true` and `SIGNUP_WORKER_DEV_URL=http://127.0.0.1:8787`.
+4. Exercise Kit-only, Kit-plus-marketing, active-to-pending-marketing, and suppressed/unsubscribed paths.
+5. Verify generic responses, exact group state, double-opt-in behavior, no direct identifiers in URLs/logs/analytics, and GA4 Realtime receipt after consent.
+6. Stop both processes, delete the ignored token file, Forget disposable test profiles where appropriate, and re-confirm that delivery, pending-confirmation, and marketing automations remain inactive.
+
+The committed route and Worker flags must still be false after QA. This local procedure does not authorize preview deployment, production deployment, public signup, or public email.
+
+## Production-closeout smoke
+
+After merging the feature-disabled integration, verify that `https://bronerbooks.com/niran-storytime-kit` still renders the normal site 404 and that no production signup Worker deployment or route attachment occurred. A successful 404 is the expected protected-integration result, not a launch failure.
 
 ## Privacy Notice factual delta
 

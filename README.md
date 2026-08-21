@@ -49,6 +49,8 @@ Credential-gated Search Console setup, sitemap submission, and post-deploy inspe
 
 Google Analytics 4 is configured for the site with measurement ID `G-DD2217GBC7`. Set `VITE_GA_MEASUREMENT_ID` in the hosting environment to override it.
 
+The Niran Storytime integration is fail-closed. `VITE_NIRAN_STORYTIME_ENABLED` must equal `true` for the campaign route to render; the default production build serves the normal 404. Controlled local QA may set `SIGNUP_WORKER_DEV_URL=http://127.0.0.1:8787` to proxy the exact signup endpoint to a local Wrangler process. See [`docs/runbooks/niran-signup-worker.md`](docs/runbooks/niran-signup-worker.md#website-publication-gate).
+
 See `docs/GOOGLE_ANALYTICS.md` for setup, deployment verification, and weekly report review steps.
 
 ## Generated book data

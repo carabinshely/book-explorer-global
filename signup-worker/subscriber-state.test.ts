@@ -17,6 +17,12 @@ const EMAIL = 'person@example.test';
 const PENDING_GROUP_ID = 'PENDING_TEST_GROUP';
 const TEST_TOKEN = 'test-token';
 
+describe('reviewed MailerLite contract', () => {
+  it('pins the live-tested canonical marketing group', () => {
+    expect(MARKETING_GROUP_ID).toBe('196395918279313018');
+  });
+});
+
 type RecordedCall = Readonly<{ url: string; init?: RequestInit }>;
 
 function providerSubscriber(

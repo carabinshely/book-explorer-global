@@ -6,7 +6,7 @@ import type {
 } from './mailerlite-client';
 
 export const DELIVERY_GROUP_ID = '195350273067058787';
-export const MARKETING_GROUP_ID = '195356534701556956';
+export const MARKETING_GROUP_ID = '196395918279313018';
 export const NIRAN_CONSENT_VERSION = 'niran_form_en_v2';
 export const MAX_UTM_FIELD_LENGTH = 120;
 
