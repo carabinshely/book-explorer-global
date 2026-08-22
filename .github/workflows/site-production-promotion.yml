@@ -270,6 +270,7 @@ jobs:
                   npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > recovered-deployments.json
                   if node scripts/site-production-release.mjs verify-deployment --input recovered-deployments.json --version "${previous}"; then
                     printf 'restored-prior-version\n' > recovery-status.txt
+                    echo "active_version=${previous}" >> "${GITHUB_OUTPUT}"
                   else
                     printf 'recovery-verification-failed\n' > recovery-status.txt
                   fi

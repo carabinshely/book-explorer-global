@@ -226,6 +226,7 @@ test("production workflow is manual, protected, main-gated, and has no zone auth
   assert.match(workflow, /--phase before/);
   assert.match(workflow, /--phase after/);
   assert.match(workflow, /active_version_after/);
+  assert.match(workflow, /active_version=\$\{previous\}/);
   assert.match(workflow, /unavailable-first-promotion/);
   assert.match(workflow, /wrangler versions upload --config wrangler\.site-production\.jsonc/);
   assert.match(workflow, /wrangler versions deploy "\$\{version\}@100%"/);
