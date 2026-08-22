@@ -147,6 +147,32 @@ jobs:
                   }
                 });
               '
+      - name: Enforce version-preview-only routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          worker="bronerbooks-site-production"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker}/subdomain"
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --output preview-routing-before.json \
+            "${endpoint}"
+          routing="$(node scripts/site-production-release.mjs preview-routing-state --input preview-routing-before.json)"
+          if [ "${routing}" != "ready" ]; then
+            curl --fail --silent --show-error --max-time 15 --proto '=https' \
+              --request POST \
+              --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              --header "Content-Type: application/json" \
+              --data '{"enabled":false,"previews_enabled":true}' \
+              --output preview-routing-update.json \
+              "${endpoint}"
+          fi
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --output preview-routing-after.json \
+            "${endpoint}"
+          routing="$(node scripts/site-production-release.mjs preview-routing-state --input preview-routing-after.json)"
+          test "${routing}" = "ready"
       - name: Capture current production deployment
         id: previous
         env:

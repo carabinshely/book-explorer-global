@@ -147,6 +147,17 @@ export function parseVersionUploadOutput(ndjson, worker = PRODUCTION_WORKER) {
   return { version_id: entry.version_id, preview_url: preview.origin };
 }
 
+export function previewRoutingState(response) {
+  if (response?.success !== true) {
+    throw new Error("Cloudflare preview routing response was unsuccessful");
+  }
+  const { enabled, previews_enabled: previewsEnabled } = response?.result ?? {};
+  if (typeof enabled !== "boolean" || typeof previewsEnabled !== "boolean") {
+    throw new Error("Cloudflare preview routing response is malformed");
+  }
+  return enabled === false && previewsEnabled === true ? "ready" : "drift";
+}
+
 export function assertVersionId(value) {
   if (!VERSION_ID_PATTERN.test(value ?? "")) throw new Error("version must be a Cloudflare UUID");
   return value;
@@ -233,12 +244,17 @@ async function main() {
     return;
   }
 
+  if (command === "preview-routing-state") {
+    process.stdout.write(previewRoutingState(await readJson(argument("--input"))));
+    return;
+  }
+
   if (command === "validate-version-id") {
     assertVersionId(argument("--version"));
     return;
   }
 
-  throw new Error("command must be fingerprint, normalize-deployments, active-version, compare-active, verify-version, verify-deployment, parse-upload, or validate-version-id");
+  throw new Error("command must be fingerprint, normalize-deployments, active-version, compare-active, verify-version, verify-deployment, parse-upload, preview-routing-state, or validate-version-id");
 }
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));
