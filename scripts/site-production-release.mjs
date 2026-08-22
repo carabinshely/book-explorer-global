@@ -132,19 +132,23 @@ export function parseVersionUploadOutput(ndjson, worker = PRODUCTION_WORKER) {
   if (entry.worker_name !== worker) throw new Error("Wrangler uploaded an unexpected Worker");
   assertVersionId(entry.version_id);
 
-  const preview = new URL(entry.preview_url);
-  const expectedPrefix = `${entry.version_id.slice(0, 8)}-${worker}.`;
-  if (
-    preview.protocol !== "https:" ||
-    preview.username ||
-    preview.password ||
-    preview.pathname !== "/" ||
-    !preview.hostname.startsWith(expectedPrefix) ||
-    !preview.hostname.endsWith(".workers.dev")
-  ) {
-    throw new Error("Wrangler returned an invalid production version preview URL");
+  let previewUrl = null;
+  if (entry.preview_url != null) {
+    const preview = new URL(entry.preview_url);
+    const expectedPrefix = `${entry.version_id.slice(0, 8)}-${worker}.`;
+    if (
+      preview.protocol !== "https:" ||
+      preview.username ||
+      preview.password ||
+      preview.pathname !== "/" ||
+      !preview.hostname.startsWith(expectedPrefix) ||
+      !preview.hostname.endsWith(".workers.dev")
+    ) {
+      throw new Error("Wrangler returned an invalid production version preview URL");
+    }
+    previewUrl = preview.origin;
   }
-  return { version_id: entry.version_id, preview_url: preview.origin };
+  return { version_id: entry.version_id, preview_url: previewUrl };
 }
 
 export function previewRoutingState(response) {
@@ -156,6 +160,17 @@ export function previewRoutingState(response) {
     throw new Error("Cloudflare preview routing response is malformed");
   }
   return enabled === false && previewsEnabled === true ? "ready" : "drift";
+}
+
+export function workersDevSubdomain(response) {
+  if (response?.success !== true) {
+    throw new Error("Cloudflare workers.dev subdomain response was unsuccessful");
+  }
+  const value = response?.result?.subdomain;
+  if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(value ?? "")) {
+    throw new Error("Cloudflare workers.dev subdomain response is malformed");
+  }
+  return value;
 }
 
 export function assertVersionId(value) {
@@ -234,10 +249,9 @@ async function main() {
     const parsed = parseVersionUploadOutput(await readFile(argument("--input"), "utf8"));
     const githubOutput = argument("--github-output", { required: false });
     if (githubOutput) {
-      await appendFile(
-        githubOutput,
-        `version_id=${parsed.version_id}\npreview_url=${parsed.preview_url}\n`,
-      );
+      let output = `version_id=${parsed.version_id}\n`;
+      if (parsed.preview_url) output += `preview_url=${parsed.preview_url}\n`;
+      await appendFile(githubOutput, output);
     } else {
       process.stdout.write(`${JSON.stringify(parsed)}\n`);
     }
@@ -249,12 +263,17 @@ async function main() {
     return;
   }
 
+  if (command === "workers-dev-subdomain") {
+    process.stdout.write(workersDevSubdomain(await readJson(argument("--input"))));
+    return;
+  }
+
   if (command === "validate-version-id") {
     assertVersionId(argument("--version"));
     return;
   }
 
-  throw new Error("command must be fingerprint, normalize-deployments, active-version, compare-active, verify-version, verify-deployment, parse-upload, preview-routing-state, or validate-version-id");
+  throw new Error("command must be fingerprint, normalize-deployments, active-version, compare-active, verify-version, verify-deployment, parse-upload, preview-routing-state, workers-dev-subdomain, or validate-version-id");
 }
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));
