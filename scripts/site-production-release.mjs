@@ -60,7 +60,29 @@ function normalizeCollection(value) {
   if (Array.isArray(value)) return value;
   if (Array.isArray(value?.result)) return value.result;
   if (Array.isArray(value?.items)) return value.items;
-  return [];
+  throw new Error("deployment state must be an array or contain an array result/items collection");
+}
+
+export function normalizeDeploymentSnapshot({ httpStatus, operation, phase, deployments }) {
+  if (!new Set(["upload", "promote"]).has(operation)) {
+    throw new Error("deployment snapshot operation must be upload or promote");
+  }
+  if (!new Set(["before", "after"]).has(phase)) {
+    throw new Error("deployment snapshot phase must be before or after");
+  }
+  if (!/^[0-9]{3}$/.test(httpStatus ?? "")) {
+    throw new Error("deployment snapshot HTTP status must be a three-digit string");
+  }
+
+  if (httpStatus === "204") return [];
+  if (httpStatus === "404") {
+    if (operation === "upload" && phase === "before") return [];
+    throw new Error("production Worker/version resource does not exist");
+  }
+  if (httpStatus !== "200") {
+    throw new Error(`production Worker state is unavailable (HTTP ${httpStatus})`);
+  }
+  return normalizeCollection(deployments);
 }
 
 export function activeVersionId(deployments) {
@@ -158,6 +180,21 @@ async function main() {
     return;
   }
 
+  if (command === "normalize-deployments") {
+    const inputPath = argument("--input", { required: false });
+    const normalized = normalizeDeploymentSnapshot({
+      httpStatus: argument("--status"),
+      operation: argument("--operation"),
+      phase: argument("--phase"),
+      deployments: inputPath ? await readJson(inputPath) : undefined,
+    });
+    const output = `${JSON.stringify(normalized, null, 2)}\n`;
+    const outputPath = argument("--output", { required: false });
+    if (outputPath) await writeFile(outputPath, output);
+    else process.stdout.write(output);
+    return;
+  }
+
   if (command === "compare-active") {
     const before = activeVersionId(await readJson(argument("--before")));
     const after = activeVersionId(await readJson(argument("--after")));
@@ -201,7 +238,7 @@ async function main() {
     return;
   }
 
-  throw new Error("command must be fingerprint, active-version, compare-active, verify-version, verify-deployment, parse-upload, or validate-version-id");
+  throw new Error("command must be fingerprint, normalize-deployments, active-version, compare-active, verify-version, verify-deployment, parse-upload, or validate-version-id");
 }
 
 const isMain = process.argv[1] && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));

@@ -10,6 +10,7 @@ import {
   assertActiveVersion,
   assertVersionMetadata,
   computeDistFingerprint,
+  normalizeDeploymentSnapshot,
   parseVersionUploadOutput,
 } from "./site-production-release.mjs";
 
@@ -41,9 +42,108 @@ test("deployment parsing requires one version at 100 percent", () => {
     /exactly one version at 100%/,
   );
   assert.throws(
+    () => activeVersionId([{
+      versions: [
+        { version_id: previous, percentage: 50 },
+        { version_id: version, percentage: 50 },
+      ],
+    }]),
+    /exactly one version at 100%/,
+  );
+  assert.throws(() => activeVersionId({}), /deployment state must be an array/);
+  assert.throws(
     () => assertActiveVersion([{ versions: [{ version_id: previous, percentage: 100 }] }], version),
     /does not match/,
   );
+});
+
+test("deployment HTTP state normalization preserves 404 and 204 semantics", () => {
+  assert.deepEqual(normalizeDeploymentSnapshot({
+    httpStatus: "204",
+    operation: "upload",
+    phase: "before",
+  }), []);
+  assert.deepEqual(normalizeDeploymentSnapshot({
+    httpStatus: "204",
+    operation: "promote",
+    phase: "before",
+  }), []);
+  assert.deepEqual(normalizeDeploymentSnapshot({
+    httpStatus: "404",
+    operation: "upload",
+    phase: "before",
+  }), []);
+  assert.deepEqual(normalizeDeploymentSnapshot({
+    httpStatus: "200",
+    operation: "upload",
+    phase: "before",
+    deployments: { result: [] },
+  }), []);
+  assert.throws(
+    () => normalizeDeploymentSnapshot({
+      httpStatus: "404",
+      operation: "promote",
+      phase: "before",
+    }),
+    /resource does not exist/,
+  );
+  assert.throws(
+    () => normalizeDeploymentSnapshot({
+      httpStatus: "404",
+      operation: "upload",
+      phase: "after",
+    }),
+    /resource does not exist/,
+  );
+  assert.throws(
+    () => normalizeDeploymentSnapshot({
+      httpStatus: "503",
+      operation: "upload",
+      phase: "before",
+    }),
+    /unavailable \(HTTP 503\)/,
+  );
+  assert.throws(
+    () => normalizeDeploymentSnapshot({
+      httpStatus: "200",
+      operation: "upload",
+      phase: "before",
+      deployments: {},
+    }),
+    /deployment state must be an array/,
+  );
+});
+
+test("zero-deployment upload remains empty before and after", () => {
+  const before = normalizeDeploymentSnapshot({
+    httpStatus: "204",
+    operation: "upload",
+    phase: "before",
+  });
+  const after = normalizeDeploymentSnapshot({
+    httpStatus: "204",
+    operation: "upload",
+    phase: "after",
+  });
+  assert.equal(activeVersionId(before), null);
+  assert.equal(activeVersionId(after), null);
+  assert.deepEqual(after, before);
+});
+
+test("first promotion transitions empty state to the selected exact version", () => {
+  const before = normalizeDeploymentSnapshot({
+    httpStatus: "204",
+    operation: "promote",
+    phase: "before",
+  });
+  const after = normalizeDeploymentSnapshot({
+    httpStatus: "200",
+    operation: "promote",
+    phase: "after",
+    deployments: [{ versions: [{ version_id: version, percentage: 100 }] }],
+  });
+  assert.equal(activeVersionId(before), null);
+  assert.equal(assertActiveVersion(after, version), version);
 });
 
 test("version metadata is bound to the exact commit and dist digest", () => {
@@ -122,6 +222,19 @@ test("production workflow is manual, protected, main-gated, and has no zone auth
   assert.match(workflow, /refs\/heads\/main/);
   assert.match(workflow, /CLOUDFLARE_API_TOKEN_SITE_PRODUCTION/);
   assert.match(workflow, /cancel-in-progress: false/);
+  assert.match(workflow, /normalize-deployments/);
+  assert.match(workflow, /--phase before/);
+  assert.match(workflow, /--phase after/);
+  assert.match(workflow, /active_version_after/);
+  assert.match(workflow, /active_version=\$\{previous\}/);
+  assert.match(workflow, /unavailable-first-promotion/);
+  const verifiedDeployment = workflow.lastIndexOf("site-production-release.mjs verify-deployment");
+  const recordedActiveVersion = workflow.indexOf('echo "active_version=${version}"');
+  const postPromotionSmoke = workflow.indexOf(
+    'node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"',
+  );
+  assert.ok(verifiedDeployment < recordedActiveVersion);
+  assert.ok(recordedActiveVersion < postPromotionSmoke);
   assert.match(workflow, /wrangler versions upload --config wrangler\.site-production\.jsonc/);
   assert.match(workflow, /wrangler versions deploy "\$\{version\}@100%"/);
   assert.doesNotMatch(workflow, /version="\$\{\{ inputs\.version \}\}"/);

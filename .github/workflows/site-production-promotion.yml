@@ -159,13 +159,16 @@ jobs:
             --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker}")"
           if [ "${status}" = "200" ]; then
-            npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > before-deployments.json
-          elif [ "${status}" = "404" ] && [ "${OPERATION_INPUT}" = "upload" ]; then
-            printf '[]\n' > before-deployments.json
+            npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > before-deployments.raw.json
           else
-            echo "ERROR: production Worker state is unavailable or promotion target does not exist (HTTP ${status})" >&2
-            exit 1
+            printf 'null\n' > before-deployments.raw.json
           fi
+          node scripts/site-production-release.mjs normalize-deployments \
+            --status "${status}" \
+            --operation "${OPERATION_INPUT}" \
+            --phase before \
+            --input before-deployments.raw.json \
+            --output before-deployments.json
           previous="$(node scripts/site-production-release.mjs active-version --input before-deployments.json)"
           echo "version=${previous}" >> "${GITHUB_OUTPUT}"
       - name: Upload immutable version without deploying it
@@ -190,10 +193,26 @@ jobs:
             --commit "${GITHUB_SHA}" \
             --digest "${{ steps.candidate.outputs.digest }}"
           node scripts/site-smoke.mjs --origin "${preview}"
-          npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > after-deployments.json
+          worker="bronerbooks-site-production"
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker}")"
+          if [ "${status}" = "200" ]; then
+            npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > after-deployments.raw.json
+          else
+            printf 'null\n' > after-deployments.raw.json
+          fi
+          node scripts/site-production-release.mjs normalize-deployments \
+            --status "${status}" \
+            --operation upload \
+            --phase after \
+            --input after-deployments.raw.json \
+            --output after-deployments.json
           node scripts/site-production-release.mjs compare-active \
             --before before-deployments.json \
             --after after-deployments.json
+          active_after="$(node scripts/site-production-release.mjs active-version --input after-deployments.json)"
+          echo "active_version=${active_after}" >> "${GITHUB_OUTPUT}"
       - name: Resolve and verify selected immutable version
         id: selected
         if: ${{ inputs.operation == 'promote' }}
@@ -251,12 +270,15 @@ jobs:
                   npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > recovered-deployments.json
                   if node scripts/site-production-release.mjs verify-deployment --input recovered-deployments.json --version "${previous}"; then
                     printf 'restored-prior-version\n' > recovery-status.txt
+                    echo "active_version=${previous}" >> "${GITHUB_OUTPUT}"
                   else
                     printf 'recovery-verification-failed\n' > recovery-status.txt
+                    echo "active_version=" >> "${GITHUB_OUTPUT}"
                   fi
                 else
                   echo "ERROR: automatic prior-version recovery also failed" >&2
                   printf 'recovery-command-failed\n' > recovery-status.txt
+                  echo "active_version=" >> "${GITHUB_OUTPUT}"
                 fi
               else
                 echo "ERROR: first promotion has no prior version; leaving the unattached Worker blocked for S5" >&2
@@ -275,6 +297,7 @@ jobs:
           node scripts/site-production-release.mjs verify-deployment \
             --input after-deployments.json \
             --version "${version}"
+          echo "active_version=${version}" >> "${GITHUB_OUTPUT}"
           node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"
           promotion_started=false
           trap - ERR
@@ -299,6 +322,7 @@ jobs:
           SELECTED_VERSION: ${{ steps.selected.outputs.version_id }}
           PREVIEW_URL: ${{ steps.target.outputs.url }}
           PREVIOUS_VERSION: ${{ steps.previous.outputs.version }}
+          ACTIVE_VERSION_AFTER: ${{ steps.upload.outputs.active_version || steps.promote.outputs.active_version }}
           JOB_STATUS: ${{ job.status }}
         shell: bash
         run: |
@@ -321,6 +345,7 @@ jobs:
             asset_count: artifact.file_count,
             largest_asset_bytes: artifact.largest_asset_bytes,
             previous_version: process.env.PREVIOUS_VERSION || null,
+            active_version_after: process.env.ACTIVE_VERSION_AFTER || null,
             recovery,
             smoke: success ? "passed" : "failed-or-not-reached",
             deployment_state: success && process.env.OPERATION === "promote" ? "selected-version-at-100-percent" : success ? "unchanged" : "failed",

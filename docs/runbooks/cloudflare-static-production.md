@@ -80,6 +80,8 @@ Worker. It captures the previous 100% version first. If post-promotion
 deployment verification or smoke fails, it attempts to restore that exact
 prior version. A first promotion has no prior version to restore; failure leaves
 the Worker unattached and blocks Issue #32 rather than deleting anything.
+The Worker may already contain immutable versions while still having zero active
+deployments; this is the expected state before its first promotion.
 
 Promotion is not hostname cutover approval. Do not add a Custom Domain, route,
 or DNS mutation to this workflow.
@@ -97,8 +99,9 @@ operation as post-cutover evidence.
 
 Each upload or promotion stores a sanitized JSON artifact with the source SHA,
 Worker/version IDs, version preview URL, dist digest, asset count/maximum size,
-previous version, smoke result, and deployment state. It contains no token,
-account ID, API response, subscriber data, or request body.
+previous version, active version after the operation, smoke result, and
+deployment state. It contains no token, account ID, API response, subscriber
+data, or request body.
 
 Stop and keep Issue #32 blocked for any config drift, version/digest mismatch,
 preview smoke failure, soft 404, Privacy Notice regression, non-100% deployment,
