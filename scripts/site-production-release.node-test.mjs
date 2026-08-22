@@ -235,6 +235,7 @@ test("preview and production static-host configs keep the frozen assets-only bou
   assert.equal(preview.name, "bronerbooks-site-preview");
   assert.equal(preview.workers_dev, true);
   assert.equal(production.name, "bronerbooks-site-production");
+  assert.deepEqual(production.compatibility_flags, ["global_fetch_strictly_public"]);
   assert.equal(production.workers_dev, false);
   assert.equal(production.preview_urls, true);
   assert.deepEqual(production.assets, preview.assets);

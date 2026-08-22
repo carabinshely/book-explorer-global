@@ -13,6 +13,9 @@ rollback authority until the later cutover and soak are complete.
   `wrangler.site-production.jsonc`.
 - Keep `workers_dev=false` and `preview_urls=true` so immutable versions can be
   tested without creating a stable production `workers.dev` origin.
+- Keep the production-only `global_fetch_strictly_public` compatibility flag.
+  Cloudflare version-preview routing for this assets-only Worker otherwise
+  returns runtime error `1042` when it performs its same-zone Worker fetch.
 - `wrangler versions upload` does not apply the Worker's non-versioned subdomain
   setting. After an upload creates the Worker resource (and before its preview
   smoke), or before a promotion, the protected mutation job reads that setting,
