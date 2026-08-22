@@ -4,6 +4,10 @@ import { join } from "node:path";
 const SCHEMA_VERSION = "book-explorer-global-seo-v1";
 const DEFAULT_SITE_URL = "https://bronerbooks.com";
 const REQUIRED_STATIC_PATHS = new Set(["/", "/books", "/about", "/contact", "/privacy"]);
+const NON_INDEXED_SHELLS = [
+  { path: "/niran-storytime-kit", robots: "noindex,nofollow" },
+  { path: "/404", robots: "noindex,follow" },
+];
 const MAX_SEO_DESCRIPTION_LENGTH = 161;
 const HTML_TAG_PATTERN = /<[^>]+>/;
 const mode = process.argv.includes("--dist") ? "dist" : "source";
@@ -80,6 +84,49 @@ const routeOutputPath = (path) =>
 
 const parseSitemapLocs = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 
+const parseModuleScriptSources = (html) =>
+  [
+    ...html.matchAll(
+      /<script\b(?=[^>]*\btype=["']module["'])(?=[^>]*\bsrc=["']([^"']+)["'])[^>]*>/gi
+    ),
+  ].map((match) => match[1]);
+
+const assertPreviewConfig = () => {
+  const configPath = join(cwd, "wrangler.site-preview.jsonc");
+  const config = readJson(configPath, "Cloudflare static-site preview config");
+  if (config.name !== "bronerbooks-site-preview") fail("preview Worker name must be bronerbooks-site-preview.");
+  if (config.compatibility_date !== "2026-08-22") fail("preview Worker compatibility_date must be 2026-08-22.");
+  if (config.workers_dev !== true) fail("preview Worker must keep workers_dev enabled.");
+  if (config.preview_urls !== true) fail("preview Worker must keep preview_urls enabled.");
+  if (config.assets?.directory !== "./dist") fail("preview Worker assets.directory must be ./dist.");
+  if (config.assets?.html_handling !== "auto-trailing-slash") {
+    fail("preview Worker must use auto-trailing-slash HTML handling.");
+  }
+  if (config.assets?.not_found_handling !== "404-page") {
+    fail("preview Worker must use 404-page handling, never blanket SPA fallback.");
+  }
+  if (config.assets?.binding !== undefined || config.assets?.run_worker_first !== undefined) {
+    fail("preview Worker must remain assets-only with no binding or run_worker_first layer.");
+  }
+
+  const forbiddenKeys = [
+    "main",
+    "route",
+    "routes",
+    "env",
+    "vars",
+    "triggers",
+    "services",
+    "kv_namespaces",
+    "r2_buckets",
+    "d1_databases",
+    "durable_objects",
+  ];
+  for (const key of forbiddenKeys) {
+    if (config[key] !== undefined) fail(`preview Worker config must not define ${key}.`);
+  }
+};
+
 const manifestPath = join(cwd, "src", "generated", "seo", "manifest.json");
 const catalogPath = join(cwd, "src", "generated", "books", "catalog.json");
 const manifest = readJson(manifestPath, "SEO manifest");
@@ -109,6 +156,9 @@ for (const [page, label] of pages) {
 for (const requiredPath of REQUIRED_STATIC_PATHS) {
   if (!paths.has(requiredPath)) fail(`missing required static path ${requiredPath}.`);
 }
+for (const { path } of NON_INDEXED_SHELLS) {
+  if (paths.has(path)) fail(`${path} must remain outside the SEO manifest and sitemap.`);
+}
 
 const skuIds = new Set((catalog.skus || []).map((sku) => sku.sku_id));
 for (const [page, label] of (manifest.book_pages || []).map((page, index) => [page, `book_pages[${index}]`])) {
@@ -137,6 +187,8 @@ for (const loc of locs) {
 }
 
 if (mode === "dist") {
+  assertPreviewConfig();
+
   for (const path of paths) {
     const outputPath = routeOutputPath(path);
     if (!existsSync(outputPath)) fail(`dist route is missing for ${path}: expected ${outputPath}.`);
@@ -157,6 +209,28 @@ if (mode === "dist") {
     if (!html.includes(`href=\"${baseUrl}${representative.path}\"`)) fail("representative page canonical does not match manifest path.");
     const manifestImage = Array.isArray(representative.images) ? representative.images.find(Boolean) : undefined;
     if (manifestImage && !html.includes(`${baseUrl}${manifestImage}`)) fail("representative page metadata does not include the manifest image URL.");
+  }
+
+  const indexHtml = readText(routeOutputPath("/"), "dist application shell");
+  const indexModuleScripts = parseModuleScriptSources(indexHtml);
+  if (indexModuleScripts.length === 0) fail("dist application shell must load at least one module script.");
+
+  for (const shell of NON_INDEXED_SHELLS) {
+    const html = readText(routeOutputPath(shell.path), `non-indexed shell ${shell.path}`);
+    const moduleScripts = parseModuleScriptSources(html);
+    if (JSON.stringify(moduleScripts) !== JSON.stringify(indexModuleScripts)) {
+      fail(`${shell.path} must load the same compiled module scripts as dist/index.html.`);
+    }
+    if (!/<div\s+id=["']root["']><\/div>/i.test(html)) {
+      fail(`${shell.path} must contain the React application root.`);
+    }
+    const robots = html.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["'][^>]*>/i)?.[1];
+    if (robots !== shell.robots) fail(`${shell.path} must use robots=${shell.robots}.`);
+    if (/<link\s+rel=["']canonical["']/i.test(html)) fail(`${shell.path} must not emit a canonical link.`);
+    if (/type=["']application\/ld\+json["']/i.test(html)) fail(`${shell.path} must not emit JSON-LD.`);
+    if (html.includes("window.location.replace") || html.includes("/?/") || html.includes("~and~")) {
+      fail(`${shell.path} must not contain the legacy GitHub Pages redirect shim.`);
+    }
   }
 }
 

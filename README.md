@@ -27,6 +27,11 @@ npm run build
 
 Pull-request checks use `npm run build:verify` to build the proposed site without deploying it.
 
+The isolated Cloudflare Workers Static Assets preview remains separate from
+production hosting. Use the
+[Cloudflare static-site preview runbook](docs/runbooks/cloudflare-static-preview.md)
+for its build, dry-run, deployment, and evidence contract.
+
 ## SEO workflow
 
 After the publish pipeline refreshes `src/generated/seo/manifest.json`, run the SEO checks from this directory:

@@ -22,6 +22,8 @@
     "seo:check:committed": "npm run seo:sitemap && git diff --exit-code -- public/sitemap.xml",
     "seo:check:dist": "node scripts/seo-check.mjs --dist",
     "seo:smoke": "npm run seo:check && npm run seo:check:committed && npm run build && npm run seo:check:dist",
+    "site:check:preview": "wrangler deploy --dry-run --config wrangler.site-preview.jsonc",
+    "site:deploy:preview": "wrangler deploy --config wrangler.site-preview.jsonc",
     "links:check": "node scripts/links-dx.mjs check --environment preview",
     "links:test": "node --test scripts/links-dx.node-test.mjs",
     "links:preview": "node scripts/links-dx.mjs preview --environment preview",

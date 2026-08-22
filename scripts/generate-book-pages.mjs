@@ -94,6 +94,7 @@ const removeHeadSeo = (headHtml) =>
   headHtml
     .replace(/<title>[\s\S]*?<\/title>\s*/gi, "")
     .replace(/<meta\s+name=["']description["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+name=["']robots["'][^>]*>\s*/gi, "")
     .replace(/<link\s+rel=["']canonical["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+property=["']og:(title|description|url|type|image)["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+name=["']twitter:(card|title|description|image|site)["'][^>]*>\s*/gi, "")
@@ -112,7 +113,7 @@ const seoTags = ({ title, description, canonicalUrl, type = "website", imageUrl,
   return `    <title>${escapeHtmlText(title)}</title>\n    <meta name="description" content="${escapeHtmlAttr(description)}" />\n    <link rel="canonical" href="${escapeHtmlAttr(canonicalUrl)}" />\n    <meta property="og:title" content="${escapeHtmlAttr(title)}" />\n    <meta property="og:description" content="${escapeHtmlAttr(description)}" />\n    <meta property="og:type" content="${escapeHtmlAttr(type)}" />\n    <meta property="og:url" content="${escapeHtmlAttr(canonicalUrl)}" />${imageTags}\n    <meta name="twitter:card" content="${imageUrl ? "summary_large_image" : "summary"}" />\n    <meta name="twitter:title" content="${escapeHtmlAttr(title)}" />\n    <meta name="twitter:description" content="${escapeHtmlAttr(description)}" />\n    <script type="application/ld+json">${payload}</script>\n`;
 };
 
-const applySeo = (template, seo) => {
+const applyHeadTags = (template, tags) => {
   const withoutBodyJsonLd = removeBodyJsonLd(template);
   const headClose = withoutBodyJsonLd.match(/<\/head>/i);
   if (!headClose) fail("dist/index.html template is missing </head>.");
@@ -124,8 +125,16 @@ const applySeo = (template, seo) => {
 
   const beforeHead = beforeHeadClose.slice(0, headOpen.index + headOpen[0].length);
   const headBody = beforeHeadClose.slice(headOpen.index + headOpen[0].length);
-  return `${beforeHead}\n${removeHeadSeo(headBody)}${seoTags(seo)}${afterHeadClose}`;
+  return `${beforeHead}\n${removeHeadSeo(headBody)}${tags}${afterHeadClose}`;
 };
+
+const applySeo = (template, seo) => applyHeadTags(template, seoTags(seo));
+
+const applyNoIndexShell = (template, { title, robots }) =>
+  applyHeadTags(
+    template,
+    `    <title>${escapeHtmlText(title)}</title>\n    <meta name="robots" content="${escapeHtmlAttr(robots)}" />\n`
+  );
 
 const routeOutputPath = (path) =>
   path === "/" ? join(distDir, "index.html") : join(distDir, `${path.slice(1)}.html`);
@@ -281,7 +290,24 @@ const main = () => {
     bookCount += 1;
   }
 
-  console.log(`Generated ${manifest.static_pages.length} static route pages and ${bookCount} book pages with page-specific SEO metadata.`);
+  writeRoutePage(
+    "/niran-storytime-kit",
+    applyNoIndexShell(template, {
+      title: "Niran Storytime Kit | Broner Books",
+      robots: "noindex,nofollow",
+    })
+  );
+  writeRoutePage(
+    "/404",
+    applyNoIndexShell(template, {
+      title: "Page Not Found | Broner Books",
+      robots: "noindex,follow",
+    })
+  );
+
+  console.log(
+    `Generated ${manifest.static_pages.length} static route pages, ${bookCount} book pages, and 2 non-indexed application shells.`
+  );
 };
 
 try {
