@@ -273,10 +273,12 @@ jobs:
                     echo "active_version=${previous}" >> "${GITHUB_OUTPUT}"
                   else
                     printf 'recovery-verification-failed\n' > recovery-status.txt
+                    echo "active_version=" >> "${GITHUB_OUTPUT}"
                   fi
                 else
                   echo "ERROR: automatic prior-version recovery also failed" >&2
                   printf 'recovery-command-failed\n' > recovery-status.txt
+                  echo "active_version=" >> "${GITHUB_OUTPUT}"
                 fi
               else
                 echo "ERROR: first promotion has no prior version; leaving the unattached Worker blocked for S5" >&2
@@ -295,8 +297,8 @@ jobs:
           node scripts/site-production-release.mjs verify-deployment \
             --input after-deployments.json \
             --version "${version}"
-          node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"
           echo "active_version=${version}" >> "${GITHUB_OUTPUT}"
+          node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"
           promotion_started=false
           trap - ERR
       - name: Select deployment evidence URL

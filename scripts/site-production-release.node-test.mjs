@@ -228,6 +228,13 @@ test("production workflow is manual, protected, main-gated, and has no zone auth
   assert.match(workflow, /active_version_after/);
   assert.match(workflow, /active_version=\$\{previous\}/);
   assert.match(workflow, /unavailable-first-promotion/);
+  const verifiedDeployment = workflow.lastIndexOf("site-production-release.mjs verify-deployment");
+  const recordedActiveVersion = workflow.indexOf('echo "active_version=${version}"');
+  const postPromotionSmoke = workflow.indexOf(
+    'node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"',
+  );
+  assert.ok(verifiedDeployment < recordedActiveVersion);
+  assert.ok(recordedActiveVersion < postPromotionSmoke);
   assert.match(workflow, /wrangler versions upload --config wrangler\.site-production\.jsonc/);
   assert.match(workflow, /wrangler versions deploy "\$\{version\}@100%"/);
   assert.doesNotMatch(workflow, /version="\$\{\{ inputs\.version \}\}"/);
