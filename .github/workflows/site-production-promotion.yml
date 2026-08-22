@@ -185,14 +185,55 @@ jobs:
             --input wrangler-upload-output.ndjson \
             --github-output "${GITHUB_OUTPUT}"
           version="$(node -e 'const fs=require("fs"); const rows=fs.readFileSync("wrangler-upload-output.ndjson","utf8").trim().split(/\r?\n/).map(JSON.parse); process.stdout.write(rows.findLast((row)=>row.type==="version-upload").version_id)')"
-          preview="$(node -e 'const fs=require("fs"); const rows=fs.readFileSync("wrangler-upload-output.ndjson","utf8").trim().split(/\r?\n/).map(JSON.parse); process.stdout.write(rows.findLast((row)=>row.type==="version-upload").preview_url)')"
           npm exec -- wrangler versions view "${version}" --config wrangler.site-production.jsonc --json > selected-version.json
           node scripts/site-production-release.mjs verify-version \
             --input selected-version.json \
             --version "${version}" \
             --commit "${GITHUB_SHA}" \
             --digest "${{ steps.candidate.outputs.digest }}"
-          node scripts/site-smoke.mjs --origin "${preview}"
+      - name: Enforce version-preview-only routing
+        id: routing
+        env:
+          VERSION_INPUT: ${{ steps.upload.outputs.version_id || inputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          worker="bronerbooks-site-production"
+          endpoint="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker}/subdomain"
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --output preview-routing-before.json \
+            "${endpoint}"
+          routing="$(node scripts/site-production-release.mjs preview-routing-state --input preview-routing-before.json)"
+          if [ "${routing}" != "ready" ]; then
+            curl --fail --silent --show-error --max-time 15 --proto '=https' \
+              --request POST \
+              --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              --header "Content-Type: application/json" \
+              --data '{"enabled":false,"previews_enabled":true}' \
+              --output preview-routing-update.json \
+              "${endpoint}"
+          fi
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --output preview-routing-after.json \
+            "${endpoint}"
+          routing="$(node scripts/site-production-release.mjs preview-routing-state --input preview-routing-after.json)"
+          test "${routing}" = "ready"
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --output workers-subdomain.json \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/subdomain"
+          subdomain="$(node scripts/site-production-release.mjs workers-dev-subdomain --input workers-subdomain.json)"
+          node scripts/site-production-release.mjs validate-version-id --version "${VERSION_INPUT}"
+          echo "preview_url=https://${VERSION_INPUT:0:8}-${worker}.${subdomain}.workers.dev" >> "${GITHUB_OUTPUT}"
+      - name: Smoke immutable upload and verify deployment unchanged
+        id: upload_verify
+        if: ${{ inputs.operation == 'upload' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/site-smoke.mjs --origin "${{ steps.routing.outputs.preview_url }}"
           worker="bronerbooks-site-production"
           status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 15 --proto '=https' \
             --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
@@ -229,21 +270,7 @@ jobs:
             --version "${version}" \
             --commit "${GITHUB_SHA}" \
             --digest "${{ steps.candidate.outputs.digest }}"
-          subdomain="$(curl --fail --silent --show-error --max-time 15 --proto '=https' \
-            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/subdomain" \
-            | node --input-type=module -e '
-                let body = "";
-                process.stdin.setEncoding("utf8");
-                process.stdin.on("data", (chunk) => { body += chunk; });
-                process.stdin.on("end", () => {
-                  const parsed = JSON.parse(body);
-                  const value = parsed.success === true && parsed.result?.subdomain;
-                  if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(value ?? "")) process.exit(1);
-                  process.stdout.write(value);
-                });
-              ')"
-          preview="https://${version:0:8}-bronerbooks-site-production.${subdomain}.workers.dev"
+          preview="${{ steps.routing.outputs.preview_url }}"
           node scripts/site-smoke.mjs --origin "${preview}"
           echo "version_id=${version}" >> "${GITHUB_OUTPUT}"
           echo "preview_url=${preview}" >> "${GITHUB_OUTPUT}"
@@ -304,15 +331,9 @@ jobs:
       - name: Select deployment evidence URL
         id: target
         if: ${{ always() }}
-        env:
-          OPERATION_INPUT: ${{ inputs.operation }}
         shell: bash
         run: |
-          if [ "${OPERATION_INPUT}" = "upload" ]; then
-            echo "url=${{ steps.upload.outputs.preview_url }}" >> "${GITHUB_OUTPUT}"
-          else
-            echo "url=${{ steps.selected.outputs.preview_url }}" >> "${GITHUB_OUTPUT}"
-          fi
+          echo "url=${{ steps.routing.outputs.preview_url }}" >> "${GITHUB_OUTPUT}"
       - name: Write sanitized release evidence
         if: ${{ always() }}
         env:
@@ -322,7 +343,7 @@ jobs:
           SELECTED_VERSION: ${{ steps.selected.outputs.version_id }}
           PREVIEW_URL: ${{ steps.target.outputs.url }}
           PREVIOUS_VERSION: ${{ steps.previous.outputs.version }}
-          ACTIVE_VERSION_AFTER: ${{ steps.upload.outputs.active_version || steps.promote.outputs.active_version }}
+          ACTIVE_VERSION_AFTER: ${{ steps.upload_verify.outputs.active_version || steps.promote.outputs.active_version }}
           JOB_STATUS: ${{ job.status }}
         shell: bash
         run: |

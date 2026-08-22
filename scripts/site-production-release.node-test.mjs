@@ -12,6 +12,8 @@ import {
   computeDistFingerprint,
   normalizeDeploymentSnapshot,
   parseVersionUploadOutput,
+  previewRoutingState,
+  workersDevSubdomain,
 } from "./site-production-release.mjs";
 
 const version = "6030742a-3272-4a68-b601-5abb87d7e3c7";
@@ -181,6 +183,50 @@ test("Wrangler upload output must name the production Worker and exact version p
     () => parseVersionUploadOutput(valid.replace("crab2007.workers.dev", "example.com")),
     /invalid production version preview URL/,
   );
+  assert.deepEqual(parseVersionUploadOutput(JSON.stringify({
+    type: "version-upload",
+    worker_name: "bronerbooks-site-production",
+    version_id: version,
+    preview_url: null,
+  })), { version_id: version, preview_url: null });
+});
+
+test("preview routing requires version previews with the stable workers.dev origin disabled", () => {
+  assert.equal(previewRoutingState({
+    success: true,
+    result: { enabled: false, previews_enabled: true },
+  }), "ready");
+  assert.equal(previewRoutingState({
+    success: true,
+    result: { enabled: true, previews_enabled: true },
+  }), "drift");
+  assert.equal(previewRoutingState({
+    success: true,
+    result: { enabled: false, previews_enabled: false },
+  }), "drift");
+  assert.throws(
+    () => previewRoutingState({ success: false, result: null }),
+    /response was unsuccessful/,
+  );
+  assert.throws(
+    () => previewRoutingState({ success: true, result: { enabled: false } }),
+    /response is malformed/,
+  );
+});
+
+test("workers.dev subdomain parsing rejects failed and malformed API responses", () => {
+  assert.equal(workersDevSubdomain({
+    success: true,
+    result: { subdomain: "crab2007" },
+  }), "crab2007");
+  assert.throws(
+    () => workersDevSubdomain({ success: false, result: null }),
+    /response was unsuccessful/,
+  );
+  assert.throws(
+    () => workersDevSubdomain({ success: true, result: { subdomain: "bad.example" } }),
+    /response is malformed/,
+  );
 });
 
 test("preview and production static-host configs keep the frozen assets-only boundary", async () => {
@@ -226,6 +272,16 @@ test("production workflow is manual, protected, main-gated, and has no zone auth
   assert.match(workflow, /--phase before/);
   assert.match(workflow, /--phase after/);
   assert.match(workflow, /active_version_after/);
+  assert.match(workflow, /preview-routing-state/);
+  assert.match(workflow, /workers\/scripts\/\$\{worker\}\/subdomain/);
+  assert.match(workflow, /'\{"enabled":false,"previews_enabled":true\}'/);
+  assert.match(workflow, /test "\$\{routing\}" = "ready"/);
+  const immutableUpload = workflow.indexOf("Upload immutable version without deploying it");
+  const previewRoutingGuard = workflow.indexOf("Enforce version-preview-only routing");
+  const uploadSmoke = workflow.indexOf("Smoke immutable upload and verify deployment unchanged");
+  assert.ok(immutableUpload < previewRoutingGuard);
+  assert.ok(previewRoutingGuard < uploadSmoke);
+  assert.match(workflow, /steps\.upload_verify\.outputs\.active_version/);
   assert.match(workflow, /active_version=\$\{previous\}/);
   assert.match(workflow, /unavailable-first-promotion/);
   const verifiedDeployment = workflow.lastIndexOf("site-production-release.mjs verify-deployment");
@@ -239,7 +295,9 @@ test("production workflow is manual, protected, main-gated, and has no zone auth
   assert.match(workflow, /wrangler versions deploy "\$\{version\}@100%"/);
   assert.doesNotMatch(workflow, /version="\$\{\{ inputs\.version \}\}"/);
   assert.doesNotMatch(workflow, /CLOUDFLARE_ZONE_ID/);
+  assert.doesNotMatch(workflow, /\/zones\//);
   assert.doesNotMatch(workflow, /wrangler\s+deploy(?:\s|$)/m);
+  assert.doesNotMatch(workflow, /wrangler\s+triggers\s+deploy/);
   assert.doesNotMatch(workflow, /--(?:route|routes|domain|domains)\b/);
 });
 

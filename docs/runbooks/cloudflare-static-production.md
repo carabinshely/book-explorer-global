@@ -13,6 +13,12 @@ rollback authority until the later cutover and soak are complete.
   `wrangler.site-production.jsonc`.
 - Keep `workers_dev=false` and `preview_urls=true` so immutable versions can be
   tested without creating a stable production `workers.dev` origin.
+- `wrangler versions upload` does not apply the Worker's non-versioned subdomain
+  setting. After an upload creates the Worker resource (and before its preview
+  smoke), or before a promotion, the protected mutation job reads that setting,
+  reconciles only `enabled=false, previews_enabled=true` when needed, and
+  requires an exact readback before continuing. It never adds a route, Custom
+  Domain, or DNS record.
 - The production config must contain no route, Custom Domain, Worker script,
   binding, zone ID, or `run_worker_first` layer.
 - `/r/*` and the exact signup API boundary remain separately owned. This flow
