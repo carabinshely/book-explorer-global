@@ -1,0 +1,409 @@
+name: Promote static site production Worker (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "check is non-mutating; upload creates an immutable version; promote deploys one exact version; verify-live is post-cutover only"
+        required: true
+        default: check
+        type: choice
+        options: [check, upload, promote, verify-live]
+      version:
+        description: "Exact Cloudflare version UUID (required only for promote)"
+        required: false
+        type: string
+
+concurrency:
+  group: site-static-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: ${{ inputs.operation != 'verify-live' }}
+    name: Validate static-site candidate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SITE_URL: https://bronerbooks.com
+      VITE_BASE_URL: /
+      VITE_NIRAN_STORYTIME_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Validate manual operation
+        env:
+          OPERATION_INPUT: ${{ inputs.operation }}
+          VERSION_INPUT: ${{ inputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${OPERATION_INPUT}" in
+            check)
+              ;;
+            upload)
+              test "${GITHUB_REF}" = "refs/heads/main" || { echo "ERROR: production upload requires main" >&2; exit 1; }
+              test -z "${VERSION_INPUT}" || { echo "ERROR: upload does not accept a version input" >&2; exit 1; }
+              ;;
+            promote)
+              test "${GITHUB_REF}" = "refs/heads/main" || { echo "ERROR: production promotion requires main" >&2; exit 1; }
+              node scripts/site-production-release.mjs validate-version-id --version "${VERSION_INPUT}"
+              ;;
+            *)
+              echo "ERROR: unsupported operation" >&2
+              exit 1
+              ;;
+          esac
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+      - run: npm run seo:check
+      - run: npm run seo:check:committed
+      - run: npm run build
+      - run: npm run seo:check:dist
+      - run: npm run site:check:preview
+      - run: npm run site:check:production
+      - name: Fingerprint exact candidate artifact
+        run: node scripts/site-production-release.mjs fingerprint --directory dist --output site-artifact.json
+      - name: Confirm source files remain clean
+        run: git diff --exit-code
+      - name: Preserve exact candidate for an approved mutation
+        if: ${{ inputs.operation == 'upload' || inputs.operation == 'promote' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site-candidate-${{ github.run_id }}
+          path: |
+            dist
+            site-artifact.json
+          if-no-files-found: error
+          retention-days: 7
+
+  mutate:
+    if: ${{ inputs.operation == 'upload' || inputs.operation == 'promote' }}
+    needs: validate
+    name: ${{ inputs.operation }} exact static-site version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    environment:
+      name: site-static-production
+      url: ${{ steps.target.outputs.url }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_SITE_PRODUCTION }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      SITE_URL: https://bronerbooks.com
+      VITE_BASE_URL: /
+      VITE_NIRAN_STORYTIME_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: static-site-candidate-${{ github.run_id }}
+          path: .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+      - run: npm ci
+      - name: Verify protected target and exact candidate
+        id: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = "refs/heads/main" || { echo "ERROR: production mutation requires main" >&2; exit 1; }
+          : "${CLOUDFLARE_API_TOKEN:?CLOUDFLARE_API_TOKEN_SITE_PRODUCTION environment secret is required}"
+          : "${CLOUDFLARE_ACCOUNT_ID:?CLOUDFLARE_ACCOUNT_ID environment variable is required}"
+          node scripts/site-production-release.mjs fingerprint --directory dist --output downloaded-artifact.json
+          cmp --silent site-artifact.json downloaded-artifact.json
+          digest="$(node -e 'process.stdout.write(require("./site-artifact.json").sha256)')"
+          [[ "${digest}" =~ ^[0-9a-f]{64}$ ]]
+          echo "digest=${digest}" >> "${GITHUB_OUTPUT}"
+      - name: Verify Cloudflare token without exposing token or API response
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            | node --input-type=module -e '
+                let body = "";
+                process.stdin.setEncoding("utf8");
+                process.stdin.on("data", (chunk) => { body += chunk; });
+                process.stdin.on("end", () => {
+                  try {
+                    if (JSON.parse(body).success !== true) throw new Error("verification failed");
+                    console.log("OK: Cloudflare API token verified");
+                  } catch {
+                    console.error("ERROR: Cloudflare API token verification failed");
+                    process.exitCode = 1;
+                  }
+                });
+              '
+      - name: Capture current production deployment
+        id: previous
+        env:
+          OPERATION_INPUT: ${{ inputs.operation }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          worker="bronerbooks-site-production"
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts/${worker}")"
+          if [ "${status}" = "200" ]; then
+            npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > before-deployments.json
+          elif [ "${status}" = "404" ] && [ "${OPERATION_INPUT}" = "upload" ]; then
+            printf '[]\n' > before-deployments.json
+          else
+            echo "ERROR: production Worker state is unavailable or promotion target does not exist (HTTP ${status})" >&2
+            exit 1
+          fi
+          previous="$(node scripts/site-production-release.mjs active-version --input before-deployments.json)"
+          echo "version=${previous}" >> "${GITHUB_OUTPUT}"
+      - name: Upload immutable version without deploying it
+        id: upload
+        if: ${{ inputs.operation == 'upload' }}
+        env:
+          WRANGLER_OUTPUT_FILE_PATH: wrangler-upload-output.ndjson
+        shell: bash
+        run: |
+          set -euo pipefail
+          message="commit:${GITHUB_SHA};dist:${{ steps.candidate.outputs.digest }}"
+          npm exec -- wrangler versions upload --config wrangler.site-production.jsonc --message "${message}"
+          node scripts/site-production-release.mjs parse-upload \
+            --input wrangler-upload-output.ndjson \
+            --github-output "${GITHUB_OUTPUT}"
+          version="$(node -e 'const fs=require("fs"); const rows=fs.readFileSync("wrangler-upload-output.ndjson","utf8").trim().split(/\r?\n/).map(JSON.parse); process.stdout.write(rows.findLast((row)=>row.type==="version-upload").version_id)')"
+          preview="$(node -e 'const fs=require("fs"); const rows=fs.readFileSync("wrangler-upload-output.ndjson","utf8").trim().split(/\r?\n/).map(JSON.parse); process.stdout.write(rows.findLast((row)=>row.type==="version-upload").preview_url)')"
+          npm exec -- wrangler versions view "${version}" --config wrangler.site-production.jsonc --json > selected-version.json
+          node scripts/site-production-release.mjs verify-version \
+            --input selected-version.json \
+            --version "${version}" \
+            --commit "${GITHUB_SHA}" \
+            --digest "${{ steps.candidate.outputs.digest }}"
+          node scripts/site-smoke.mjs --origin "${preview}"
+          npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > after-deployments.json
+          node scripts/site-production-release.mjs compare-active \
+            --before before-deployments.json \
+            --after after-deployments.json
+      - name: Resolve and verify selected immutable version
+        id: selected
+        if: ${{ inputs.operation == 'promote' }}
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${VERSION_INPUT}"
+          node scripts/site-production-release.mjs validate-version-id --version "${version}"
+          npm exec -- wrangler versions view "${version}" --config wrangler.site-production.jsonc --json > selected-version.json
+          node scripts/site-production-release.mjs verify-version \
+            --input selected-version.json \
+            --version "${version}" \
+            --commit "${GITHUB_SHA}" \
+            --digest "${{ steps.candidate.outputs.digest }}"
+          subdomain="$(curl --fail --silent --show-error --max-time 15 --proto '=https' \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/subdomain" \
+            | node --input-type=module -e '
+                let body = "";
+                process.stdin.setEncoding("utf8");
+                process.stdin.on("data", (chunk) => { body += chunk; });
+                process.stdin.on("end", () => {
+                  const parsed = JSON.parse(body);
+                  const value = parsed.success === true && parsed.result?.subdomain;
+                  if (!/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(value ?? "")) process.exit(1);
+                  process.stdout.write(value);
+                });
+              ')"
+          preview="https://${version:0:8}-bronerbooks-site-production.${subdomain}.workers.dev"
+          node scripts/site-smoke.mjs --origin "${preview}"
+          echo "version_id=${version}" >> "${GITHUB_OUTPUT}"
+          echo "preview_url=${preview}" >> "${GITHUB_OUTPUT}"
+      - name: Promote exact version with automatic prior-version recovery
+        id: promote
+        if: ${{ inputs.operation == 'promote' }}
+        shell: bash
+        run: |
+          set -eEuo pipefail
+          version="${{ steps.selected.outputs.version_id }}"
+          previous="${{ steps.previous.outputs.version }}"
+          promotion_started=false
+          printf 'not-needed\n' > recovery-status.txt
+          recover_on_failure() {
+            status=$?
+            trap - ERR
+            if [ "${promotion_started}" = "true" ]; then
+              if [ -n "${previous}" ]; then
+                echo "ERROR: promotion verification failed; restoring the prior exact version" >&2
+                if npm exec -- wrangler versions deploy "${previous}@100%" \
+                  --config wrangler.site-production.jsonc \
+                  --yes \
+                  --message "automatic recovery after failed ${version}"; then
+                  npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > recovered-deployments.json
+                  if node scripts/site-production-release.mjs verify-deployment --input recovered-deployments.json --version "${previous}"; then
+                    printf 'restored-prior-version\n' > recovery-status.txt
+                  else
+                    printf 'recovery-verification-failed\n' > recovery-status.txt
+                  fi
+                else
+                  echo "ERROR: automatic prior-version recovery also failed" >&2
+                  printf 'recovery-command-failed\n' > recovery-status.txt
+                fi
+              else
+                echo "ERROR: first promotion has no prior version; leaving the unattached Worker blocked for S5" >&2
+                printf 'unavailable-first-promotion\n' > recovery-status.txt
+              fi
+            fi
+            exit "${status}"
+          }
+          trap recover_on_failure ERR
+          promotion_started=true
+          npm exec -- wrangler versions deploy "${version}@100%" \
+            --config wrangler.site-production.jsonc \
+            --yes \
+            --message "commit:${GITHUB_SHA};dist:${{ steps.candidate.outputs.digest }}"
+          npm exec -- wrangler deployments list --config wrangler.site-production.jsonc --json > after-deployments.json
+          node scripts/site-production-release.mjs verify-deployment \
+            --input after-deployments.json \
+            --version "${version}"
+          node scripts/site-smoke.mjs --origin "${{ steps.selected.outputs.preview_url }}"
+          promotion_started=false
+          trap - ERR
+      - name: Select deployment evidence URL
+        id: target
+        if: ${{ always() }}
+        env:
+          OPERATION_INPUT: ${{ inputs.operation }}
+        shell: bash
+        run: |
+          if [ "${OPERATION_INPUT}" = "upload" ]; then
+            echo "url=${{ steps.upload.outputs.preview_url }}" >> "${GITHUB_OUTPUT}"
+          else
+            echo "url=${{ steps.selected.outputs.preview_url }}" >> "${GITHUB_OUTPUT}"
+          fi
+      - name: Write sanitized release evidence
+        if: ${{ always() }}
+        env:
+          OPERATION: ${{ inputs.operation }}
+          SOURCE_COMMIT: ${{ github.sha }}
+          UPLOADED_VERSION: ${{ steps.upload.outputs.version_id }}
+          SELECTED_VERSION: ${{ steps.selected.outputs.version_id }}
+          PREVIEW_URL: ${{ steps.target.outputs.url }}
+          PREVIOUS_VERSION: ${{ steps.previous.outputs.version }}
+          JOB_STATUS: ${{ job.status }}
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from "node:fs";
+          const artifact = JSON.parse(readFileSync("site-artifact.json", "utf8"));
+          const success = process.env.JOB_STATUS === "success";
+          let recovery = "not-applicable";
+          try {
+            recovery = readFileSync("recovery-status.txt", "utf8").trim();
+          } catch {}
+          const evidence = {
+            schema_version: "bronerbooks-static-site-release-v1",
+            operation: process.env.OPERATION,
+            source_commit: process.env.SOURCE_COMMIT,
+            worker: "bronerbooks-site-production",
+            version: process.env.UPLOADED_VERSION || process.env.SELECTED_VERSION || null,
+            preview_url: process.env.PREVIEW_URL || null,
+            dist_sha256: artifact.sha256,
+            asset_count: artifact.file_count,
+            largest_asset_bytes: artifact.largest_asset_bytes,
+            previous_version: process.env.PREVIOUS_VERSION || null,
+            recovery,
+            smoke: success ? "passed" : "failed-or-not-reached",
+            deployment_state: success && process.env.OPERATION === "promote" ? "selected-version-at-100-percent" : success ? "unchanged" : "failed",
+          };
+          writeFileSync("site-production-release-evidence.json", `${JSON.stringify(evidence, null, 2)}\n`);
+          NODE
+      - name: Persist sanitized release evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-site-production-evidence-${{ github.run_id }}
+          path: site-production-release-evidence.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish sanitized release summary
+        if: ${{ always() }}
+        run: cat site-production-release-evidence.json >> "${GITHUB_STEP_SUMMARY}"
+
+  verify-live:
+    if: ${{ inputs.operation == 'verify-live' }}
+    name: Verify live Privacy Notice after S5 cutover
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
+    environment:
+      name: site-static-production
+      url: https://bronerbooks.com
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+      - name: Enforce post-cutover main-only verification
+        run: test "${GITHUB_REF}" = "refs/heads/main"
+      - name: Mark live Privacy Notice verification pending
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data '{"state":"pending","context":"privacy-live-smoke","description":"Waiting for live Privacy Notice verification"}'
+      - name: Verify approved static site and Privacy Notice on the live domain
+        id: privacy_smoke
+        continue-on-error: true
+        run: node scripts/site-smoke.mjs --origin https://bronerbooks.com
+      - name: Publish live Privacy Notice verification status
+        if: ${{ always() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SMOKE_OUTCOME: ${{ steps.privacy_smoke.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${SMOKE_OUTCOME}" = "success" ]; then
+            state="success"
+            description="Live Privacy Notice matches approved identity/version"
+          else
+            state="failure"
+            description="Live Privacy Notice verification failed"
+          fi
+          payload="$(STATE="${state}" DESC="${description}" node - <<'NODE'
+          console.log(JSON.stringify({
+            state: process.env.STATE,
+            context: "privacy-live-smoke",
+            description: process.env.DESC,
+            target_url: "https://bronerbooks.com",
+          }));
+          NODE
+          )"
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            --data "${payload}"
+      - name: Enforce live Privacy Notice verification
+        if: ${{ always() && steps.privacy_smoke.outcome != 'success' }}
+        run: exit 1

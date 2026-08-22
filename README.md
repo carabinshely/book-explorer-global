@@ -32,6 +32,13 @@ production hosting. Use the
 [Cloudflare static-site preview runbook](docs/runbooks/cloudflare-static-preview.md)
 for its build, dry-run, deployment, and evidence contract.
 
+The production Static Assets resource has a separate, protected manual
+upload-and-promotion path. It deliberately contains no route or Custom Domain;
+use the
+[guarded production runbook](docs/runbooks/cloudflare-static-production.md)
+for environment setup, immutable-version evidence, recovery, and the later S5
+handoff. Ordinary pushes to `main` continue to deploy GitHub Pages.
+
 ## SEO workflow
 
 After the publish pipeline refreshes `src/generated/seo/manifest.json`, run the SEO checks from this directory:

@@ -37,6 +37,10 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
       - name: Mark live Privacy Notice verification pending
         env:
           GH_TOKEN: ${{ github.token }}
@@ -55,44 +59,7 @@ jobs:
       - name: Verify approved Privacy Notice in the live bundle
         id: privacy_smoke
         continue-on-error: true
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          origin="https://bronerbooks.com"
-          bundle_file="$(mktemp)"
-          trap 'rm -f "${bundle_file}"' EXIT
-
-          for attempt in $(seq 1 12); do
-            html="$(curl --fail --silent --show-error --location --retry 2 --retry-delay 2 "${origin}/")" || true
-            asset_path="$(printf '%s' "${html}" | grep -oE 'src="[^"]+\.js"' | head -n 1 | cut -d '"' -f 2 || true)"
-
-            if [[ -n "${asset_path}" ]]; then
-              if [[ "${asset_path}" =~ ^https?:// ]]; then
-                asset_url="${asset_path}"
-              elif [[ "${asset_path}" == /* ]]; then
-                asset_url="${origin}${asset_path}"
-              else
-                asset_url="${origin}/${asset_path}"
-              fi
-
-              if curl --fail --silent --show-error --location --retry 2 --retry-delay 2 "${asset_url}" --output "${bundle_file}"; then
-                if grep -Fq 'P.O. Box 4244, Haifa 3104201, Israel' "${bundle_file}" \
-                  && grep -Fq 'August 19, 2026' "${bundle_file}" \
-                  && grep -Fq "Children's content and adult data collection" "${bundle_file}" \
-                  && ! grep -Fq 'provisional pending review' "${bundle_file}" \
-                  && ! grep -Fq '{{PUBLIC_MAILBOX_ADDRESS}}' "${bundle_file}"; then
-                  echo "Live Broner Books bundle contains the approved Privacy Notice identity/version and no superseded placeholder/provisional wording."
-                  exit 0
-                fi
-              fi
-            fi
-
-            sleep 5
-          done
-
-          echo "Live Privacy Notice verification did not observe the approved bundle." >&2
-          exit 1
+        run: node scripts/site-smoke.mjs --origin https://bronerbooks.com
 
       - name: Publish live Privacy Notice verification status
         if: always()
