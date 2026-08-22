@@ -25,3 +25,4 @@ jobs:
       - run: npm run build:verify
       - run: npm run seo:check:dist
       - run: npm run site:check:preview
+      - run: npm run site:check:production

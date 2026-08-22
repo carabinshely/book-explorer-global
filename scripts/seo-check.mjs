@@ -91,22 +91,26 @@ const parseModuleScriptSources = (html) =>
     ),
   ].map((match) => match[1]);
 
-const assertPreviewConfig = () => {
-  const configPath = join(cwd, "wrangler.site-preview.jsonc");
-  const config = readJson(configPath, "Cloudflare static-site preview config");
-  if (config.name !== "bronerbooks-site-preview") fail("preview Worker name must be bronerbooks-site-preview.");
-  if (config.compatibility_date !== "2026-08-22") fail("preview Worker compatibility_date must be 2026-08-22.");
-  if (config.workers_dev !== true) fail("preview Worker must keep workers_dev enabled.");
-  if (config.preview_urls !== true) fail("preview Worker must keep preview_urls enabled.");
-  if (config.assets?.directory !== "./dist") fail("preview Worker assets.directory must be ./dist.");
+const assertStaticSiteConfig = ({ file, label, name, workersDev }) => {
+  const configPath = join(cwd, file);
+  const config = readJson(configPath, `Cloudflare static-site ${label} config`);
+  if (config.name !== name) fail(`${label} Worker name must be ${name}.`);
+  if (config.compatibility_date !== "2026-08-22") {
+    fail(`${label} Worker compatibility_date must be 2026-08-22.`);
+  }
+  if (config.workers_dev !== workersDev) {
+    fail(`${label} Worker workers_dev must be ${workersDev}.`);
+  }
+  if (config.preview_urls !== true) fail(`${label} Worker must keep version preview URLs enabled.`);
+  if (config.assets?.directory !== "./dist") fail(`${label} Worker assets.directory must be ./dist.`);
   if (config.assets?.html_handling !== "auto-trailing-slash") {
-    fail("preview Worker must use auto-trailing-slash HTML handling.");
+    fail(`${label} Worker must use auto-trailing-slash HTML handling.`);
   }
   if (config.assets?.not_found_handling !== "404-page") {
-    fail("preview Worker must use 404-page handling, never blanket SPA fallback.");
+    fail(`${label} Worker must use 404-page handling, never blanket SPA fallback.`);
   }
   if (config.assets?.binding !== undefined || config.assets?.run_worker_first !== undefined) {
-    fail("preview Worker must remain assets-only with no binding or run_worker_first layer.");
+    fail(`${label} Worker must remain assets-only with no binding or run_worker_first layer.`);
   }
 
   const forbiddenKeys = [
@@ -123,7 +127,27 @@ const assertPreviewConfig = () => {
     "durable_objects",
   ];
   for (const key of forbiddenKeys) {
-    if (config[key] !== undefined) fail(`preview Worker config must not define ${key}.`);
+    if (config[key] !== undefined) fail(`${label} Worker config must not define ${key}.`);
+  }
+
+  return config;
+};
+
+const assertStaticSiteConfigs = () => {
+  const preview = assertStaticSiteConfig({
+    file: "wrangler.site-preview.jsonc",
+    label: "preview",
+    name: "bronerbooks-site-preview",
+    workersDev: true,
+  });
+  const production = assertStaticSiteConfig({
+    file: "wrangler.site-production.jsonc",
+    label: "production",
+    name: "bronerbooks-site-production",
+    workersDev: false,
+  });
+  if (JSON.stringify(preview.assets) !== JSON.stringify(production.assets)) {
+    fail("preview and production static-site asset behavior must remain identical.");
   }
 };
 
@@ -187,7 +211,7 @@ for (const loc of locs) {
 }
 
 if (mode === "dist") {
-  assertPreviewConfig();
+  assertStaticSiteConfigs();
 
   for (const path of paths) {
     const outputPath = routeOutputPath(path);
